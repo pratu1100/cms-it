@@ -15,7 +15,7 @@ Pipfile.lock
 *.pyc
 __pycache__/
 local_settings.py
-db.sqlite3
+cms/db.sqlite3
 media
 migrations/
 
