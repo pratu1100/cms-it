@@ -11,6 +11,10 @@
     <ul>
         {% for leave in LEAVES %}
             <li>{{ leave.leave_note }}</li>
+            <form action="/faculty/approve/{{ leave.id }}/" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Approve" style="display: inline;">
+            </form>
         {% endfor %}
     </ul>
     {% endblock  %} 

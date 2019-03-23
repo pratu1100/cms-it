@@ -1,5 +1,7 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponseRedirect
+from .models import Leave
 
-# Create your views here.
-def index(request):
-    return HttpResponse("<h1>Hello</h1>")
+# Update leave as approved by HOD
+def update_leave(request, leave_id):  
+    Leave.objects.filter(id=leave_id).update(is_approved=True)
+    return HttpResponseRedirect('/hod/')

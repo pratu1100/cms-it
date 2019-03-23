@@ -1,6 +1,6 @@
 from django.urls import path, include
-from faculty import views
+from .views import update_leave
 
 urlpatterns = [
-    path('', views.index)
+    path('approve/<int:leave_id>/', update_leave)
 ]

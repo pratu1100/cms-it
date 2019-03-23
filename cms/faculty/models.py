@@ -4,3 +4,4 @@ from django.db import models
 class Leave(models.Model):
     leave_note = models.CharField(max_length=255, blank=False, null=False)
     by_name = models.CharField(max_length=255, blank=False, null=False)
+    is_approved = models.BooleanField(default=False, null=False)
