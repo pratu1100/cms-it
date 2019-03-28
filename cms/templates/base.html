@@ -1,0 +1,32 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>CMS | {% block title %}Home{% endblock %}</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+
+    {% include 'includes/stylesheets.html' %}
+    <style type="text/css">
+        
+        a{
+            text-decoration: none !important;
+        }
+    </style>
+    {% include 'includes/scripts.html' %}
+  </head>
+  <body>
+
+    <div class="container-fluid">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+
+    
+
+    </body>
+</html>

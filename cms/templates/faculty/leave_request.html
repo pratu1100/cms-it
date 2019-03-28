@@ -1,0 +1,24 @@
+{% extends '../base.html' %}
+
+{% block content %}
+
+<form method="POST" action="{% url 'request_leave' %}">
+	{% csrf_token %}
+	<input type="datetime-local" name="leave_data">
+	<input type="submit" value="Submit">
+</form>
+
+{% if lecs %}
+	<ul>
+		{% for lec_name, adjs in adjust_opts.items %}
+			<li>{{ lec_name }}</li>
+			<select>
+				{% for faculty in adjs %}
+					<option value="{{ faculty.id }}">{{ faculty.username }}</option>
+				{% endfor %}
+			</select>
+		{% endfor %}
+	</ul>
+{% endif %}
+
+{% endblock %}
