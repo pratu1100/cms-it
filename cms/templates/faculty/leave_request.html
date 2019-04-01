@@ -2,11 +2,35 @@
 
 {% block content %}
 
-<form method="POST" action="{% url 'request_leave' %}">
-	{% csrf_token %}
-	<input type="datetime-local" name="leave_data">
-	<input type="submit" value="Submit">
-</form>
+<div class="fixed-action-btn">
+  <a class="btn-floating btn-large red modal-trigger" href="#leave-modal">
+    <i class="large material-icons">add</i>   
+  </a>
+</div>
+
+ <div id="leave-modal" class="modal" style="width: 75% !important; height: 75% !important;">
+ 	<form method="POST" action="{% url 'request_leave' %}">
+		{% csrf_token %}
+    	<div class="modal-content">
+			<div class="row">
+				<div class="input-field col s12">
+					<input type="text" class="datepicker">
+					<label for="leave_date">Select Date</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s12">
+					<input type="text" class="timepicker">
+					<label for="leave_time">Select Time</label>
+				</div>
+			</div>
+			{% comment %} <input type="datetime-local" name="leave_data"> {% endcomment %}
+    	</div>
+		<div class="modal-footer">
+			<button type="submit" class="modal-close waves-effect waves-pink btn-flat">Submit</button>
+		</div>
+	</form>
+  </div>
 
 {% if lecs %}
 	<ul>
@@ -20,5 +44,16 @@
 		{% endfor %}
 	</ul>
 {% endif %}
+
+<script>
+
+	$(function () {
+		$('.fixed-action-btn').floatingActionButton();
+		$('.modal').modal();
+		$('.datepicker').datepicker();
+		$('.timepicker').timepicker();
+	});
+</script>
+
 
 {% endblock %}
