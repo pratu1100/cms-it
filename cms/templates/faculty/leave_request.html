@@ -20,11 +20,16 @@
 			</div>
 			<div class="row">
 				<div class="input-field col s12">
-					<input type="text" class="timepicker" name="leave_time">
-					<label for="leave_time">Select Time</label>
+					<input type="text" class="timepicker" name="leave_start_time">
+					<label for="leave_start_time">Select Start Time</label>
 				</div>
 			</div>
-			{% comment %} <input type="datetime-local" name="leave_data"> {% endcomment %}
+			<div class="row">
+				<div class="input-field col s12">
+					<input type="text" class="timepicker" name="leave_end_time">
+					<label for="leave_end_time">Select End Time</label>
+				</div>
+			</div>
     	</div>
 		<div class="modal-footer">
 			<div class="row center">
@@ -36,28 +41,46 @@
 
 {% if lecs %}
 	<ul>
-		{% for lec_name, adjs in adjust_opts.items %}
-			<li>{{ lec_name }} <br>
-			<div class="input-field col s12">
-				<select>
-				{% for faculty in adjs %}
-					<option value="{{ faculty.id }}">{{ faculty.username }}</option>
-				{% endfor %}
-			</select>
-			</div>
-			</li>
-		{% endfor %}
+		<form action="{% url '' %}" method="POST">
+			{% csrf_token %}
+		
+			{% for lec_name, adjs in adjust_opts.items %}
+				<li>{{ lec_name }} <br>
+				<div class="input-field col s12">
+					<select id="teachers_option">
+					{% for faculty in adjs %}
+						<option value="{{ faculty.id }}">{{ faculty.username }}</option>
+					{% endfor %}
+				</select>
+				</div>
+				</li>
+				<div class="row center">
+					<button type="submit" class="waves-effect waves-pink btn-flat center-align" id="option_submit">OK</button>
+				</div>
+			{% endfor %}
+		</form>
 	</ul>
 {% endif %}
 
 <script>
-
+	<!-- Material Components -->
 	$(function () {
 		$('.fixed-action-btn').floatingActionButton();
 		$('.modal').modal();
 		$('.datepicker').datepicker();
 		$('.timepicker').timepicker();
 		$('select').formSelect();
+	});
+
+	<!-- Custom Utils -->
+	$(() => {
+		$("#option_submit").on('click', (e) => {
+			e.preventDefault();
+
+			const facultyId = $("#teachers_option").val();
+
+			console.log(facultyId);
+		});
 	});
 </script>
 
