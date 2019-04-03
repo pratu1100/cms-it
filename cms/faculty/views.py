@@ -13,8 +13,11 @@ import time
 def create_leave(request):
 	uname = User.objects.get(pk = request.user.id)
 	if request.method == 'POST':
-		date_time = request.POST.get('leave_data')
-		day_name = datetime.strptime(date_time, '%Y-%m-%dT%H:%M')
+		date_val = request.POST.get('leave_date')
+		time_val = request.POST.get('leave_time')
+		print(request.POST)
+		date_time = date_val + 'T' + time_val
+		day_name = datetime.strptime(date_time, '%b %d, %YT%H:%M %p')
 		print(type(day_name))
 		lecs = Lecture.objects.filter(lec_day__day_name = day_name.strftime("%A")).filter(taken_by = uname).filter(lec_time__start_time__gte = datetime.time(day_name))
 		adjust_opts = dict()

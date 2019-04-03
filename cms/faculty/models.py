@@ -40,3 +40,10 @@ class Lecture(models.Model):
 	def __str__(self):
 		return self.lname.sname
 
+class LoadShift(models.Model):
+	leave = models.ForeignKey(Leave, on_delete=models.CASCADE)
+	to_faculty = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name="to_faculty")
+	for_lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name="to_lecture")
+	
+	# def __str__(self):
+	# 	return self.to_faculty.

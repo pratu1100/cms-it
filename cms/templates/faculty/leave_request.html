@@ -14,20 +14,22 @@
     	<div class="modal-content">
 			<div class="row">
 				<div class="input-field col s12">
-					<input type="text" class="datepicker">
+					<input type="text" class="datepicker" name="leave_date">
 					<label for="leave_date">Select Date</label>
 				</div>
 			</div>
 			<div class="row">
 				<div class="input-field col s12">
-					<input type="text" class="timepicker">
+					<input type="text" class="timepicker" name="leave_time">
 					<label for="leave_time">Select Time</label>
 				</div>
 			</div>
 			{% comment %} <input type="datetime-local" name="leave_data"> {% endcomment %}
     	</div>
 		<div class="modal-footer">
-			<button type="submit" class="modal-close waves-effect waves-pink btn-flat">Submit</button>
+			<div class="row center">
+				<button type="submit" class="modal-close waves-effect waves-pink btn-flat center-align">Submit</button>
+			</div>
 		</div>
 	</form>
   </div>
@@ -35,12 +37,15 @@
 {% if lecs %}
 	<ul>
 		{% for lec_name, adjs in adjust_opts.items %}
-			<li>{{ lec_name }}</li>
-			<select>
+			<li>{{ lec_name }} <br>
+			<div class="input-field col s12">
+				<select>
 				{% for faculty in adjs %}
 					<option value="{{ faculty.id }}">{{ faculty.username }}</option>
 				{% endfor %}
 			</select>
+			</div>
+			</li>
 		{% endfor %}
 	</ul>
 {% endif %}
@@ -52,6 +57,7 @@
 		$('.modal').modal();
 		$('.datepicker').datepicker();
 		$('.timepicker').timepicker();
+		$('select').formSelect();
 	});
 </script>
 

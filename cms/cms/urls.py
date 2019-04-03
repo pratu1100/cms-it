@@ -8,5 +8,5 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('faculty/', include('faculty.urls')),
-    path('hod/', include('hod.urls'))
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('hod/', include('hod.urls')),
+]
