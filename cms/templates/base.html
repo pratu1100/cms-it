@@ -31,6 +31,7 @@
             <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="faculty/leave_request.html">Faculty</a></li>
             <!-- <li><a href="hod/leaves.html">HOD</a></li> -->
+            {% comment %} <li><a href="{% url 'login_page' %}">Login</a></li> {% endcomment %}
             {% block nav-content %}
             {% endblock %}  
             </ul>
@@ -38,7 +39,7 @@
     </nav>
 
 
-    <div class="container-fluid">
+    <div class="container">
         {% block content %}
 
         {% endblock %}

@@ -1,23 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Leaves</title>
-</head>
-<body>
-    {% block content %}
-    <ul>
+{% extends '../base.html' %} 
+
+{% block content %}
+    <ul class="collection">
         {% for leave in LEAVES %}
-            <li>{{ leave.leave_note }}</li>
-            <form action="/faculty/approve/{{ leave.id }}/" method="post">
-                {% csrf_token %}
-                <input type="submit" value="Approve" style="display: inline;">
-            </form>
+            <li class="collection-item">{{ leave.leave_note }}
+                <form action="/faculty/approve/{{ leave.id }}/" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-small black right" type="button" style="display: inline;">
+                        Approve
+                    </button>
+                </form>
+            </li>
         {% endfor %}
     </ul>
-    {% endblock  %} 
-    
-</body>
-</html>
+{% endblock  %} 
+

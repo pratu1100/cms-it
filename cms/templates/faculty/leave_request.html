@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="fixed-action-btn">
-  <a class="btn-floating btn-large red modal-trigger" href="#leave-modal">
+  <a class="btn-floating btn-large black modal-trigger" href="#leave-modal">
     <i class="large material-icons">add</i>   
   </a>
 </div>
@@ -14,26 +14,38 @@
  	<form method="POST" action="{% url 'submit_leave' %}">
 		{% csrf_token %}
     	<div class="modal-content">
-			<div class="row">
-				<div class="input-field col s12">
+			<div class="row center">
+				<div class="col s1">
+					<i class="medium material-icons">calendar_today</i>
+				</div>
+				<div class="input-field col s8">
 					<input type="text" class="datepicker" name="leave_start_date">
 					<label for="leave_start_date">Start Date</label>
 				</div>
 			</div>
-			<div class="row">
-				<div class="input-field col s12">
+			<div class="row center">
+				<div class="col s1">
+					<i class="medium material-icons">alarm</i>
+				</div>
+				<div class="input-field col s8">
 					<input type="text" class="timepicker" name="leave_start_time">
 					<label for="leave_start_time">Start Time</label>
 				</div>
 			</div>
-			<div class="row">
-				<div class="input-field col s12">
+			<div class="row center">
+				<div class="col s1">
+					<i class="medium material-icons">calendar_today</i>
+				</div>
+				<div class="input-field col s8">
 					<input type="text" class="datepicker" name="leave_end_date">
 					<label for="leave_start_date">End Date</label>
 				</div>
 			</div>
-			<div class="row">
-				<div class="input-field col s12">
+			<div class="row center">
+				<div class="col s1">
+					<i class="medium material-icons">alarm</i>
+				</div>
+				<div class="input-field col s8">
 					<input type="text" class="timepicker" name="leave_end_time">
 					<label for="leave_end_time">End Time</label>
 				</div>
@@ -41,7 +53,7 @@
     	</div>
 		<div class="modal-footer">
 			<div class="row center">
-				<button type="submit" class="modal-close waves-effect waves-pink btn-flat center-align">Submit</button>
+				<button type="submit" class="modal-close waves-effect waves-pink btn btn-large black center-align">Submit</button>
 			</div>
 		</div>
 	</form>
