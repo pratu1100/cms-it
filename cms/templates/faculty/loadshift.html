@@ -1,0 +1,43 @@
+{% extends '../base.html' %}
+
+            {% block nav-content %}<li><a href="{% url 'request_leave' %}">Leave</a></li>{% endblock %}
+
+{% block content %}
+
+{% if load_shifts %}
+	<div class="row">
+		{% for load_shift in load_shifts %}
+			<div class="card col s6 offset-s3">
+				<p class="card-title text-darken-4">From : {{ load_shift.leave.leave_taken_by.username }}</p>
+				<p class="card-content">For : {{ load_shift.for_lecture.lname.sname }}
+				</p>
+			</div>
+		{% endfor %}
+	</div>
+{% endif %}
+
+
+<script>
+	<!-- Material Components -->
+	$(function () {
+		$('.fixed-action-btn').floatingActionButton();
+		$('.modal').modal();
+		$('.datepicker').datepicker();
+		$('.timepicker').timepicker();
+		$('select').formSelect();
+	});
+
+	// <!-- Custom Utils -->
+	// $(() => {
+	// 	$("#option_submit").on('click', (e) => {
+	// 		e.preventDefault();
+
+	// 		const facultyId = $("#teachers_option").val();
+
+	// 		console.log(facultyId);
+	// 	});
+	// });
+</script>
+
+
+{% endblock %}

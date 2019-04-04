@@ -1,5 +1,7 @@
 {% extends '../base.html' %}
 
+            {% block nav-content %}<li><a href="{% url 'loadshifts' %}">Load Shifts</a></li>{% endblock %}
+
 {% block content %}
 
 <div class="fixed-action-btn">
@@ -9,25 +11,31 @@
 </div>
 
  <div id="leave-modal" class="modal" style="width: 75% !important; height: 75% !important;">
- 	<form method="POST" action="{% url 'request_leave' %}">
+ 	<form method="POST" action="{% url 'submit_leave' %}">
 		{% csrf_token %}
     	<div class="modal-content">
 			<div class="row">
 				<div class="input-field col s12">
-					<input type="text" class="datepicker" name="leave_date">
-					<label for="leave_date">Select Date</label>
+					<input type="text" class="datepicker" name="leave_start_date">
+					<label for="leave_start_date">Start Date</label>
 				</div>
 			</div>
 			<div class="row">
 				<div class="input-field col s12">
 					<input type="text" class="timepicker" name="leave_start_time">
-					<label for="leave_start_time">Select Start Time</label>
+					<label for="leave_start_time">Start Time</label>
+				</div>
+			</div>
+			<div class="row">
+				<div class="input-field col s12">
+					<input type="text" class="datepicker" name="leave_end_date">
+					<label for="leave_start_date">End Date</label>
 				</div>
 			</div>
 			<div class="row">
 				<div class="input-field col s12">
 					<input type="text" class="timepicker" name="leave_end_time">
-					<label for="leave_end_time">Select End Time</label>
+					<label for="leave_end_time">End Time</label>
 				</div>
 			</div>
     	</div>
@@ -40,26 +48,37 @@
   </div>
 
 {% if lecs %}
-	<ul>
-		<form action="{% url '' %}" method="POST">
+		<form action="{% url 'loadshifts' %}" method="POST">
 			{% csrf_token %}
-		
-			{% for lec_name, adjs in adjust_opts.items %}
-				<li>{{ lec_name }} <br>
-				<div class="input-field col s12">
-					<select id="teachers_option">
-					{% for faculty in adjs %}
-						<option value="{{ faculty.id }}">{{ faculty.username }}</option>
-					{% endfor %}
-				</select>
-				</div>
-				</li>
-				<div class="row center">
-					<button type="submit" class="waves-effect waves-pink btn-flat center-align" id="option_submit">OK</button>
-				</div>
+			<div class="row">
+				<div class="card col s6 offset-s3">
+					<div class="row">
+						<p class="card-title text-darken-4 center-align">Start Date : {{ start_date }}</p>
+						<p class="card-title text-darken-4 center-align">End Date : {{ end_date }}</p>
+						<p class="card-title text-darken-4 center-align">Start Time : {{ start_time }}</p>
+						<p class="card-title text-darken-4 center-align">End Date : {{ end_time }}</p>
+			{% for lec, adjs in adjust_opts.items %}
+						<div class="col s8 offset-s2"><span class="card-title text-darken-4">{{ lec.lname.sname }}</span>
+							<div class="input-field s12">
+								<input type="hidden" name="leave_id" value="{{ leave_id }}"></ins>
+								<input type="hidden" name="lecture_id" value="{{ lec.id }}">
+								<select id="teachers_option" name="faculty_id">
+								{% for faculty in adjs %}
+									<option value="{{ faculty.id }}">{{ faculty.username }}</option>
+								{% endfor %}
+							</select>
+							</div>
+						</div>
+
+				
 			{% endfor %}
+					</div>
+			<div class="row center">
+					<button type="submit" class="waves-effect waves-pink btn-flat center-align" id="option_submit">OK</button>
+			</div>
+				</div>				
+		</div>
 		</form>
-	</ul>
 {% endif %}
 
 <script>
@@ -72,16 +91,16 @@
 		$('select').formSelect();
 	});
 
-	<!-- Custom Utils -->
-	$(() => {
-		$("#option_submit").on('click', (e) => {
-			e.preventDefault();
+	// <!-- Custom Utils -->
+	// $(() => {
+	// 	$("#option_submit").on('click', (e) => {
+	// 		e.preventDefault();
 
-			const facultyId = $("#teachers_option").val();
+	// 		const facultyId = $("#teachers_option").val();
 
-			console.log(facultyId);
-		});
-	});
+	// 		console.log(facultyId);
+	// 	});
+	// });
 </script>
 
 
