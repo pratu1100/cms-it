@@ -9,9 +9,6 @@ import time
 #     Leave.objects.filter(id=leave_id).update(is_approved=True)
 #     return HttpResponseRedirect('/hod/')
 
-def load_login_page(request):
-	return render(request, "login.html", {})
-
 @login_required
 def create_leave(request):
 	return render(request,"faculty/leave_request.html",{})

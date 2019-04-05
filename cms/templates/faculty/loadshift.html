@@ -1,17 +1,19 @@
 {% extends '../base.html' %}
 
-            {% block nav-content %}<li><a href="{% url 'request_leave' %}">Leave</a></li>{% endblock %}
+{% block nav-content %}<li><a href="{% url 'request_leave' %}">Leave</a></li>{% endblock %}
 
 {% block content %}
 
 {% if load_shifts %}
 	<div class="row">
-		<div class="container">
+		<div class="card">
 			<table class="highlight centered reponsive-table">
 			<thead>
 			<tr>
-				<th>From</th>
-				<th>For</th>
+				<th>Name</th>
+				<th>Lecture</th>
+				<th><i class="far fa-calendar-alt"></i></th>
+				<th><i class="far fa-clock"></i></th>
 			</tr>
 			</thead>
 
@@ -19,6 +21,8 @@
 				{% for load_shift in load_shifts %}
 					<td>{{ load_shift.leave.leave_taken_by.username }}</td>
 					<td>{{ load_shift.for_lecture.lname.sname }}</td>
+					<td>{{ load_shift.for_lecture.lec_day }}</td>
+					<td>{{ load_shift.for_lecture.lec_time }}</td>
 				{% endfor %}
 			</tbody>
 		</table>

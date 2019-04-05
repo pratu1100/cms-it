@@ -37,7 +37,6 @@ class Subject(models.Model):
 	def __str__(self):
 		return self.sname
 
-
 class Lecture(models.Model):
 	lname = models.ForeignKey(Subject,on_delete = models.CASCADE)
 	taken_by = models.ForeignKey("auth.User",on_delete = models.CASCADE)

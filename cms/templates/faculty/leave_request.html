@@ -10,42 +10,30 @@
   </a>
 </div>
 
- <div id="leave-modal" class="modal" style="width: 75% !important; height: 75% !important;">
+ <div id="leave-modal" class="modal" style="width: 75% !important;height: 60% !important;">
  	<form method="POST" action="{% url 'submit_leave' %}">
 		{% csrf_token %}
     	<div class="modal-content">
 			<div class="row center">
-				<div class="col s1">
-					<i class="medium material-icons">calendar_today</i>
-				</div>
-				<div class="input-field col s8">
+				<div class="input-field col s6">
+					<i class="far fa-calendar-alt fa-1x prefix"></i>
 					<input type="text" class="datepicker" name="leave_start_date">
 					<label for="leave_start_date">Start Date</label>
 				</div>
-			</div>
-			<div class="row center">
-				<div class="col s1">
-					<i class="medium material-icons">alarm</i>
-				</div>
-				<div class="input-field col s8">
+				<div class="input-field col s6">
+					<i class="far fa-clock fa-1x prefix"></i>
 					<input type="text" class="timepicker" name="leave_start_time">
 					<label for="leave_start_time">Start Time</label>
 				</div>
 			</div>
 			<div class="row center">
-				<div class="col s1">
-					<i class="medium material-icons">calendar_today</i>
-				</div>
-				<div class="input-field col s8">
+				<div class="input-field col s6">
+					<i class="far fa-calendar-alt fa-1x prefix"></i>
 					<input type="text" class="datepicker" name="leave_end_date">
 					<label for="leave_start_date">End Date</label>
 				</div>
-			</div>
-			<div class="row center">
-				<div class="col s1">
-					<i class="medium material-icons">alarm</i>
-				</div>
-				<div class="input-field col s8">
+				<div class="input-field col s6">
+					<i class="far fa-clock fa-1x prefix"></i>
 					<input type="text" class="timepicker" name="leave_end_time">
 					<label for="leave_end_time">End Time</label>
 				</div>
