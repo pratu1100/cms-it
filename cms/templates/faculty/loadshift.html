@@ -1,33 +1,40 @@
 {% extends '../base.html' %}
 
-{% block nav-content %}<li><a href="{% url 'request_leave' %}">Leave</a></li>{% endblock %}
+{% block nav-content %}
+	<li class="nav-item" role="presentation">
+		<a class="nav-link" href="{% url 'request_leave' %}" style="color: white;">
+			<p class="h6 mt-2">Leave</p>	
+		</a>
+	</li>
+{% endblock %}
 
 {% block content %}
 
-{% if load_shifts %}
-	<div class="row">
-		<div class="card">
-			<table class="highlight centered reponsive-table">
-			<thead>
-			<tr>
-				<th>Name</th>
-				<th>Lecture</th>
-				<th><i class="far fa-calendar-alt"></i></th>
-				<th><i class="far fa-clock"></i></th>
-			</tr>
-			</thead>
+	{% if load_shifts %}
+		<table class="table table-striped table-bordered" id="load_shift_table">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Lecture</th>
+			<th><i class="far fa-calendar-alt"></i></th>
+			<th><i class="far fa-clock"></i></th>
+		</tr>
+		</thead>
 
-			<tbody>
-				{% for load_shift in load_shifts %}
-					<td>{{ load_shift.leave.leave_taken_by.username }}</td>
-					<td>{{ load_shift.for_lecture.lname.sname }}</td>
-					<td>{{ load_shift.for_lecture.lec_day }}</td>
-					<td>{{ load_shift.for_lecture.lec_time }}</td>
-				{% endfor %}
-			</tbody>
+		<tbody>
+			{% for load_shift in load_shifts %}
+				<td>{{ load_shift.leave.leave_taken_by.username }}</td>
+				<td>{{ load_shift.for_lecture.lname.sname }}</td>
+				<td>{{ load_shift.for_lecture.lec_day }}</td>
+				<td>{{ load_shift.for_lecture.lec_time }}</td>
+			{% endfor %}
+		</tbody>
 		</table>
-		</div>
-	</div>
-{% endif %}
+	{% endif %}
 
+	<script>
+		$(function() {
+			$("#load_shift_table").DataTable();
+		});
+	</script>
 {% endblock %}
