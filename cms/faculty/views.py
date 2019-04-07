@@ -24,8 +24,8 @@ def submit_leave(request):
 		start_date_time = start_date_val + 'T' + start_time_val
 		end_date_time = end_date_val + 'T' + end_time_val
 		# Python date time objects
-		start_date = datetime.strptime(start_date_time, '%b %d, %YT%I:%M %p')
-		end_date = datetime.strptime(end_date_time, '%b %d, %YT%I:%M %p')
+		start_date = datetime.strptime(start_date_time, '%d/%m/%YT%H:%M')
+		end_date = datetime.strptime(end_date_time, '%d/%m/%YT%H:%M')
 		lecs = Lecture.objects.filter(lec_day__id__in = range(start_date.day,end_date.day+1)).filter(taken_by = user).filter(lec_time__start_time__gte = datetime.time(start_date)).filter(lec_time__end_time__lte = datetime.time(end_date))
 		adjust_opts = dict()
 		new_leave = Leave.objects.get_or_create(leave_taken_by = user,leave_start_date=start_date.date(),leave_end_date = end_date.date(),leave_start_time=start_date.time(),leave_end_time = end_date.time())

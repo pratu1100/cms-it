@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['172.20.10.3','127.0.0.1']
 
-LOGIN_REDIRECT_URL = '/faculty/requestleave'
+LOGIN_REDIRECT_URL = '/'
 
 LOGOUT_REDIRECT_URL = '/accounts/login'
 
