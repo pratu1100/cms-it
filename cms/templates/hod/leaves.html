@@ -2,8 +2,9 @@
 {% block content %}
 
     <div class="d-flex justify-content-center mt-5 pt-5">
+        <div class="row col-md-12 justify-content-center">
             {% for leave,loads in leave_loads_pairs %}
-                <div class="card col-md-6">
+                <div class="card col-md-7 mb-3">
                 <form method="POST" action="{% url 'leaves' %}">
                 {% csrf_token %}
                 <input type="hidden" name="leave_id" value="{{ leave.id }}">
@@ -47,6 +48,7 @@
                 </form>
                 </div>
             {% endfor %}
+        </div>
     </div>
 {% endblock  %} 
 

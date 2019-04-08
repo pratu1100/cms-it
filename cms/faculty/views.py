@@ -26,7 +26,7 @@ def submit_leave(request):
 		# Python date time objects
 		start_date = datetime.strptime(start_date_time, '%d/%m/%YT%H:%M')
 		end_date = datetime.strptime(end_date_time, '%d/%m/%YT%H:%M')
-		lecs = Lecture.objects.filter(lec_day__id__in = range(start_date.day,end_date.day+1)).filter(taken_by = user).filter(lec_time__start_time__gte = datetime.time(start_date)).filter(lec_time__end_time__lte = datetime.time(end_date))
+		lecs = Lecture.objects.filter(lec_day__id__in = range(start_date.weekday(),end_date.weekday()+1)).filter(taken_by = user).filter(lec_time__start_time__gte = datetime.time(start_date)).filter(lec_time__end_time__lte = datetime.time(end_date))
 		adjust_opts = dict()
 		new_leave = Leave.objects.get_or_create(leave_taken_by = user,leave_start_date=start_date.date(),leave_end_date = end_date.date(),leave_start_time=start_date.time(),leave_end_time = end_date.time())
 		print("####",new_leave)
@@ -52,11 +52,16 @@ def submit_load_shift(request):
 	user = User.objects.get(pk = request.user.id)
 	load_shifts = LoadShift.objects.filter(to_faculty = user)
 	if request.method == 'POST':
-		leave = Leave.objects.get(pk = request.POST.get('leave_id'))
-		print(leave)
-		print(request.POST.getlist('lecture_id'))
-		for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
-			LoadShift.objects.get_or_create(leave = leave,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
+		print(request.POST)
+		if(request.POST.get('leave_id')):
+			leave = Leave.objects.get(pk = request.POST.get('leave_id'))
+			print(leave)
+			print(request.POST.getlist('lecture_id'))
+			if(request.POST.getlist('lecture_id')):
+				for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
+					LoadShift.objects.get_or_create(leave = leave,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
+		else:
+			print("No load shifts")
 		# print(user.username)
 		# print(for_lec)
 		# print(to_faculty)
