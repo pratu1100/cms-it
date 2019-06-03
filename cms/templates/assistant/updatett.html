@@ -119,20 +119,20 @@
 		                                <div class="col-md-12 text-center">
 											  <div class="radio-tile-group">
 											    <div class="input-container">
-											      <input id="sy-year" class="radio-button" type="radio" name="yearopt" value="sy" checked/>
+											      <input id="sy-year" class="radio-button" type="radio" name="yearopt" value="SY" checked/>
 											      <div class="radio-tile">
 											        <label for="sy-year" class="radio-tile-label">Second Year</label>
 											      </div>
 											    </div>
 
 											    <div class="input-container">
-											      <input id="ty-year" class="radio-button" type="radio" name="yearopt" value="ty"/>
+											      <input id="ty-year" class="radio-button" type="radio" name="yearopt" value="TY"/>
 											      <div class="radio-tile">
 											        <label for="ty-year" class="radio-tile-label">Third Year</label>
 											      </div>
 											    </div>
 											    <div class="input-container">
-											      <input id="last-year" class="radio-button" type="radio" name="yearopt" value="ly"/>
+											      <input id="last-year" class="radio-button" type="radio" name="yearopt" value="LY"/>
 											      <div class="radio-tile">
 											        <label for="last-year" class="radio-tile-label">Last Year</label>
 											      </div>
@@ -265,16 +265,19 @@
 	<script src="{% static 'wizard/js/jquery.validate.min.js' %}" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
-
+			var value = $('[name="yearopt"]').val();
+			console.log(value);
 			$('[name="yearopt"]').change(function(){
 				var value = $(this).val();
-				{% for sub in subjects %}
-					if(value == "{{ sub.year }}"){
-						var html = "<option value='{{ sub.sname }}'>{{ sub.sname }} - {{ sub.teaching_faculty }}</option>";
-						$('.lec-select').append(html);
-					}
-				{% endfor %}
+				console.log(value);
+
 			});
+			{% for sub in subjects %}
+				if(value == "{{ sub.year }}"){
+					var html = "<option value='{{ sub.sname }}'>{{ sub.sname }} - {{ sub.teaching_faculty }}</option>";
+					$('.lec-select').append(html);
+				}
+			{% endfor %}
 			
 		});
 	</script>

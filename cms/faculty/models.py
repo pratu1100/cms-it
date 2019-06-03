@@ -45,7 +45,7 @@ class DaysOfWeek(models.Model):
 class Subject(models.Model):
 	sname = models.CharField(max_length=255,null=False,blank=False) 
 	teaching_faculty = models.ManyToManyField("auth.User")
-	year = models.ForeignKey(Year,on_delete="models.CASCADE")
+	year = models.ForeignKey(Year,on_delete="models.CASCADE",null=True)
 
 	def __str__(self):
 		return self.sname
@@ -55,7 +55,7 @@ class Lecture(models.Model):
 	taken_by = models.ForeignKey("auth.User",on_delete = models.CASCADE)
 	lec_day = models.ForeignKey(DaysOfWeek,on_delete = models.CASCADE)
 	lec_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE)
-	lec_div = models.ForeignKey(Division,on_delete= models.CASCADE)
+	lec_div = models.ForeignKey(Division,on_delete= models.CASCADE,null=True)
 
 	def __str__(self):
 		return self.lname.sname

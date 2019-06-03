@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,Year, Division
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,Year,Division
 
 # Register your models here.
 

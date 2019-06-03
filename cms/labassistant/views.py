@@ -10,6 +10,7 @@ def get_timetable(request):
 	time_slots = TimeSlot.objects.annotate(
     diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
 	).filter(diff__lte=datetime.timedelta(hours = 2))
+	
 	subjects = Subject.objects.all();
 
 	context_data = {
