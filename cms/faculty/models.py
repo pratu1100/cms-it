@@ -1,6 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
+class Year(models.Model):
+	year = models.CharField(max_length=255,null=False,blank=False) 
+
+	def __str__(self):
+		return self.year
+
+class Division(models.Model):
+	division = models.CharField(max_length=255,null=False,blank=False) 
+
+	def __str__(self):
+		return self.division
+
 class TimeSlot(models.Model):
 	start_time = models.TimeField(auto_now=False, auto_now_add=False)
 	end_time = models.TimeField(auto_now=False, auto_now_add=False)
@@ -33,6 +45,7 @@ class DaysOfWeek(models.Model):
 class Subject(models.Model):
 	sname = models.CharField(max_length=255,null=False,blank=False) 
 	teaching_faculty = models.ManyToManyField("auth.User")
+	year = models.ForeignKey(Year,on_delete="models.CASCADE")
 
 	def __str__(self):
 		return self.sname
@@ -42,6 +55,8 @@ class Lecture(models.Model):
 	taken_by = models.ForeignKey("auth.User",on_delete = models.CASCADE)
 	lec_day = models.ForeignKey(DaysOfWeek,on_delete = models.CASCADE)
 	lec_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE)
+	lec_div = models.ForeignKey(Division,on_delete= models.CASCADE)
+
 	def __str__(self):
 		return self.lname.sname
 	class Meta:

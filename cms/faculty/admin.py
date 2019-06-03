@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,Year, Division
 
 # Register your models here.
 
@@ -26,4 +26,7 @@ class LoadShiftAdmin(admin.ModelAdmin):
 
 admin.site.register(LoadShift,LoadShiftAdmin)
 
+admin.site.register(Year)
+
+admin.site.register(Division)
 

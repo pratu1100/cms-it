@@ -8,5 +8,6 @@ urlpatterns = [
     path('',views.index,name="index"),
     path('accounts/', include('django.contrib.auth.urls')),
     path('faculty/', include('faculty.urls')),
-    path('hod/', include('hod.urls'))
+    path('hod/', include('hod.urls')),
+    path('assistant/',include('labassistant.urls'))
 ]
