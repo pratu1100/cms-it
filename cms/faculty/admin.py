@@ -10,7 +10,7 @@ class LeaveAdmin(admin.ModelAdmin):
 admin.site.register(Leave,LeaveAdmin)
 
 class LectureAdmin(admin.ModelAdmin):
-	list_display = ('lname','taken_by','lec_day','lec_time')
+	list_display = ('lname','taken_by','lec_day','lec_time','lec_div')
 	list_display_links = ('lname',)
 
 admin.site.register(Lecture,LectureAdmin)

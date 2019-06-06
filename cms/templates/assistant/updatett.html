@@ -46,6 +46,10 @@
 		                <!--        You can switch " data-color="orange" "  with one of the next bright colors: "blue", "green", "orange", "red", "azure"          -->
 
 		                    	<div class="wizard-header text-center">
+		                    		{% if errors %}
+										<h3 class="text-danger">{{ errors }}</h3>
+					            	{% endif %}
+
 		                        	<h3 class="wizard-title">Update Time Table</h3>
 									<!-- <p class="category"></p> -->
 		                    	</div>
@@ -165,38 +169,38 @@
 		                                <div class="col-md-12 text-center">
 											  <div class="radio-tile-group">
 											    <div class="input-container">
-											      <input id="monday-day" class="radio-button" type="radio" name="dayopt" value="monday" checked/>
+											      <input id="monday-day" class="radio-button" type="radio" name="dayopt" value="Monday" checked/>
 											      <div class="radio-tile">
 											        <label for="monday-day" class="radio-tile-label">Monday</label>
 											      </div>
 											    </div>
 
 											    <div class="input-container">
-											      <input id="tuesday-day" class="radio-button" type="radio" name="dayopt" value="tuesday"/>
+											      <input id="tuesday-day" class="radio-button" type="radio" name="dayopt" value="Tuesday"/>
 											      <div class="radio-tile">
 											        <label for="tuesday-day" class="radio-tile-label">Tuesday</label>
 											      </div>
 											    </div>
 											    <div class="input-container">
-											      <input id="wednesday-day" class="radio-button" type="radio" name="dayopt" value="wednesday"/>
+											      <input id="wednesday-day" class="radio-button" type="radio" name="dayopt" value="Wednesday"/>
 											      <div class="radio-tile">
 											        <label for="wednesday-day" class="radio-tile-label">Wednesday</label>
 											      </div>
 											    </div>
 											    <div class="input-container">
-											      <input id="thursday-day" class="radio-button" type="radio" name="dayopt" value="thursday"/>
+											      <input id="thursday-day" class="radio-button" type="radio" name="dayopt" value="Thursday"/>
 											      <div class="radio-tile">
 											        <label for="thursday-day" class="radio-tile-label">Thursday</label>
 											      </div>
 											    </div>
 											    <div class="input-container">
-											      <input id="friday-day" class="radio-button" type="radio" name="dayopt" value="friday"/>
+											      <input id="friday-day" class="radio-button" type="radio" name="dayopt" value="Friday"/>
 											      <div class="radio-tile">
 											        <label for="friday-day" class="radio-tile-label">Friday</label>
 											      </div>
 											    </div>
 											    <div class="input-container">
-											      <input id="saturday-day" class="radio-button" type="radio" name="dayopt" value="saturday"/>
+											      <input id="saturday-day" class="radio-button" type="radio" name="dayopt" value="Saturday"/>
 											      <div class="radio-tile">
 											        <label for="saturday-day" class="radio-tile-label">Saturday</label>
 											      </div>
@@ -274,8 +278,11 @@
 			});
 			{% for sub in subjects %}
 				if(value == "{{ sub.year }}"){
-					var html = "<option value='{{ sub.sname }}'>{{ sub.sname }} - {{ sub.teaching_faculty }}</option>";
-					$('.lec-select').append(html);
+					{% for fac in sub.teaching_faculty.all %}
+						console.log("{{ fac }}")
+						var html = "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
+						$('.lec-select').append(html);
+					{% endfor %}
 				}
 			{% endfor %}
 			

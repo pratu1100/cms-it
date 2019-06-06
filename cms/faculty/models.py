@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+
 # Create your models here.
 class Year(models.Model):
 	year = models.CharField(max_length=255,null=False,blank=False) 
@@ -59,8 +61,15 @@ class Lecture(models.Model):
 
 	def __str__(self):
 		return self.lname.sname
-	class Meta:
-		unique_together = ('lec_day','lec_time')
+	def validate_unique(self, *args, **kwargs):
+		super(Lecture,self).validate_unique(*args, **kwargs)
+		if self.__class__.objects.filter(lec_day = self.lec_day, lec_time__start_time = self.lec_time.start_time, lec_div = self.lec_div).exists() or self.__class__.objects.filter(lec_day = self.lec_day, lec_time__end_time = self.lec_time.end_time, lec_div = self.lec_div).exists():
+			raise ValidationError(
+					message = 'Lecture with conflicting time already exists',
+					code = 'unique_together'
+				)
+	# class Meta:
+	# 	unique_together = ('lec_day','lec_time__start_time','lec_div')
 
 class LoadShift(models.Model):
 	leave = models.ForeignKey(Leave, on_delete=models.CASCADE)
