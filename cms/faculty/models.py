@@ -79,8 +79,10 @@ class Lecture(models.Model):
 
 	def __str__(self):
 		return self.lname.sname
+
 	def validate_unique(self, *args, **kwargs):
 		super(Lecture,self).validate_unique(*args, **kwargs)
+		print("Hahahaha check")
 		print(self.__class__.objects.filter(lec_day = self.lec_day, lec_time__start_time = self.lec_time.start_time, lec_div = self.lec_div).exclude(pk = self.id).exists() or self.__class__.objects.filter(lec_day = self.lec_day, lec_time__end_time = self.lec_time.end_time, lec_div = self.lec_div).exclude(pk = self.id).exists())
 		if self.__class__.objects.filter(lec_day = self.lec_day, lec_time__start_time = self.lec_time.start_time, lec_div = self.lec_div).exclude(pk = self.id).exists() or self.__class__.objects.filter(lec_day = self.lec_day, lec_time__end_time = self.lec_time.end_time, lec_div = self.lec_div).exclude(pk = self.id).exists():
 			raise ValidationError(
@@ -89,6 +91,10 @@ class Lecture(models.Model):
 				)
 	# class Meta:
 	# 	unique_together = ('lec_day','lec_time__start_time','lec_div')
+	def save(self, *args, **kwargs):
+		self.validate_unique(self,*args, **kwargs)
+		super(Lecture, self).save(*args, **kwargs)
+
 
 class LoadShift(models.Model):
 	leave = models.ForeignKey(Leave, on_delete=models.CASCADE)

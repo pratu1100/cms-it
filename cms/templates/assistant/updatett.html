@@ -216,20 +216,8 @@
 											</div>
 		                            </div>
 		                            <div class="tab-pane" id="submit">
-		                                <div class="row" style="margin-top: 15px;">
-											{% for t in timeslots %}
-			                                	<div class="col-md-4 text-center">
-			                                		
-			                                		<label>{{ t }}</label>
-				                                    <select class="form-control custom-select lec-select" name="{{ t }}">
-														  <option value="0" selected> --- </option>
-													</select>
-													<div class="row" id="batch-row-{{ t }}">
-														
-													</div>
-
-			                                	</div>
-											{% endfor %}
+		                                <div class="row lec_batch_opts" style="margin-top: 15px;">
+											
 		                                </div>
 		                            </div>
 		                        </div>
@@ -273,105 +261,206 @@
 	<!--  More information about jquery.validate here: https://jqueryvalidation.org/	 -->
 	<script src="{% static 'wizard/js/jquery.validate.min.js' %}" type="text/javascript"></script>
 	<script type="text/javascript">
+		console.log("Initial")
+		var value = $('[name="yearopt"]').val();
+		var value2 = $('[name="divopt"]').val();
+
 		$(document).ready(function(){
-			var value = $('[name="yearopt"]').val();
-			var value2 = $('[name="divopt"]').val();
-			console.log(value);
-
-			var room_str = "";
+			compute_lecs(value,value2)
 			$('[name="yearopt"]').change(function(){
-				var value = $(this).val();
-				console.log(value);
-				$('.lec-select').find('option').not(':first').remove();
-				{% for sub in subjects %}
-				if(value == "{{ sub.year }}"){
-					{% for fac in sub.teaching_faculty.all %}
-						console.log("{{ fac }}")
-						var html = "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
-						$('.lec-select').append(html);
-					{% endfor %}
-				}
-			{% endfor %}
-
+				console.log("Year changed")
+				value = $(this).val()
+				compute_lecs(value,value2)
+				console.log($(this).val())
 			});
 			$('[name="divopt"]').change(function(){
-				var value2 = $(this).val();
-				console.log(value2);
-				$('[id^=batch-row]').empty();
+				console.log("Division changed")
+				value2 = $(this).val()
+				console.log($(this).val())
+				compute_lecs(value,value2)
 
-				{% for batch in batches %}
-				if(value2 == "{{ batch.batch_of_div }}" && value == "{{ batch.batch_of_year }}"){
-						var room_str = "";
-						{% for room in rooms %}
-							room_str += '<option value="{{ room }}-{{ batch.id }}">{{ room }}</option>';
-						{% endfor %}
-						// console.log("{{ fac }}")
+			});
+		});
+
+
+			// var room_str = "";
+			// $('[name="yearopt"]').change(function(){
+			// 	var value = $(this).val();
+			// 	console.log(value);
+			// 	$('.lec-select').find('option').not(':first').remove();
+			// 	{% for sub in subjects %}
+			// 	if(value == "{{ sub.year }}"){
+			// 		{% for fac in sub.teaching_faculty.all %}
+			// 			console.log("{{ fac }}")
+			// 			var html = "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
+			// 			$('.lec-select').append(html);
+			// 		{% endfor %}
+			// 	}
+			// {% endfor %}
+
+			// });
+			// $('[name="divopt"]').change(function(){
+			// 	var value2 = $(this).val();
+			// 	console.log(value2);
+			// 	$('[id^=batch-row]').empty();
+
+			// 	{% for batch in batches %}
+			// 	if(value2 == "{{ batch.batch_of_div }}" && value == "{{ batch.batch_of_year }}"){
+			// 			var room_str = "";
+			// 			{% for room in rooms %}
+			// 				room_str += '<option value="{{ room }}-{{ batch.id }}">{{ room }}</option>';
+			// 			{% endfor %}
+			// 			// console.log("{{ fac }}")
 						
 
-						$.each($('[id^=batch-row]'),function(index, data){
-							if($(this).hasClass('has-options')){
-								var name = $(this).siblings(".lec-select").attr('name');
-								var html = `<div class="col-sm-3 batch-drp">
-									<label>{{ batch.batch }}</label>
-									<select class="form-control custom-select" name="${name}-{{ batch.id }}">
-										${room_str}
-									</select>
-									</div>`;
-								$(this).append(html);
-							}
-						});
+			// 			$.each($('[id^=batch-row]'),function(index, data){
+			// 				if($(this).hasClass('has-options')){
+			// 					var name = $(this).siblings(".lec-select").attr('name');
+			// 					var html = `<div class="col-sm-3 batch-drp">
+			// 						<label>{{ batch.batch }}</label>
+			// 						<select class="form-control custom-select" name="${name}-{{ batch.id }}">
+			// 							${room_str}
+			// 						</select>
+			// 						</div>`;
+			// 					$(this).append(html);
+			// 				}
+			// 			});
 					
-					}
-				{% endfor %}
+			// 		}
+			// 	{% endfor %}
 				
-			});
-
-			{% for sub in subjects %}
-				if(value == "{{ sub.year }}"){
-					{% for fac in sub.teaching_faculty.all %}
-						console.log("{{ fac }}")
-						var html = "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
-						$('.lec-select').append(html);
-					{% endfor %}
-				}
-			{% endfor %}
+			// });
 
 
-			
-
-			$(document).on('change', '.lec-select', function(){
-				var cur_val = $(this).val();
-				if(cur_val != 0){
-					var name = $(this).attr("name");
-					$($(this).siblings('div')[0]).empty();
-					$($(this).siblings('div')[0]).removeClass('has-options').addClass('has-options');
-					{% for batch in batches %}
-					if(value2 == "{{ batch.batch_of_div }}" && value == "{{ batch.batch_of_year }}"){
-							room_str = "";
-							{% for room in rooms %}
-								room_str += '<option value="{{ room }}-{{ batch.id }}">{{ room }}</option>';
+			function compute_lecs(value,value2){
+				$('.lec_batch_opts').empty();
+				// console.log(value);
+				// console.log(value2);
+				{% for t in timeslots %}
+            	html = `<div class="col-md-4 text-center">
+            		
+            		<label class="custom-select">{{ t }}</label>
+                    <select class="form-control custom-select lec-select" name="{{ t }}">
+						  <option value="0" selected> --- </option>`
+					{% for sub in subjects %}
+						if(value == "{{ sub.year }}"){
+							{% for fac in sub.teaching_faculty.all %}
+								// console.log("{{ fac }}")
+								html += "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
 							{% endfor %}
-							// console.log("{{ fac }}")
-							var html = `<div class="col-sm-3 batch-drp">
-										<label>{{ batch.batch }}</label>
-										<select class="form-control custom-select" name="${name}-{{ batch.id }}">
-											${room_str}
-										</select>
-										</div>`;
-
-							$($(this).siblings('div')[0]).append(html);
 						
 						}
-				{% endfor %}
+					{% endfor %}
+						
+					html += `</select>
+					<div class="batch-room-select">`
+					{% for batch in batches %}
+							if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value) {
+								// console.log("{{ batch.batch }}")
+								html += "<div class='col-md-3 batch-drp'><label>{{ batch.batch }}</label><select class='form-control batch-drp' name='{{ t }}-{{ batch.batch }}'>"
+								{% for room in rooms %}
+									html += "<option value='{{ room.id }}'>{{ room }}</option>"
+								{% endfor %}
+								html += "</select></div>"
+							}
+					{% endfor %}
 
-				}else{
-					$($(this).siblings('div')[0]).removeClass('has-options');
-					$($(this).siblings('div')[0]).empty();
-				}
-			});
+					html += `</div></div>`
+				$('.lec_batch_opts').append(html);
+			{% endfor %}
+			}
+
+			// {% for t in timeslots %}
+   //          	html = `<div class="col-md-4 text-center">
+            		
+   //          		<label>{{ t }}</label>
+   //                  <select class="form-control custom-select lec-select" name="{{ t }}">
+			// 			  <option value="0" selected> --- </option>`
+			// 		{% for sub in subjects %}
+			// 			if(value == "{{ sub.year }}"){
+			// 				{% for fac in sub.teaching_faculty.all %}
+			// 					console.log("{{ fac }}")
+			// 					html += "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
+			// 				{% endfor %}
+						
+			// 			}
+			// 		{% endfor %}
+						
+			// 		html += `</select>
+			// 		<div class="batch-room-select">`
+			// 		{% for batch in batches %}
+			// 				if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value) {
+			// 					console.log("{{ batch.batch }}")
+			// 					html += "<div class='col-md-3 batch-drp'><label>{{ batch.batch }}</label><select class='form-control' name='{{ t }}-{{ batch.batch }}'>"
+			// 					{% for room in rooms %}
+			// 						html += "<option value='{{ room.id }}'>{{ room }}</option>"
+			// 					{% endfor %}
+			// 					html += "</select></div>"
+			// 				}
+			// 		{% endfor %}
+
+			// 		html += `</div></div>`
+			// 	$('.lec_batch_opts').append(html);
+			// {% endfor %}
+
+
+
+			// {% for sub in subjects %}
+			// 	if(value == "{{ sub.year }}"){
+			// 		{% for fac in sub.teaching_faculty.all %}
+			// 			console.log("{{ fac }}")
+			// 			var html = "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
+			// 			$('.lec-select').append(html);
+			// 		{% endfor %}
+						
+			// 	}
+			// {% endfor %}
+			// {% for batch in batches %}
+			// 				if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value) {
+			// 					console.log("{{ batch.batch }}")
+			// 					var html = "<label>{{ batch.batch }}</label><select name='{{ t }}-{{ batch.batch }}'>"
+			// 					{% for room in rooms %}
+			// 						html += "<option value='{{ room.id }}'>{{ room }}</option>"
+			// 					{% endfor %}
+			// 					html += "</select>"
+			// 					$('.batch-room-select').append(html)
+			// 				}
+			// {% endfor %}
+
 
 			
+
+			// $(document).on('change', '.lec-select', function(){
+			// 	var cur_val = $(this).val();
+			// 	if(cur_val != 0){
+			// 		var name = $(this).attr("name");
+			// 		$($(this).siblings('div')[0]).empty();
+			// 		$($(this).siblings('div')[0]).removeClass('has-options').addClass('has-options');
+			// 		{% for batch in batches %}
+			// 		if(value2 == "{{ batch.batch_of_div }}" && value == "{{ batch.batch_of_year }}"){
+			// 				room_str = "";
+			// 				{% for room in rooms %}
+			// 					room_str += '<option value="{{ room }}-{{ batch.id }}">{{ room }}</option>';
+			// 				{% endfor %}
+			// 				// console.log("{{ fac }}")
+			// 				var html = `<div class="col-sm-3 batch-drp">
+			// 							<label>{{ batch.batch }}</label>
+			// 							<select class="form-control custom-select" name="${name}-{{ batch.id }}">
+			// 								${room_str}
+			// 							</select>
+			// 							</div>`;
+
+			// 				$($(this).siblings('div')[0]).append(html);
+						
+			// 			}
+			// 	{% endfor %}
+
+			// 	}else{
+			// 		$($(this).siblings('div')[0]).removeClass('has-options');
+			// 		$($(this).siblings('div')[0]).empty();
+			// 	}
+			// });
+
 			
-		});
 	</script>
 </html>
