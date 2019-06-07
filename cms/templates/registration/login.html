@@ -1,32 +1,50 @@
+
 {% extends '../base.html' %}
+{% load static %}
 
 {% block content %}
-  <div class="d-flex justify-content-center mt-5 pt-5">
-  <div class="card col-md-4">
-    <form method="POST" action="{% url 'login' %}">
-      {% csrf_token %}
-      <div class="card-header text-center"><h2>Login</h2>
-        <i class="fa fa-lock fa-3x" aria-hidden="true"></i>
-      </div>
-      <div class="card-body">
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <span class="input-group-text" id="basic-addon1"><i class="fa fa-user"></i></span>
+  <main>
+    <section class="section section-shaped section-lg" style="padding-top: 3rem;">
+      <div class="container pt-lg-md">
+        <div class="row justify-content-center">
+          <div class="col-lg-5">
+            <div class="card bg-secondary shadow">
+              <div class="card-header bg-secondary pb-5 text-center" style="border: none;">
+                <!-- <p class="h3 mb-4 mt-3 text-dark font-weight-bold">Login as a Faculty</p> -->
+                <!-- Change in this div only -->
+                <div class="key-image mt-3">
+                	<img src="{% static 'images/key.png' %}" alt="">
+                </div>
+              </div>
+              <div class="card-body px-lg-5 py-lg-2">
+                <form role="form" method="POST" action="{% url 'login' %}">
+                  {% csrf_token %}
+                  <div class="form-group mb-3">
+                    <div class="input-group input-group-alternative">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                      </div><input class="form-control text-dark font-weight-bold" type="text" placeholder="Username" name="username" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-group input-group-alternative">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                      </div><input class="form-control text-dark font-weight-bold" placeholder="Password" type="password" name="password" />
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" name="btn_login" class="btn btn-block btn-dark my-4">Login</button>
+                  </div>
+                </form>
+                <div class="text-center mb-3">
+                  <a href="#" class="text-dark h6"><small>Forgot your email or password?</small></a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" name="username">
       </div>
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <span class="input-group-text" id="basic-addon1"><i class="fa fa-key"></i></span>
-        </div>
-        <input type="password" class="form-control" placeholder="Password" aria-label="Username" aria-describedby="basic-addon1" name="password">
-      </div>
-      </div>
-      <div class="form-group text-center">
-        <button class="btn btn-primary" name='btn_login' type="submit" style="background: black; color:white;">Log In</button>
-      </div>
-    </form>
-  </div>
-  </div>
-
+    </section>
+  </main>
 {% endblock %}
