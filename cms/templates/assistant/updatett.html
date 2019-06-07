@@ -23,7 +23,12 @@
 	<link href="{% static 'wizard/css/themify-icons.css' %}" rel="stylesheet">
 	<style type="text/css">
 		.custom-select{
+			padding-left: 8px;
 			margin: 10px 0;
+		}
+
+		.batch-drp{
+			padding: 0px 4px;
 		}
 	</style>
 	</head>
@@ -35,7 +40,7 @@
 	    <!--   Big container   -->
 	    <div class="container">
 	        <div class="row">
-		        <div class="col-sm-8 col-sm-offset-2">
+		        <div class="col-sm-12">
 
 		            <!--      Wizard container        -->
 		            <div class="wizard-container">
@@ -214,15 +219,15 @@
 		                                <div class="row" style="margin-top: 15px;">
 											{% for t in timeslots %}
 			                                	<div class="col-md-4 text-center">
+			                                		
 			                                		<label>{{ t }}</label>
 				                                    <select class="form-control custom-select lec-select" name="{{ t }}">
 														  <option value="0" selected> --- </option>
-														  {% comment %}
-														  {% for lec in lectures %}
-														  		<option value="{{ lec }}">{{ lec }}</option>
-														  {% endfor %}
-														  {% endcomment %}
 													</select>
+													<div class="row" id="batch-row-{{ t }}">
+														
+													</div>
+
 			                                	</div>
 											{% endfor %}
 		                                </div>
@@ -270,12 +275,57 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			var value = $('[name="yearopt"]').val();
+			var value2 = $('[name="divopt"]').val();
 			console.log(value);
+
+			var room_str = "";
 			$('[name="yearopt"]').change(function(){
 				var value = $(this).val();
 				console.log(value);
+				$('.lec-select').find('option').not(':first').remove();
+				{% for sub in subjects %}
+				if(value == "{{ sub.year }}"){
+					{% for fac in sub.teaching_faculty.all %}
+						console.log("{{ fac }}")
+						var html = "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
+						$('.lec-select').append(html);
+					{% endfor %}
+				}
+			{% endfor %}
 
 			});
+			$('[name="divopt"]').change(function(){
+				var value2 = $(this).val();
+				console.log(value2);
+				$('[id^=batch-row]').empty();
+
+				{% for batch in batches %}
+				if(value2 == "{{ batch.batch_of_div }}" && value == "{{ batch.batch_of_year }}"){
+						var room_str = "";
+						{% for room in rooms %}
+							room_str += '<option value="{{ room }}-{{ batch.id }}">{{ room }}</option>';
+						{% endfor %}
+						// console.log("{{ fac }}")
+						
+
+						$.each($('[id^=batch-row]'),function(index, data){
+							if($(this).hasClass('has-options')){
+								var name = $(this).siblings(".lec-select").attr('name');
+								var html = `<div class="col-sm-3 batch-drp">
+									<label>{{ batch.batch }}</label>
+									<select class="form-control custom-select" name="${name}-{{ batch.id }}">
+										${room_str}
+									</select>
+									</div>`;
+								$(this).append(html);
+							}
+						});
+					
+					}
+				{% endfor %}
+				
+			});
+
 			{% for sub in subjects %}
 				if(value == "{{ sub.year }}"){
 					{% for fac in sub.teaching_faculty.all %}
@@ -285,6 +335,42 @@
 					{% endfor %}
 				}
 			{% endfor %}
+
+
+			
+
+			$(document).on('change', '.lec-select', function(){
+				var cur_val = $(this).val();
+				if(cur_val != 0){
+					var name = $(this).attr("name");
+					$($(this).siblings('div')[0]).empty();
+					$($(this).siblings('div')[0]).removeClass('has-options').addClass('has-options');
+					{% for batch in batches %}
+					if(value2 == "{{ batch.batch_of_div }}" && value == "{{ batch.batch_of_year }}"){
+							room_str = "";
+							{% for room in rooms %}
+								room_str += '<option value="{{ room }}-{{ batch.id }}">{{ room }}</option>';
+							{% endfor %}
+							// console.log("{{ fac }}")
+							var html = `<div class="col-sm-3 batch-drp">
+										<label>{{ batch.batch }}</label>
+										<select class="form-control custom-select" name="${name}-{{ batch.id }}">
+											${room_str}
+										</select>
+										</div>`;
+
+							$($(this).siblings('div')[0]).append(html);
+						
+						}
+				{% endfor %}
+
+				}else{
+					$($(this).siblings('div')[0]).removeClass('has-options');
+					$($(this).siblings('div')[0]).empty();
+				}
+			});
+
+			
 			
 		});
 	</script>

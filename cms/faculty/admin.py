@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,Year,Division
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,Year,Division,Room,Batch
 
 # Register your models here.
 
@@ -10,8 +10,17 @@ class LeaveAdmin(admin.ModelAdmin):
 admin.site.register(Leave,LeaveAdmin)
 
 class LectureAdmin(admin.ModelAdmin):
-	list_display = ('lname','taken_by','lec_day','lec_time','lec_div')
+	list_display = ('lname','taken_by','lec_day','lec_time','lec_div','lec_in')
 	list_display_links = ('lname',)
+
+admin.site.register(Room)
+
+class BatchAdmin(admin.ModelAdmin):
+	list_display = ('batch','batch_of_year','batch_of_div')
+	list_display_links = ('batch',)
+
+admin.site.register(Batch,BatchAdmin)
+
 
 admin.site.register(Lecture,LectureAdmin)
 admin.site.register(DaysOfWeek)

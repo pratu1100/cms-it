@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from faculty.models import TimeSlot,Lecture,Subject,Year,Division,DaysOfWeek
+from faculty.models import TimeSlot,Lecture,Subject,Year,Division,DaysOfWeek,Batch,Room
 from django.db.models import DurationField, F, ExpressionWrapper
 from django.contrib.auth.models import User
 
@@ -29,7 +29,7 @@ def get_timetable(request):
 		t_year = Year.objects.filter(year = request.POST.get('yearopt'))[0]
 		t_div = Division.objects.filter(division = request.POST.get('divopt'))[0]
 		t_day = DaysOfWeek.objects.filter(day_name = request.POST.get('dayopt'))[0]
-		# print(request.POST)
+		print(request.POST)
 		ts = TimeSlot.objects.all();
 		for t in ts:
 			tavail = request.POST.get(str(t))
@@ -45,6 +45,7 @@ def get_timetable(request):
 				# print(l.taken_by)
 				try:
 					l.save()
+					print("Success")
 				except Exception as e:
 					print("Already exist at same time")
 					errors = 'Conflicting timeslot ' + str(t) 
@@ -56,9 +57,15 @@ def get_timetable(request):
 	
 	subjects = Subject.objects.all();
 
+	batches = Batch.objects.all();
+
+	rooms = Room.objects.all();
+
 	context_data = {
 		"errors" : errors,
 		"timeslots" : time_slots,
-		"subjects" : subjects
+		"subjects" : subjects,
+		"batches" : batches,
+		"rooms" : rooms
 	}
 	return render(request,'assistant/updatett.html',context_data)
