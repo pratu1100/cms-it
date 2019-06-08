@@ -6,7 +6,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 	<link rel="apple-touch-icon" sizes="76x76" href="{% static 'wizard/img/apple-icon.png' %}"/>
 	<link rel="icon" type="image/png" href="{% static 'wizard/img/favicon.png' %}" />
-	<title>Material Bootstrap Wizard by Creative Tim | Free Boostrap Wizard</title>
+	<title>Lab Assistant | CMS</title>
 
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
@@ -30,6 +30,13 @@
 		.batch-drp{
 			padding: 0px 4px;
 		}
+
+		/*.radio-tile, .radio-tile-label {
+			background-color: #2dce89 !important;
+			color: #fff !important;
+			border: 2px solid #2dce89 !important;
+		}*/
+
 	</style>
 	</head>
 
@@ -50,12 +57,12 @@
 		                    	{% csrf_token %}
 		                <!--        You can switch " data-color="orange" "  with one of the next bright colors: "blue", "green", "orange", "red", "azure"          -->
 
-		                    	<div class="wizard-header text-center">
+		                    	<div class="wizard-header text-center" style="margin-bottom: 3rem;">
 		                    		{% if errors %}
 										<h3 class="text-danger">{{ errors }}</h3>
 					            	{% endif %}
 
-		                        	<h3 class="wizard-title">Update Time Table</h3>
+		                        	<p class="wizard-title font-weight-bold h3"><u>Update Time Table</u></p>
 									<!-- <p class="category"></p> -->
 		                    	</div>
 
@@ -99,9 +106,9 @@
 			                        </ul>
 								</div>
 		                        <div class="tab-content">
-		                            <div class="tab-pane" id="term">
+		                            <div class="tab-pane" id="term" style="padding-top: 4.5rem;">
 		                            	<div class="row">
-											<h5 class="info-text"> Please Select Term</h5>
+											<p class="info-text h5"><u>Please Select Term</u></p>
 											<div class="col-md-8 col-sm-offset-2 text-center">
 											  <div class="radio-tile-group">
 											    <div class="input-container">
@@ -123,7 +130,7 @@
 											</div>
 										</div>
 		                            </div>
-		                            <div class="tab-pane" id="year">
+		                            <div class="tab-pane" id="year" style="padding-top: 4.5rem;">
 		                                <h5 class="info-text"> Please Select Year </h5>
 		                                <div class="col-md-12 text-center">
 											  <div class="radio-tile-group">
@@ -169,7 +176,7 @@
 											  </div>
 											</div>		                         
 		                            </div>
-		                            <div class="tab-pane" id="day">
+		                            <div class="tab-pane" id="day" style="padding-top: 4.5rem;"> 
 		                                <h5 class="info-text"> Please Select Day </h5>
 		                                <div class="col-md-12 text-center">
 											  <div class="radio-tile-group">
