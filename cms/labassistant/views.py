@@ -93,16 +93,44 @@ def get_timetable(request):
 				print(tavail)
 				print(tavail.split("-")[0])
 				print(tavail.split("-")[1])
+
 				u = User.objects.get(pk= int(tavail.split("-")[1]))
 				s = Subject.objects.filter(sname = tavail.split("-")[0])[0]
-				l = Lecture(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div)
-				# print(l.taken_by)
-				try:
-					l.save()
-				except Exception as e:
-					print("Already exist at same time")
-					errors = 'Conflicting timeslot ' + str(t) 
+				# l = Lecture(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div)
+				# if(Lecture.objects.filter(lec_day = t_day, lec_time__start_time = t.lec_time.start_time, lec_div = t_div, lec_batch__in = self.lec_batch).exclude(pk = self.id).exists() or self.__class__.objects.filter(lec_day = self.lec_day, lec_time__end_time = self.lec_time.end_time, lec_div = self.lec_div, lec_in = self.lec_in).exclude(pk = self.id).exists():))
 
+				batches = Batch.objects.filter(batch_of_year = t_year, batch_of_div = t_div)
+				rooms_for_lecture = list()
+				for batch in batches:
+					print(request.POST.get(str(t)+"-"+str(batch.batch)))
+					r = Room.objects.get(pk = int(request.POST.get(str(t)+"-"+str(batch.batch))))
+					# rooms_for_lecture.append(Room.objects.get(pk = int(request.POST.get(str(t)+"-"+str(batch.batch)))))
+					print(r)
+					lec = None
+
+					try:
+						lec = Lecture.objects.get(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div,lec_in = r)
+						print(lec)
+					except:
+						lec = Lecture(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div,lec_in = r)
+						print("Not exist")
+						lec.full_clean()
+						try:
+							lec.save()
+							print("Success")
+						except Exception as e:
+							print("Already exist at same time")
+							errors = 'Conflicting timeslot ' + str(t) 
+					finally:
+						lec.lec_batch.add(batch)
+						try:
+							lec.save()
+							print("Success")
+						except Exception as e:
+							print("Already exist at same time")
+							errors = 'Conflicting timeslot ' + str(t)
+				
+				
 
 	time_slots = TimeSlot.objects.annotate(
     diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())

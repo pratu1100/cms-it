@@ -84,16 +84,17 @@ class Lecture(models.Model):
 		super(Lecture,self).validate_unique(*args, **kwargs)
 		print("Hahahaha check")
 		print(self.__class__.objects.filter(lec_day = self.lec_day, lec_time__start_time = self.lec_time.start_time, lec_div = self.lec_div).exclude(pk = self.id).exists() or self.__class__.objects.filter(lec_day = self.lec_day, lec_time__end_time = self.lec_time.end_time, lec_div = self.lec_div).exclude(pk = self.id).exists())
-		if self.__class__.objects.filter(lec_day = self.lec_day, lec_time__start_time = self.lec_time.start_time, lec_div = self.lec_div).exclude(pk = self.id).exists() or self.__class__.objects.filter(lec_day = self.lec_day, lec_time__end_time = self.lec_time.end_time, lec_div = self.lec_div).exclude(pk = self.id).exists():
+		# print("######",self.lec_batch)
+		if self.__class__.objects.filter(lec_day = self.lec_day, lec_time__start_time = self.lec_time.start_time, lec_div = self.lec_div,lec_in = self.lec_in, lec_batch__in = self.lec_batch).exclude(pk = self.id).exists() or self.__class__.objects.filter(lec_day = self.lec_day, lec_time__end_time = self.lec_time.end_time, lec_div = self.lec_div, lec_in = self.lec_in).exclude(pk = self.id).exists():
 			raise ValidationError(
 					message = 'Lecture with conflicting time already exists',
 					code = 'unique_together'
 				)
 	# class Meta:
 	# 	unique_together = ('lec_day','lec_time__start_time','lec_div')
-	def save(self, *args, **kwargs):
-		self.validate_unique(self,*args, **kwargs)
-		super(Lecture, self).save(*args, **kwargs)
+	# def save(self, *args, **kwargs):
+	# 	self.validate_unique(self,*args, **kwargs)
+	# 	super(Lecture, self).save(*args, **kwargs)
 
 
 class LoadShift(models.Model):
