@@ -102,33 +102,43 @@ def get_timetable(request):
 				batches = Batch.objects.filter(batch_of_year = t_year, batch_of_div = t_div)
 				rooms_for_lecture = list()
 				for batch in batches:
-					print(request.POST.get(str(t)+"-"+str(batch.batch)))
-					r = Room.objects.get(pk = int(request.POST.get(str(t)+"-"+str(batch.batch))))
-					# rooms_for_lecture.append(Room.objects.get(pk = int(request.POST.get(str(t)+"-"+str(batch.batch)))))
-					print(r)
-					lec = None
-
 					try:
-						lec = Lecture.objects.get(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div,lec_in = r)
-						print(lec)
-					except:
-						lec = Lecture(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div,lec_in = r)
-						print("Not exist")
-						lec.full_clean()
+						print(request.POST.get(str(t)+"-"+str(batch.batch)))
+						r = Room.objects.get(pk = int(request.POST.get(str(t)+"-"+str(batch.batch))))
+						# rooms_for_lecture.append(Room.objects.get(pk = int(request.POST.get(str(t)+"-"+str(batch.batch)))))
+						print(r)
 						try:
+							lec = Lecture(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div, lec_in = r, lec_batch = batch)
+							lec.full_clean()
 							lec.save()
-							print("Success")
-						except Exception as e:
-							print("Already exist at same time")
-							errors = 'Conflicting timeslot ' + str(t) 
-					finally:
-						lec.lec_batch.add(batch)
-						try:
-							lec.save()
-							print("Success")
-						except Exception as e:
+						except:
 							print("Already exist at same time")
 							errors = 'Conflicting timeslot ' + str(t)
+					except:
+						print("No ts")
+					
+
+					# try:
+					# 	lec = Lecture.objects.get(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div,lec_in = r)
+					# 	print(lec)
+					# except:
+					# 	lec = Lecture(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div,lec_in = r)
+					# 	print("Not exist")
+					# 	lec.full_clean()
+					# 	try:
+					# 		lec.save()
+					# 		print("Success")
+					# 	except Exception as e:
+					# 		print("Already exist at same time")
+					# 		errors = 'Conflicting timeslot ' + str(t) 
+					# finally:
+					# 	lec.lec_batch.add(batch)
+					# 	try:
+					# 		lec.save()
+					# 		print("Success")
+					# 	except Exception as e:
+					# 		print("Already exist at same time")
+					# 		errors = 'Conflicting timeslot ' + str(t)
 				
 				
 

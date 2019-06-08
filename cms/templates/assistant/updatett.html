@@ -357,7 +357,7 @@
 					{% for batch in batches %}
 							if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value) {
 								// console.log("{{ batch.batch }}")
-								html += "<div class='col-md-3 batch-drp'><label>{{ batch.batch }}</label><select class='form-control batch-drp' name='{{ t }}-{{ batch.batch }}'>"
+								html += "<div class='col-md-3 batch-drp'><label>{{ batch.batch }}</label><select class='form-control batch-drp' name='{{ t }}-{{ batch.batch }}'><option value=None>---</option>"
 								{% for room in rooms %}
 									html += "<option value='{{ room.id }}'>{{ room }}</option>"
 								{% endfor %}

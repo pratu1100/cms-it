@@ -75,7 +75,7 @@ class Lecture(models.Model):
 	lec_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE)
 	lec_div = models.ForeignKey(Division,on_delete= models.CASCADE,null=True)
 	lec_in = models.ForeignKey(Room,on_delete= models.CASCADE,null=True)
-	lec_batch = models.ManyToManyField(Batch)
+	lec_batch = models.ForeignKey(Batch,on_delete = models.CASCADE, null = True, blank = True)
 
 	def __str__(self):
 		return self.lname.sname
@@ -83,9 +83,9 @@ class Lecture(models.Model):
 	def validate_unique(self, *args, **kwargs):
 		super(Lecture,self).validate_unique(*args, **kwargs)
 		print("Hahahaha check")
-		print(self.__class__.objects.filter(lec_day = self.lec_day, lec_time__start_time = self.lec_time.start_time, lec_div = self.lec_div).exclude(pk = self.id).exists() or self.__class__.objects.filter(lec_day = self.lec_day, lec_time__end_time = self.lec_time.end_time, lec_div = self.lec_div).exclude(pk = self.id).exists())
+		# print(self.__class__.objects.filter(lec_day = self.lec_day, lec_time__start_time = self.lec_time.start_time, lec_div = self.lec_div).exclude(pk = self.id).exists() or self.__class__.objects.filter(lec_day = self.lec_day, lec_time__end_time = self.lec_time.end_time, lec_div = self.lec_div).exclude(pk = self.id).exists())
 		# print("######",self.lec_batch)
-		if self.__class__.objects.filter(lec_day = self.lec_day, lec_time__start_time = self.lec_time.start_time, lec_div = self.lec_div,lec_in = self.lec_in, lec_batch__in = self.lec_batch).exclude(pk = self.id).exists() or self.__class__.objects.filter(lec_day = self.lec_day, lec_time__end_time = self.lec_time.end_time, lec_div = self.lec_div, lec_in = self.lec_in).exclude(pk = self.id).exists():
+		if self.__class__.objects.filter(lec_day = self.lec_day, lec_time__start_time = self.lec_time.start_time, lec_div = self.lec_div, lec_batch = self.lec_batch).exclude(pk = self.id).exists() or self.__class__.objects.filter(lec_day = self.lec_day, lec_time__end_time = self.lec_time.end_time, lec_div = self.lec_div, lec_batch = self.lec_batch).exclude(pk = self.id).exists():
 			raise ValidationError(
 					message = 'Lecture with conflicting time already exists',
 					code = 'unique_together'
