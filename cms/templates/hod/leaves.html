@@ -1,47 +1,47 @@
 {% extends '../base.html' %} 
 {% block content %}
 
-    <div class="d-flex justify-content-center mt-5 pt-5">
+    <div class="d-flex justify-content-center mt-5 pt-5 align-items-center align-self-center">
         <div class="row col-md-12 justify-content-center">
             {% for leave,loads in leave_loads_pairs %}
-                <div class="card col-md-7 mb-3">
+                <div class="card col-md-7 mb-3 shadow border-0 rounded">
                 <form method="POST" action="{% url 'leaves' %}">
                 {% csrf_token %}
                 <input type="hidden" name="leave_id" value="{{ leave.id }}">
-                    <div class="card-header">
-                        <h4 class="card-title text-center">Leave Details</h4>
-                        <h6 class="card-title text-center"><b>Applied by:</b> {{ leave.leave_taken_by }}</h6>
+                    <div class="card-header bg-white">
+                        <h4 class="card-title text-center font-weight-bold"><u>Leave Details</u></h4>
+                        <h6 class="card-title text-center font-weight-normal"><b>Applied by:</b> {{ leave.leave_taken_by }}</h6>
                         <div class="row">
-                            <div class="col-md m-3 p-3">
-                                <p class="card-text"><b>Start Date : </b>{{ leave.leave_start_date }}</p>
-                                <p class="card-text"><b>Start Time : </b>{{ leave.leave_start_time }}</p>
+                            <div class="col-md m-2 p-3 text-center">
+                                <p class="card-text font-weight-normal h6"><b>Start Date : </b>{{ leave.leave_start_date }}</p>
+                                <p class="card-text font-weight-normal h6"><b>Start Time : </b>{{ leave.leave_start_time }}</p>
                             </div>  
-                            <div class="col-md m-3 p-3">
-                                <p class="card-text"><b>End Date : </b>{{ leave.leave_end_date }}</p>
-                                <p class="card-text"><b>End Time : </b>{{ leave.leave_end_time }}</p>
+                            <div class="col-md m-2 p-3 text-center">
+                                <p class="card-text font-weight-normal h6"><b>End Date : </b>{{ leave.leave_end_date }}</p>
+                                <p class="card-text font-weight-normal h6"><b>End Time : </b>{{ leave.leave_end_time }}</p>
                             </div>
                         </div>
                     </div>
                     {% if loads %}
-                    <div class="card-body">
+                    <div class="card-body bg-white">
                         <h4 class="card-title text-center">Load Shifts</h4>
                         {% for load in loads %}
                                 <div class="list-group-item">
                                     <div class="row">
-                                        <div class="col-md m-3 p-3">
-                                            <p class="card-text"><b>Lecture : </b>{{ load.for_lecture }}</p>
-                                            <p class="card-text"><b>Faculty : </b>{{ load.to_faculty }}</p>
+                                        <div class="col-md m-2 p-3 text-center">
+                                            <p class="card-text font-weight-normal h6"><b>Lecture : </b>{{ load.for_lecture }}</p>
+                                            <p class="card-text font-weight-normal h6"><b>Faculty : </b>{{ load.to_faculty }}</p>
                                         </div>
-                                        <div class="col-md m-3 p-3">
-                                            <p class="card-text"><b>Day : </b>{{ load.for_lecture.lec_day }}</p>
-                                            <p class="card-text"><b>Time : </b>{{ load.for_lecture.lec_time }}</p>
+                                        <div class="col-md m-2 p-3 text-center">
+                                            <p class="card-text font-weight-normal h6"><b>Day : </b>{{ load.for_lecture.lec_day }}</p>
+                                            <p class="card-text font-weight-normal h6"><b>Time : </b>{{ load.for_lecture.lec_time }}</p>
                                         </div>
                                     </div>
                                 </div>
                         {% endfor %}
                     </div>
                     {% endif %}
-                    <div class="card-footer text-center">
+                    <div class="card-footer text-center bg-white">
                         <button class="btn btn-danger" type="submit" name="_reject">Reject</button>
                         <button class="btn btn-success" type="submit" name="_approve">Approve</button>
                     </div>

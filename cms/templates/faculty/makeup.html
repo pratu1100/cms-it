@@ -1,0 +1,38 @@
+{% extends '../base.html' %}
+
+{% block nav-content %}
+	<li class="nav-item" role="presentation">
+		<a class="nav-link pr-3" href="{% url 'request_leave' %}" style="color: white;">Makeup</a>
+	</li>
+{% endblock %}
+
+{% block content %}
+	<div class="d-flex pt-5 mt-5 justify-content-center">
+		<select name="day">
+			<option value="None">---</option>
+			
+		</select>
+		<select name="timeslot" style=" display: none;">
+			
+		</select>
+
+	</div>
+	<script>
+		$(document).ready(function(){
+			day = $('[name = day]');
+			var html = "";
+			{% for slot in free_slots %}
+				html+="<option value='{{ slot }}'>{{ slot }}</option>";
+				
+			{% endfor %}
+			day.append(html)
+			day.change(function(){
+				console.log("changed")
+				$('[name = "timeslot"]').show();
+				
+
+
+			})
+		})
+	</script>
+{% endblock %}

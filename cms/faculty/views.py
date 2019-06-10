@@ -2,7 +2,8 @@ from django.shortcuts import render, HttpResponseRedirect,HttpResponse
 from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
+import datetime
+from django.db.models import DurationField, F, ExpressionWrapper
 import time
 # # Update leave as approved by HOD
 # def update_leave(request, leave_id):  
@@ -24,8 +25,8 @@ def submit_leave(request):
 		start_date_time = start_date_val + 'T' + start_time_val
 		end_date_time = end_date_val + 'T' + end_time_val
 		# Python date time objects
-		start_date = datetime.strptime(start_date_time, '%d/%m/%YT%H:%M')
-		end_date = datetime.strptime(end_date_time, '%d/%m/%YT%H:%M')
+		start_date = datetime.datetime.strptime(start_date_time, '%d/%m/%YT%H:%M')
+		end_date = datetime.datetime.strptime(end_date_time, '%d/%m/%YT%H:%M')
 		lecs = Lecture.objects.filter(lec_day__id__in = range(start_date.weekday(),end_date.weekday()+1)).filter(taken_by = user).filter(lec_time__start_time__gte = datetime.time(start_date)).filter(lec_time__end_time__lte = datetime.time(end_date))
 		adjust_opts = dict()
 		new_leave = Leave.objects.get_or_create(leave_taken_by = user,leave_start_date=start_date.date(),leave_end_date = end_date.date(),leave_start_time=start_date.time(),leave_end_time = end_date.time())
@@ -66,3 +67,29 @@ def submit_load_shift(request):
 		# print(for_lec)
 		# print(to_faculty)
 	return render(request,"faculty/loadshift.html",{"load_shifts":load_shifts})
+
+@login_required
+def get_makeup(request):
+	days = DaysOfWeek.objects.all().exclude(day_name__in = ('Sunday','Saturday'))
+	timeslots = TimeSlot.objects.annotate(
+    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
+	).filter(diff__lte= datetime.timedelta(hours = 1))
+
+
+	free = dict()
+
+	for day in days:
+		# print(day)
+		free_ts = list()
+		for timeslot in timeslots:
+			if(not Lecture.objects.filter(lec_day = day,lec_time = timeslot).exists()):
+				free_ts.append(timeslot)
+		free[day] = free_ts
+	print(free)
+
+	context_data = {
+		"free_slots" : free,
+	}
+
+	return render(request,"faculty/makeup.html",context_data)
+
