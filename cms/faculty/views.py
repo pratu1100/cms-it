@@ -93,3 +93,14 @@ def get_makeup(request):
 
 	return render(request,"faculty/makeup.html",context_data)
 
+def post_makeup(request):
+	success = False
+	if(request.method == "POST"):
+		print(request.POST)
+		success = True
+		context_data = {
+			"success" : success ,
+		}
+		return render(request,"faculty/makeup.html",context_data)
+	else:
+		return HttpResponseRedirect('./')

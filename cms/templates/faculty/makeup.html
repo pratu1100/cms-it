@@ -1,4 +1,5 @@
 {% extends '../base.html' %}
+{% load static %}
 
 {% block nav-content %}
 	<li class="nav-item" role="presentation">
@@ -8,31 +9,69 @@
 
 {% block content %}
 	<div class="d-flex pt-5 mt-5 justify-content-center">
-		<select name="day">
+		{% if success %}
+			<h4>Reserved</h4>
+
+		{% else %}
+		<form method="POST" action="{% url 'reserve' %}">
+			{% csrf_token %}
+		<label for="leave_start_date">Select Date</label>
+			<input type="text" class="form-control" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="makeup_date" data-date-end-date="+7d" data-date-start-date="0d">
+	<!-- 	<select name="day">
 			<option value="None">---</option>
 			
-		</select>
+		</select> -->
 		<select name="timeslot" style=" display: none;">
 			
 		</select>
-
+		<input type="submit" value="Reserve">
+		</form>
 	</div>
 	<script>
 		$(document).ready(function(){
-			day = $('[name = day]');
-			var html = "";
-			{% for slot in free_slots %}
-				html+="<option value='{{ slot }}'>{{ slot }}</option>";
-				
-			{% endfor %}
-			day.append(html)
+			day = $('[name = makeup_date ]');
+
 			day.change(function(){
-				console.log("changed")
+				$('[name = "timeslot"]').empty();				
+
+				newd = new Date($('[name = makeup_date]').val());
+				let weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][newd.getDay()];
+				console.log(weekday)
+				var options = "";
+				{% for day,slots in free_slots.items %}
+
+					if("{{ day.day_name }}" == weekday){
+						{% for slot in slots %}
+						console.log("{{ slot }}")
+						options+= "<option value='{{ slot.id }}'>{{ slot }}</option>"
+						{% endfor %}
+					}
+				{% endfor %}
+
+				$('[name = "timeslot"]').append(options);
 				$('[name = "timeslot"]').show();
-				
 
 
 			})
-		})
+
+
+			// var html = "";
+			// {% for slot in free_slots %}
+			// 	html+="<option value='{{ slot }}'>{{ slot }}</option>";
+			// {% endfor %}
+			// day.append(html)
+			// day.change(function(){
+			// 	console.log($('[name = makeup_date]').val())
+			// 	newd = new Date($('[name = makeup_date]').val());
+			// 	console.log(newd)
+			// 	console.log($(this).val())
+			// 	$('[name = "timeslot"]').empty();				
+				
+
+
+			// })
+		});
 	</script>
+	{% endif %}
+
 {% endblock %}
