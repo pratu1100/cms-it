@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,Year,Division,Room,Batch
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,Year,Division,Room,Batch,MakeupLecture
 
 # Register your models here.
 
@@ -39,3 +39,8 @@ admin.site.register(Year)
 
 admin.site.register(Division)
 
+class MakeupAdmin(admin.ModelAdmin):
+	list_display = ('lec_subject','lec_taken_by','lec_date','lec_time')
+	list_display_links = ('lec_subject',)
+
+admin.site.register(MakeupLecture, MakeupAdmin)

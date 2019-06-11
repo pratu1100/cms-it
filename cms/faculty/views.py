@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect,HttpResponse
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,MakeupLecture,Year, Division
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 import datetime
@@ -71,6 +71,11 @@ def submit_load_shift(request):
 @login_required
 def get_makeup(request):
 	days = DaysOfWeek.objects.all().exclude(day_name__in = ('Sunday','Saturday'))
+	m_lecs = MakeupLecture.objects.filter(lec_date__lte = datetime.datetime.now()+datetime.timedelta(days = 7))
+	print("$#$#$#",m_lecs)
+	years = Year.objects.all()
+	divions = Division.objects.all()
+	subjects = Subject.objects.all()
 	timeslots = TimeSlot.objects.annotate(
     diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
 	).filter(diff__lte= datetime.timedelta(hours = 1))
@@ -79,16 +84,26 @@ def get_makeup(request):
 	free = dict()
 
 	for day in days:
-		# print(day)
+		print(day.id)
+		# m_lecs = MakeupLecture.objects.filter(lec_date__week_day = day.id)
 		free_ts = list()
 		for timeslot in timeslots:
-			if(not Lecture.objects.filter(lec_day = day,lec_time = timeslot).exists()):
+			try:
+				print("******",MakeupLecture.objects.filter(lec_date__week_day = (day.id +1) , lec_time = timeslot)[0].lec_date.strftime("%A"))
+			
+			except:
+				pass
+			if(not(Lecture.objects.filter(lec_day = day,lec_time = timeslot).exists()) and not (MakeupLecture.objects.filter(lec_date__week_day = (day.id + 1),lec_time = timeslot).exists())):
 				free_ts.append(timeslot)
+
 		free[day] = free_ts
-	print(free)
+	# print(free)
 
 	context_data = {
 		"free_slots" : free,
+		"years" : years,
+		"subjects" : subjects,
+		"divisions" : divions
 	}
 
 	return render(request,"faculty/makeup.html",context_data)

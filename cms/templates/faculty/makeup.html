@@ -15,6 +15,18 @@
 		{% else %}
 		<form method="POST" action="{% url 'reserve' %}">
 			{% csrf_token %}
+		<label> Select Year </label>
+		{% for year in years %}
+			<input type="radio" name="year" value="{{ year }}">{{ year }}
+		{% endfor %}
+		<label>Select Division</label>
+		{% for div in divisions %}
+			<input type="radio" name="division" value="{{ div }}">{{ div }}
+		{%  endfor %}
+		<label>Select Subject</label>
+		<select name="subject">
+			
+		</select>
 		<label for="leave_start_date">Select Date</label>
 			<input type="text" class="form-control" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="makeup_date" data-date-end-date="+7d" data-date-start-date="0d">
 	<!-- 	<select name="day">
@@ -30,6 +42,21 @@
 	<script>
 		$(document).ready(function(){
 			day = $('[name = makeup_date ]');
+
+			year = $('[name = year]');
+
+			year.change(function(){
+				$('[name=subject]').empty();
+				var html = "";
+				{% for subject in subjects %}
+					console.log("{{ subject.year }}");
+					console.log($(this).val());
+					if("{{subject.year }}" == $(this).val()){
+						html+="<option value={{subject.id}}>{{ subject }}</option>"
+					}
+				{% endfor %}
+				$('[name=subject]').append(html);
+			})
 
 			day.change(function(){
 				$('[name = "timeslot"]').empty();				
