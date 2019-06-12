@@ -87,7 +87,7 @@
               </div>
               <div class="slot-dropdown">
                 <div class="dropdown">
-                 	<input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="dd/mm/yyyy" autocomplete="off" name="makeup_date" data-date-end-date="+7d" data-date-start-date="0d">
+                 	<input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="makeup_date" data-date-end-date="+7d" data-date-start-date="0d">
                 </div>
               </div>
             </div>
@@ -137,7 +137,7 @@ $(document).ready(function(){
 
 				}
 			{% endfor %}
-			$('[name=subject]').append("<option class='text-dark' value='-1'>Please Select</option>"+ html);
+			$('[name=subject]').append(html);
 		})
 
 		day.change(function(){
@@ -157,7 +157,7 @@ $(document).ready(function(){
 				}
 			{% endfor %}
 
-			$('[name = "timeslot"]').append("<option class='text-dark' value='-1'>Please Select</option>"+options);
+			$('[name = "timeslot"]').append(options);
 			$('[name = "timeslot"]').show();
 
 
