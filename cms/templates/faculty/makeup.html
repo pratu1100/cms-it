@@ -8,83 +8,160 @@
 {% endblock %}
 
 {% block content %}
-	<div class="d-flex pt-5 mt-5 justify-content-center">
-		{% if success %}
-			<h4>Reserved</h4>
-		{% elif errors %}
-			<h4>Cannot reserve contact admin</h4>
-		{% else %}
-		<form method="POST" action="{% url 'reserve' %}">
+<main>
+    <div class="row mt-3 ml-2">
+      <div class="col-sm-4 col-md-3 sidebar">
+        <div class="list-group">
+          <a href="{% url 'request_leave' %}" class="list-group-item bg-white text-dark">
+              Request Leave
+          </a>
+          <a href="{% url 'loadshifts' %}" class="list-group-item bg-white text-dark">
+              Load Shifts
+          </a>
+          <a href="#" class="list-group-item active text-white" style="background-color: #481380; border-color: #481380;">
+             Makeup Lecture
+          </a>
+        </div>        
+      </div>
+      <div class="col-sm-8 col-md-7">
+          <div class="container border">
+          	{% if success %}
+				<h4>Reserved</h4>
+			{% elif errors %}
+				<h4>Cannot reserve contact admin</h4>
+			{% else %}
+          	<form method="POST" action="{% url 'reserve' %}">
 			{% csrf_token %}
-		<label> Select Year </label>
-		{% for year in years %}
-			<input type="radio" name="year" value="{{ year.id }}" required>{{ year }}
-		{% endfor %}
-		<label>Select Division</label>
-		{% for div in divisions %}
-			<input type="radio" name="division" value="{{ div.id }}" required>{{ div }}
-		{%  endfor %}
-		<label>Select Subject</label>
-		<select name="subject" required>
+            <div class="title text-center mt-2">
+              <p class="h4 font-weight-bold text-dark">Reserve</p>
+            </div>
+            <!-- Year -->
+            <div class="year text-center">
+              <div class="year-text">
+                <p class="h5 text-dark">Year: </p>
+              </div>
+              <div class="year-dropdown">
+                <div class="dropdown">
+                  <select class="custom-select text-dark" name="year">
+                  	<option class="text-dark" value="-1">Please Select</option>
+                  	{% for year in years %}
+						<option class="text-dark" value="{{ year.id }}">{{ year }}</option>
+					{% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Division -->
+            <div class="lecture text-center mt-4">
+              <div class="lecture-text">
+                <p class="h5 text-dark">Division: </p>
+              </div>
+              <div class="lecture-dropdown">
+                <div class="dropdown">
+                  <select class="custom-select text-dark" name="division">
+                  	<option class="text-dark" value="-1">Please Select</option>
+                  	{% for div in divisions %}
+                  		<option class="text-dark" value="{{ div.id }}">{{ div }}</option>
+					{%  endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Subject -->
+            <div class="lecture text-center mt-4">
+              <div class="lecture-text">
+                <p class="h5 text-dark">Subject: </p>
+              </div>
+              <div class="lecture-dropdown">
+                <div class="dropdown">
+                  <select class="custom-select text-dark" name="subject">
+                  </select>
+                </div>
+              </div>
+            </div>
 			
-		</select>
-		<label for="leave_start_date">Select Date</label>
-			<input type="text" class="form-control" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="makeup_date" data-date-end-date="+7d" data-date-start-date="0d">
-	<!-- 	<select name="day">
-			<option value="None">---</option>
-			
-		</select> -->
-		<select name="timeslot" style=" display: none;" required>
-			
-		</select>
-		<input type="submit" value="Reserve">
-		</form>
-	</div>
-	<script>
-		$(document).ready(function(){
-			day = $('[name = makeup_date ]');
-			// console.log("{{ request.user }}")
-			year = $('[name = year]');
+			<!-- Day -->
+			<div class="day text-center mt-4">
+              <div class="day-text">
+                <p class="h5 text-dark">Day: </p>
+              </div>
+              <div class="slot-dropdown">
+                <div class="dropdown">
+                 	<input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="dd/mm/yyyy" autocomplete="off" name="makeup_date" data-date-end-date="+7d" data-date-start-date="0d">
+                </div>
+              </div>
+            </div>
 
-			year.change(function(){
-				console.log("{{ request.user }}")
-				$('[name=subject]').empty();
-				var html = "";
-				{% for subject in subjects %}
-					if("{{ subject.year.id }}" == $(this).val()){
-						{% for faculty in subject.teaching_faculty.all %}
-							{% if faculty == request.user %}
-								html+="<option value={{subject.id}}>{{ subject }}</option>"
-							{% endif %}
-						{% endfor %}
+            <!-- Slot -->
+            <div class="slot text-center mt-4">
+              <div class="slot-text">
+                <p class="h5 text-dark">Slot: </p>
+              </div>
+              <div class="slot-dropdown">
+                <div class="dropdown">
+                  <select class="custom-select text-dark" name="timeslot">
+                  </select>
+                </div>
+              </div>
+            </div>
 
-					}
-				{% endfor %}
-				$('[name=subject]').append(html);
-			})
-
-			day.change(function(){
-				$('[name = "timeslot"]').empty();				
-
-				newd = new Date($('[name = makeup_date]').val());
-				let weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][newd.getDay()];
-				console.log(weekday)
-				var options = "";
-				{% for day,slots in free_slots.items %}
-
-					if("{{ day.day_name }}" == weekday){
-						{% for slot in slots %}
-						console.log("{{ slot }}")
-						options+= "<option value='{{ slot.id }}'>{{ slot }}</option>"
-						{% endfor %}
-					}
-				{% endfor %}
-
-				$('[name = "timeslot"]').append(options);
-				$('[name = "timeslot"]').show();
+            <div class="text-center">
+              <input type="submit"  style="background-color: #481380;" class="btn my-5 mr-3 text-white" value="Reserve" />
+            </div>
+          </div>
+      </div>
+  	</form>
+  	{% endif %}
+    </div>
+  </main>
 
 
-			})
+	
+<script>
+$(document).ready(function(){
+		day = $('[name = makeup_date ]');
+		// console.log("{{ request.user }}")
+		year = $('[name = year]');
+
+		year.change(function(){
+			console.log("{{ request.user }}")
+			$('[name=subject]').empty();
+			var html = "";
+			{% for subject in subjects %}
+				if("{{ subject.year.id }}" == $(this).val()){
+					{% for faculty in subject.teaching_faculty.all %}
+						{% if faculty == request.user %}
+							html+="<option class='text-dark' value={{subject.id}}>{{ subject }}</option>"
+						{% endif %}
+					{% endfor %}
+
+				}
+			{% endfor %}
+			$('[name=subject]').append("<option class='text-dark' value='-1'>Please Select</option>"+ html);
+		})
+
+		day.change(function(){
+			$('[name = "timeslot"]').empty();				
+
+			newd = new Date($('[name = makeup_date]').val());
+			let weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][newd.getDay()];
+			console.log(weekday)
+			var options = "";
+			{% for day,slots in free_slots.items %}
+
+				if("{{ day.day_name }}" == weekday){
+					{% for slot in slots %}
+					console.log("{{ slot }}")
+					options+= "<option class='text-dark' value='{{ slot.id }}'>{{ slot }}</option>"
+					{% endfor %}
+				}
+			{% endfor %}
+
+			$('[name = "timeslot"]').append("<option class='text-dark' value='-1'>Please Select</option>"+options);
+			$('[name = "timeslot"]').show();
+
+
+		})
 
 
 			// var html = "";
@@ -102,8 +179,8 @@
 
 
 			// })
-		});
+		
+	});
 	</script>
-	{% endif %}
 
 {% endblock %}
