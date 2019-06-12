@@ -106,13 +106,15 @@ class LoadShift(models.Model):
 		return self.leave.leave_taken_by.username +"--"+self.to_faculty.username
 
 class MakeupLecture(models.Model):
-    lec_date = models.DateField(auto_now = False,auto_now_add = False)
-    lec_subject = models.ForeignKey(Subject,on_delete = models.CASCADE)
-    lec_taken_by = models.ForeignKey("auth.User",on_delete = models.CASCADE)
-    lec_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE)
+	year = models.ForeignKey(Year,on_delete = models.CASCADE)
+	division = models.ForeignKey(Division,on_delete = models.CASCADE)
+	lec_date = models.DateField(auto_now = False,auto_now_add = False)
+	lec_subject = models.ForeignKey(Subject,on_delete = models.CASCADE)
+	lec_taken_by = models.ForeignKey("auth.User",on_delete = models.CASCADE)
+	lec_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE)
 
-    def __str__(self):
-    	return self.lec_subject.sname
+	def __str__(self):
+		return self.lec_subject.sname
 
-    class Meta:
-    	unique_together = ('lec_date','lec_time')
+	class Meta:
+		unique_together = ('year','division','lec_date','lec_time')

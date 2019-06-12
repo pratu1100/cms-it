@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from django.db.models import DurationField, F, ExpressionWrapper
 import time
+
 # # Update leave as approved by HOD
 # def update_leave(request, leave_id):  
 #     Leave.objects.filter(id=leave_id).update(is_approved=True)
@@ -112,10 +113,28 @@ def post_makeup(request):
 	success = False
 	if(request.method == "POST"):
 		print(request.POST)
-		success = True
-		context_data = {
-			"success" : success ,
-		}
+		year = Year.objects.get(pk = int(request.POST.get('year')))
+		subject = Subject.objects.get(pk = int(request.POST.get('subject')))
+		division = Division.objects.get(pk = int(request.POST.get('division')))
+		date = datetime.datetime.strptime(request.POST.get('makeup_date'),'%m/%d/%Y')
+		timeslot = TimeSlot.objects.get(pk = int(request.POST.get('timeslot')))
+		user = User.objects.get(pk = request.user.id)
+		print(year,"--",subject,"--",division,"--",date,"--",timeslot)
+		makeup_lec = MakeupLecture(year = year, lec_subject = subject, division = division,lec_date = date, lec_time = timeslot, lec_taken_by = user)
+		try:
+			makeup_lec.full_clean()
+			makeup_lec.save()
+			success = True
+			context_data = {
+				"success" : success ,
+			}
+		except Exception as e:
+			print("Cannnot save",e)
+			success = False
+			context_data = {
+				"errors" : success ,
+			}
+
 		return render(request,"faculty/makeup.html",context_data)
 	else:
 		return HttpResponseRedirect('./')

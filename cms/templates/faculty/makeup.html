@@ -11,20 +11,21 @@
 	<div class="d-flex pt-5 mt-5 justify-content-center">
 		{% if success %}
 			<h4>Reserved</h4>
-
+		{% elif errors %}
+			<h4>Cannot reserve contact admin</h4>
 		{% else %}
 		<form method="POST" action="{% url 'reserve' %}">
 			{% csrf_token %}
 		<label> Select Year </label>
 		{% for year in years %}
-			<input type="radio" name="year" value="{{ year }}">{{ year }}
+			<input type="radio" name="year" value="{{ year.id }}" required>{{ year }}
 		{% endfor %}
 		<label>Select Division</label>
 		{% for div in divisions %}
-			<input type="radio" name="division" value="{{ div }}">{{ div }}
+			<input type="radio" name="division" value="{{ div.id }}" required>{{ div }}
 		{%  endfor %}
 		<label>Select Subject</label>
-		<select name="subject">
+		<select name="subject" required>
 			
 		</select>
 		<label for="leave_start_date">Select Date</label>
@@ -33,7 +34,7 @@
 			<option value="None">---</option>
 			
 		</select> -->
-		<select name="timeslot" style=" display: none;">
+		<select name="timeslot" style=" display: none;" required>
 			
 		</select>
 		<input type="submit" value="Reserve">
@@ -42,17 +43,21 @@
 	<script>
 		$(document).ready(function(){
 			day = $('[name = makeup_date ]');
-
+			// console.log("{{ request.user }}")
 			year = $('[name = year]');
 
 			year.change(function(){
+				console.log("{{ request.user }}")
 				$('[name=subject]').empty();
 				var html = "";
 				{% for subject in subjects %}
-					console.log("{{ subject.year }}");
-					console.log($(this).val());
-					if("{{subject.year }}" == $(this).val()){
-						html+="<option value={{subject.id}}>{{ subject }}</option>"
+					if("{{ subject.year.id }}" == $(this).val()){
+						{% for faculty in subject.teaching_faculty.all %}
+							{% if faculty == request.user %}
+								html+="<option value={{subject.id}}>{{ subject }}</option>"
+							{% endif %}
+						{% endfor %}
+
 					}
 				{% endfor %}
 				$('[name=subject]').append(html);
