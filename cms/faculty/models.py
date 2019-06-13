@@ -112,6 +112,7 @@ class MakeupLecture(models.Model):
 	lec_subject = models.ForeignKey(Subject,on_delete = models.CASCADE)
 	lec_taken_by = models.ForeignKey("auth.User",on_delete = models.CASCADE)
 	lec_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE)
+	lec_in = models.ForeignKey(Room,on_delete = models.CASCADE,null = True)
 
 	def __str__(self):
 		return self.lec_subject.sname

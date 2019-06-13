@@ -39,9 +39,14 @@
               </select>
               <label>Date</label>
               <input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="ia_date" data-date-start-date="0d">
+              <label>Timeslot</label>
               <select name="timeslot">
+              </select>
+              <label>Room</label>
+              <select name="locations">
                 
               </select>
+             
               <input type="submit" value="Post">
 
             </form>
@@ -54,7 +59,7 @@
       $(document).ready(function(){
         $('[name=year]').change(function(){
           $('[name=subject]').empty();
-          var html = "";
+          var html = "<option value=-1>Select Subject</option>";
           {% for subject in subjects %}
             if({{ subject.year.id }} == $(this).val()){
               html+="<option value={{ subject.id }}>{{ subject }}</option>"
@@ -76,17 +81,42 @@
               // $('#resp').empty();
               // $('#resp').append(text);
               $('[name = timeslot]').empty();
-              result = $.parseJSON(text);
-              console.log(result);
-              var html = "";
-              for(i=0;i<result.length;i++){
-                slot_start = result[i].fields.start_time.split(':')[0]+ ":" + result[i].fields.start_time.split(':')[1];
-                slot_end = result[i].fields.end_time.split(':')[0]+ ":" +result[i].fields.end_time.split(':')[1];
-                html+="<option value=" + result[i].pk +">"+ slot_start +" - " + slot_end + "</option>"
+              // ts_json = text.split('$$')[0]
+              // rooms_json = text.split('$$')[1]
+              ts_result = $.parseJSON(text);
+              console.log(ts_result);
+              var html = "<option value=-1>Select Tiemslot</option>";
+              for(i=0;i<ts_result.length;i++){
+                slot_start = ts_result[i].fields.start_time.split(':')[0]+ ":" + ts_result[i].fields.start_time.split(':')[1];
+                slot_end = ts_result[i].fields.end_time.split(':')[0]+ ":" +ts_result[i].fields.end_time.split(':')[1];
+                html+="<option value=" + ts_result[i].pk +">"+ slot_start +" - " + slot_end + "</option>"
               }
               $('[name = timeslot]').append(html);
             }
           });
+        })
+        $('[name = timeslot]').change(function(){
+          $('[name = locations]').empty();
+          d = new Date($('[name=ia_date]').val());
+          d.setDate(d.getDate() + 1);
+          date = d.toISOString().split('T')[0];
+          timeslot = $(this).val(); 
+          url_string = "{% url 'available_rooms' 'date' 'timeslot' %}".replace('timeslot',timeslot).replace('date',date);
+          console.log(url_string)
+          $.ajax({
+            url : url_string,
+            success : function(text){
+              rooms_json = $.parseJSON(text);
+              // console.log(rooms_json);
+              var html = "<option value=-1>Select Room</option>";
+              for(i=0;i<rooms_json.length;i++){
+                html+="<option value=" + rooms_json[i].pk +">"+ rooms_json[i].fields.room + "</option>"
+              }
+              $('[name = locations]').append(html);
+
+
+            }
+          })
         })
       });
     </script>

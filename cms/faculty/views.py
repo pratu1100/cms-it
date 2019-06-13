@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect,HttpResponse
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,MakeupLecture,Year, Division
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,MakeupLecture,Year, Division, Room
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 import datetime
@@ -168,23 +168,58 @@ def get_timeslots(request,syear,sdate):
     diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
 	).filter(diff__lte= datetime.timedelta(hours = 2))
 		# print(timeslots)
+		# occupied_rooms = list()
 		free_ts = list()
 		for timeslot in timeslots:
 			# print(timeslot)
 			filtered_lecs = lecs.filter(lec_time__start_time__gte = timeslot.start_time, lec_time__end_time__lte = timeslot.end_time)
 			# print(filtered_lecs)
+			# for lec in filtered_lecs:
+			# 	occupied_rooms.append(lec.lec_in)
+
 			filtered_makeup_lecs = makeup_lecs.filter(lec_time__start_time__gte = timeslot.start_time,lec_time__end_time__lte = timeslot.end_time)
 			# print(filtered_makeup_lecs.exists())
-						
+			# for lec in filtered_makeup_lecs:
+			# 	occupied_rooms.append(lec.lec_in)
+
 			if(not filtered_lecs.exists() and not filtered_makeup_lecs.exists()):
 				free_ts.append(timeslot)
 		# print(lecs)
 		# print(makeup_lecs)
 		ts_json = serializers.serialize("json",free_ts)
-		# print(ts_json)
+		
+		# rooms_json = serializers.serialize("json",occupied_rooms)
+
+		# data_json = {
+		# 	"timeslots" : ts_json,
+		# 	"rooms" : rooms_json
+		# }
+		print(ts_json)
 		return HttpResponse(ts_json)
 	else:
 		return HttpResponse("Select Year")
+
+def get_available_rooms(request,sdate,slot):
+	print(sdate)
+	print(slot)
+	if(slot!='-1'):
+		date = datetime.datetime.strptime(sdate,'%Y-%m-%d')
+		day = DaysOfWeek.objects.get(day_name = date.strftime('%A'))
+		timeslot = TimeSlot.objects.get(pk = int(slot))
+		lecs = Lecture.objects.filter(lec_time__start_time__gte = timeslot.start_time, lec_time__end_time__lte = timeslot.end_time,lec_day = day)
+		makeup_lecs = MakeupLecture.objects.filter(lec_time__start_time__gte = timeslot.start_time, lec_time__end_time__lte = timeslot.end_time,lec_date = date)
+		occupied_rooms = list()
+		for lec in lecs:
+			occupied_rooms.append(lec.lec_in)
+		for lec in makeup_lecs:
+			occupied_rooms.append(lec.lec_in)
+
+		rooms = Room.objects.exclude(room__in = occupied_rooms)
+		rooms_json = serializers.serialize("json",rooms)
+		return HttpResponse(rooms_json)
+	else:
+		return HttpResponse("Select TimeSlot")
+
 
 
 def get_ia(request):
