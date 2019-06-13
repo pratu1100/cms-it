@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from django.db.models import DurationField, F, ExpressionWrapper
 import time
-
+import json
+from django.core import serializers
 # # Update leave as approved by HOD
 # def update_leave(request, leave_id):  
 #     Leave.objects.filter(id=leave_id).update(is_approved=True)
@@ -138,3 +139,64 @@ def post_makeup(request):
 		return render(request,"faculty/makeup.html",context_data)
 	else:
 		return HttpResponseRedirect('./')
+
+
+# def get_subjects(request,yid):
+# 	print("request")
+# 	try:
+# 		year = Year.objects.get(pk = yid)
+# 		subjects = Subject.objects.filter(year = year)
+# 		print(subjects)
+# 	except:
+		
+
+# 	return HttpResponse("<h1>Test</h1>")
+
+def get_timeslots(request,syear,sdate):
+	print(syear)
+	print(sdate)
+
+	if(syear!='-1'):
+		year = Year.objects.get(pk = int(syear))
+		date = datetime.datetime.strptime(sdate,'%Y-%m-%d')
+		day = DaysOfWeek.objects.get(day_name = date.strftime('%A'))
+		lecs = Lecture.objects.filter(lec_day = day,lname__year = year)
+		# print(lecs)
+		makeup_lecs = MakeupLecture.objects.filter(lec_date = date,year = year)
+		# print(makeup_lecs)
+		timeslots = TimeSlot.objects.annotate(
+    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
+	).filter(diff__lte= datetime.timedelta(hours = 2))
+		# print(timeslots)
+		free_ts = list()
+		for timeslot in timeslots:
+			# print(timeslot)
+			filtered_lecs = lecs.filter(lec_time__start_time__gte = timeslot.start_time, lec_time__end_time__lte = timeslot.end_time)
+			# print(filtered_lecs)
+			filtered_makeup_lecs = makeup_lecs.filter(lec_time__start_time__gte = timeslot.start_time,lec_time__end_time__lte = timeslot.end_time)
+			# print(filtered_makeup_lecs.exists())
+						
+			if(not filtered_lecs.exists() and not filtered_makeup_lecs.exists()):
+				free_ts.append(timeslot)
+		# print(lecs)
+		# print(makeup_lecs)
+		ts_json = serializers.serialize("json",free_ts)
+		# print(ts_json)
+		return HttpResponse(ts_json)
+	else:
+		return HttpResponse("Select Year")
+
+
+def get_ia(request):
+	years = Year.objects.all()
+	subjects = Subject.objects.all()
+
+	context_data = {
+		"years" : years,
+		"subjects" : subjects
+	}
+
+	return render(request,"faculty/ia.html",context_data)
+
+def post_ia(request):
+	pass

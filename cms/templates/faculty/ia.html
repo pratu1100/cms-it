@@ -1,0 +1,95 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block nav-content %}
+	<li class="nav-item" role="presentation">
+		<a class="nav-link pr-3" href="{% url 'request_leave' %}" style="color: white;">IA</a>
+	</li>
+{% endblock %}
+
+{% block content %}
+<main>
+    <div class="row mt-3 ml-2">
+      <div class="col-sm-4 col-md-3 sidebar">
+        <div class="list-group">
+          <a href="{% url 'request_leave' %}" class="list-group-item bg-white text-dark">
+              Request Leave
+          </a>
+          <a href="{% url 'loadshifts' %}" class="list-group-item bg-white text-dark">
+              Load Shifts
+          </a>
+          <a href="#" class="list-group-item active text-white" style="background-color: #481380; border-color: #481380;">
+             IA
+          </a>
+        </div>        
+      </div>
+      <div class="col-sm-8 col-md-7">
+          <div class="container border">
+            <form action="{% url 'postia' %}" method="POST">
+              {% csrf_token %}
+              <label>Year</label>
+              <select name="year" required>
+                  <option value="-1">Year</option>
+                {% for year in years %}
+                  <option value="{{ year.id }}">{{ year }}</option>
+                {% endfor %}
+              </select>
+              <label>Subject</label>
+              <select name="subject">
+              </select>
+              <label>Date</label>
+              <input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="ia_date" data-date-start-date="0d">
+              <select name="timeslot">
+                
+              </select>
+              <input type="submit" value="Post">
+
+            </form>
+          	
+          </div>
+      </div>
+ 
+    </div>
+    <script>
+      $(document).ready(function(){
+        $('[name=year]').change(function(){
+          $('[name=subject]').empty();
+          var html = "";
+          {% for subject in subjects %}
+            if({{ subject.year.id }} == $(this).val()){
+              html+="<option value={{ subject.id }}>{{ subject }}</option>"
+            }
+          {% endfor %}
+          $('[name=subject]').append(html);
+        })
+        $('[name=ia_date]').change(function(){
+          year = $('[name=year]').val()
+          d = new Date($(this).val())
+          // Timezone offset error correction
+          d.setDate(d.getDate() + 1);
+          date = d.toISOString().split('T')[0];
+          url_string = "{% url 'get_timeslots' 'year' 'sample' %}".replace('sample',date).replace('year',year);
+          console.log(url_string)
+          $.ajax({
+            url : url_string,
+            success: function(text){
+              // $('#resp').empty();
+              // $('#resp').append(text);
+              $('[name = timeslot]').empty();
+              result = $.parseJSON(text);
+              console.log(result);
+              var html = "";
+              for(i=0;i<result.length;i++){
+                slot_start = result[i].fields.start_time.split(':')[0]+ ":" + result[i].fields.start_time.split(':')[1];
+                slot_end = result[i].fields.end_time.split(':')[0]+ ":" +result[i].fields.end_time.split(':')[1];
+                html+="<option value=" + result[i].pk +">"+ slot_start +" - " + slot_end + "</option>"
+              }
+              $('[name = timeslot]').append(html);
+            }
+          });
+        })
+      });
+    </script>
+  </main>
+
+{% endblock %}
