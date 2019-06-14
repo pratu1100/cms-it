@@ -25,6 +25,11 @@
       </div>
       <div class="col-sm-8 col-md-7">
           <div class="container border">
+            {% if success %}
+              <h4>Success</h4>
+            {% elif errors %}
+              <h4>{{ errors }}</h4>
+            {% else %}
             <form action="{% url 'postia' %}" method="POST">
               {% csrf_token %}
               <label>Year</label>
@@ -50,7 +55,7 @@
               <input type="submit" value="Post">
 
             </form>
-          	
+          	{% endif %}
           </div>
       </div>
  

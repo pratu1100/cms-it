@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect,HttpResponse
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,MakeupLecture,Year, Division, Room
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,MakeupLecture,Year, Division, Room,IA
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 import datetime
@@ -164,6 +164,7 @@ def get_timeslots(request,syear,sdate):
 		# print(lecs)
 		makeup_lecs = MakeupLecture.objects.filter(lec_date = date,year = year)
 		# print(makeup_lecs)
+		ias = IA.objects.filter(ia_date = date, ia_year =year)
 		timeslots = TimeSlot.objects.annotate(
     diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
 	).filter(diff__lte= datetime.timedelta(hours = 2))
@@ -181,8 +182,8 @@ def get_timeslots(request,syear,sdate):
 			# print(filtered_makeup_lecs.exists())
 			# for lec in filtered_makeup_lecs:
 			# 	occupied_rooms.append(lec.lec_in)
-
-			if(not filtered_lecs.exists() and not filtered_makeup_lecs.exists()):
+			filtered_ia = ias.filter(ia_time__start_time__gte = timeslot.start_time,ia_time__end_time__lte = timeslot.end_time)
+			if(not filtered_lecs.exists() and not filtered_makeup_lecs.exists() and not filtered_ia.exists()):
 				free_ts.append(timeslot)
 		# print(lecs)
 		# print(makeup_lecs)
@@ -208,11 +209,14 @@ def get_available_rooms(request,sdate,slot):
 		timeslot = TimeSlot.objects.get(pk = int(slot))
 		lecs = Lecture.objects.filter(lec_time__start_time__gte = timeslot.start_time, lec_time__end_time__lte = timeslot.end_time,lec_day = day)
 		makeup_lecs = MakeupLecture.objects.filter(lec_time__start_time__gte = timeslot.start_time, lec_time__end_time__lte = timeslot.end_time,lec_date = date)
+		ias = IA.objects.filter(ia_date = date, ia_time__start_time__gte = timeslot.start_time,ia_time__end_time__lte = timeslot.end_time)
 		occupied_rooms = list()
 		for lec in lecs:
 			occupied_rooms.append(lec.lec_in)
 		for lec in makeup_lecs:
 			occupied_rooms.append(lec.lec_in)
+		for ia in ias:
+			occupied_rooms.append(ia.ia_in)
 
 		rooms = Room.objects.exclude(room__in = occupied_rooms)
 		rooms_json = serializers.serialize("json",rooms)
@@ -234,4 +238,30 @@ def get_ia(request):
 	return render(request,"faculty/ia.html",context_data)
 
 def post_ia(request):
-	pass
+	if(request.method == 'POST'):
+		print(request.POST)
+		year = Year.objects.get(pk = int(request.POST.get('year')))
+		subject = Subject.objects.get(pk = int(request.POST.get('subject')))
+		date = datetime.datetime.strptime(request.POST.get('ia_date'),'%m/%d/%Y')
+		timeslot = TimeSlot.objects.get(pk = int(request.POST.get('timeslot')))
+		room = Room.objects.get(pk = int(request.POST.get('locations')))
+
+		try:
+			ia = IA(ia_year = year, ia_subject = subject,ia_date = date,ia_time = timeslot,ia_in = room)
+			ia.full_clean()
+			print(ia)
+			ia.save()
+
+			context_data = {
+				"success" : 'true'
+			}
+
+		except Exception as e:
+			
+			context_data = {
+				"errors" : e
+			}
+
+		return render(request,"faculty/ia.html",context_data)
+	else:
+		return HttpResponseRedirect('./')

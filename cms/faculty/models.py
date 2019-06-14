@@ -119,3 +119,16 @@ class MakeupLecture(models.Model):
 
 	class Meta:
 		unique_together = ('year','division','lec_date','lec_time')
+
+class IA(models.Model):
+	ia_year = models.ForeignKey(Year,on_delete = models.CASCADE)
+	ia_date = models.DateField(auto_now = False,auto_now_add = False)
+	ia_subject = models.ForeignKey(Subject,on_delete = models.CASCADE)
+	ia_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE)
+	ia_in = models.ForeignKey(Room,on_delete = models.CASCADE,null = True)
+
+	def __str__(self):
+		return self.ia_subject.sname
+
+	class Meta:
+		unique_together = ('ia_year','ia_date','ia_time')
