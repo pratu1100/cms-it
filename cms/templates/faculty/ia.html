@@ -32,27 +32,78 @@
             {% else %}
             <form action="{% url 'postia' %}" method="POST">
               {% csrf_token %}
-              <label>Year</label>
-              <select name="year" required>
-                  <option value="-1">Year</option>
-                {% for year in years %}
-                  <option value="{{ year.id }}">{{ year }}</option>
-                {% endfor %}
-              </select>
-              <label>Subject</label>
-              <select name="subject">
-              </select>
-              <label>Date</label>
-              <input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="ia_date" data-date-start-date="0d">
-              <label>Timeslot</label>
-              <select name="timeslot">
-              </select>
-              <label>Room</label>
-              <select name="locations">
-                
-              </select>
-             
-              <input type="submit" value="Post">
+            <div class="title text-center mt-2">
+              <p class="h4 font-weight-bold text-dark">IA</p>
+            </div>
+            <!-- Year -->
+            <div class="year text-center">
+              <div class="year-text">
+                <p class="h5 text-dark">Year: </p>
+              </div>
+              <div class="year-dropdown">
+                <div class="dropdown">
+                  <select class="custom-select text-dark" name="year">
+                    <option class="text-dark" value="-1">Please Select</option>
+                    {% for year in years %}
+                      <option class="text-dark" value="{{ year.id }}">{{ year }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+              <!-- Subject -->
+            <div class="lecture text-center mt-4">
+              <div class="lecture-text">
+                <p class="h5 text-dark">Subject: </p>
+              </div>
+              <div class="lecture-dropdown">
+                <div class="dropdown">
+                  <select class="custom-select text-dark" name="subject">
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Day -->
+            <div class="day text-center mt-4">
+              <div class="day-text">
+                <p class="h5 text-dark">Day: </p>
+              </div>
+              <div class="slot-dropdown">
+                <div class="dropdown">
+                  <input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="ia_date" data-date-start-date="0d">
+                </div>
+              </div>
+            </div>
+              
+               <!-- Slot -->
+            <div class="slot text-center mt-4">
+              <div class="slot-text">
+                <p class="h5 text-dark">Slot: </p>
+              </div>
+              <div class="slot-dropdown">
+                <div class="dropdown">
+                  <select class="custom-select text-dark" name="timeslot">
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Room -->
+            <div class="room text-center mt-4">
+              <div class="room-text">
+                <p class="h5 text-dark">Room: </p>
+              </div>
+              <div class="room-dropdown">
+                <div class="dropdown">
+                  <select class="custom-select text-dark" name="locations">
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-center">
+              <input type="submit"  style="background-color: #481380;" class="btn my-5 mr-3 text-white" value="Post" />
+            </div>
 
             </form>
           	{% endif %}
@@ -90,7 +141,7 @@
               // rooms_json = text.split('$$')[1]
               ts_result = $.parseJSON(text);
               console.log(ts_result);
-              var html = "<option value=-1>Select Tiemslot</option>";
+              var html = "<option value=-1>Select Timeslot</option>";
               for(i=0;i<ts_result.length;i++){
                 slot_start = ts_result[i].fields.start_time.split(':')[0]+ ":" + ts_result[i].fields.start_time.split(':')[1];
                 slot_end = ts_result[i].fields.end_time.split(':')[0]+ ":" +ts_result[i].fields.end_time.split(':')[1];
