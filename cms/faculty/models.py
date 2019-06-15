@@ -132,3 +132,21 @@ class IA(models.Model):
 
 	class Meta:
 		unique_together = ('ia_year','ia_date','ia_time')
+
+class GuestLecture(models.Model):
+	lec_year = models.ForeignKey(Year,on_delete = models.CASCADE)
+	lec_date = models.DateField(auto_now = False,auto_now_add = False)
+	lec_subject = models.ForeignKey(Subject,on_delete = models.CASCADE)
+	lec_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE)
+	lec_in = models.ForeignKey(Room,on_delete = models.CASCADE,null = True)
+
+	def __str__(self):
+		return self.lec_subject.sname
+
+	class Meta:
+		unique_together = ('lec_year','lec_date','lec_time')
+
+
+
+
+
