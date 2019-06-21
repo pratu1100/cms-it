@@ -10,7 +10,8 @@
 {% block content %}
 <main>
     <div class="row mt-3 ml-2">
-      <div class="col-sm-4 col-md-3 sidebar">
+    	<!-- d-xs-none d-sm-none d-md-none d-lg-block -->
+      <!-- <div class="col-sm-4 col-md-3 sidebar d-none d-sm-none d-md-none d-lg-block">
         <div class="list-group">
           <a href="{% url 'request_leave' %}" class="list-group-item bg-white text-dark">
               Request Leave
@@ -22,7 +23,10 @@
              IA
           </a>
         </div>        
-      </div>
+      </div> -->
+		
+		{% include '../includes/sidebar.html' %}
+
       <div class="col-sm-8 col-md-7">
           <div class="container border">
             {% if success %}
