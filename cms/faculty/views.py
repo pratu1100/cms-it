@@ -29,7 +29,7 @@ def submit_leave(request):
 		# Python date time objects
 		start_date = datetime.datetime.strptime(start_date_time, '%d/%m/%YT%H:%M')
 		end_date = datetime.datetime.strptime(end_date_time, '%d/%m/%YT%H:%M')
-		lecs = Lecture.objects.filter(lec_day__id__in = range(start_date.weekday(),end_date.weekday()+1)).filter(taken_by = user).filter(lec_time__start_time__gte = datetime.time(start_date)).filter(lec_time__end_time__lte = datetime.time(end_date))
+		lecs = Lecture.objects.filter(lec_day__id__in = range(start_date.weekday(),end_date.weekday()+1)).filter(taken_by = user).filter(lec_time__start_time__gte = datetime.datetime.time(start_date)).filter(lec_time__end_time__lte = datetime.datetime.time(end_date))
 		adjust_opts = dict()
 		new_leave = Leave.objects.get_or_create(leave_taken_by = user,leave_start_date=start_date.date(),leave_end_date = end_date.date(),leave_start_time=start_date.time(),leave_end_time = end_date.time())
 		print("####",new_leave)
@@ -308,3 +308,7 @@ def guestlecture_schedule(request):
 		return render(request,"faculty/guestlecture.html",context_data)
 	else:
 		return HttpResponseRedirect('./')
+
+def od(request):
+	context_data = {}
+	return render(request,"faculty/od.html",context_data)

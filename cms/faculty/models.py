@@ -146,7 +146,9 @@ class GuestLecture(models.Model):
 	class Meta:
 		unique_together = ('lec_year','lec_date','lec_time')
 
-
+class OD(models.Model):
+	od_type = models.CharField(max_length=20,null=False,blank=False) 
+	od_organisiton = models.TextField(max_length = 255, null = False, blank = False)
 
 
 

@@ -1,0 +1,60 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block nav-content %}
+	<li class="nav-item" role="presentation">
+		<a class="nav-link pr-3" href="{% url 'request_leave' %}" style="color: white;">IA</a>
+	</li>
+{% endblock %}
+
+{% block content %}
+<main>
+	<div class="row mt-3 ml-2">
+		{% include '../includes/sidebar.html' %}
+
+      <div class="col-sm-8 col-md-7">
+          <div class="container border">
+            {% if success %}
+              <h4>Success</h4>
+            {% elif errors %}
+              <h4>{{ errors }}</h4>
+            {% else %}
+            <form action="{% url 'postia' %}" method="POST">
+              {% csrf_token %}
+              <label>Attending : </label>
+              <select name="od-type" required>
+              	<option value="-1">Select Attending</option>
+              	<option value="STTP">STTP</option>
+              	<option value="Symposium">Symposium</option>
+              	<option value="Workshop">Workshop</option>
+              	<option value="Conference">Conference</option>
+              	<option value="Seminar">Seminar</option>
+              </select>
+              <label>Title</label>
+              <input type="text" name="title" required>
+              <label>Name and Address : </label>
+              <textarea name ="og-details" placeholder="Enter name and Address of the ogranisation"></textarea>
+              <label>Supporting Ogranisation</label>
+              <input type="text" name="Supporting-og">
+              <label>Date and Duration</label>
+              <label> FROM </label>
+              <input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="from_date" data-date-start-date="0d">
+              <label>TO</label>
+              <input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="to_date" data-date-start-date="0d">
+              <label>Last date of registration</label>
+              <input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="last_date" data-date-start-date="0d">
+              <label>Registration Fee</label>
+              <input type="text" name="fees">
+              <label>Attach email or correspondence</label>
+              <input type="file" name="correspondence">
+              <label>Purpose/Scope</label>
+              <textarea name="scope" placeholder="Purpose or Scope for attending"></textarea>
+              <input type="submit" value="Submit">
+            </form>
+          	{% endif %}
+          </div>
+      </div>
+ 
+    </div>
+  </main>
+{% endblock %}
