@@ -7,6 +7,8 @@ from django.db.models import DurationField, F, ExpressionWrapper
 import time
 import json
 from django.core import serializers
+from django.core.files.storage import default_storage
+
 # # Update leave as approved by HOD
 # def update_leave(request, leave_id):  
 #     Leave.objects.filter(id=leave_id).update(is_approved=True)
@@ -312,3 +314,25 @@ def guestlecture_schedule(request):
 def od(request):
 	context_data = {}
 	return render(request,"faculty/od.html",context_data)
+
+def submit_od(request):
+	if(request.method == 'POST'):
+		od_type = request.POST.get('od_type')
+		title = request.POST.get('title')
+		og_details = request.POST.get('og-details')
+		supporting_og = request.POST.get('Supporting_og')
+		from_date = datetime.datetime.strptime(request.POST.get('from_date'),'%m/%d/%Y')
+		to_date = datetime.datetime.strptime(request.POST.get('to_date'),'%m/%d/%Y')
+		last_date = datetime.datetime.strptime(request.POST.get('last_date'),'%m/%d/%Y')
+		fees = request.POST.get('fees')
+		print(request.FILES)
+		correspondence_filename = request.FILES[u'correspondence'].name
+		correspondence_file = request.FILES['correspondence']
+
+		with default_storage.open('tmp/'+correspondence_filename,'wb+') as destination:
+			for chunk in correspondence_file.chunks():
+				destination.write(chunk)
+
+		
+
+		print(request.POST)

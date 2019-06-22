@@ -148,7 +148,18 @@ class GuestLecture(models.Model):
 
 class OD(models.Model):
 	od_type = models.CharField(max_length=20,null=False,blank=False) 
-	od_organisiton = models.TextField(max_length = 255, null = False, blank = False)
+	od_title = models.CharField(max_length=255,null=False,blank=False)
+	od_details = models.TextField(max_length = 255, null = False, blank = False)
+	supporting_organisation = models.CharField(max_length=20,null=False,blank=False)
+	from_date = models.DateField(auto_now = False,auto_now_add = False)
+	to_date = models.DateField(auto_now = False,auto_now_add = False)
+	last_date = models.DateField(auto_now = False,auto_now_add = False)
+	fees = models.IntegerField(null=True,blank=True)
+	scope = models.TextField(max_length=255,null=True,blank=True)
+	correspondence = models.FileField(upload_to = 'od/correspondence/')
+
+	def __str__(self):
+		return self.od_type+"--"+self.od_title
 
 
 

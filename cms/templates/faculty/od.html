@@ -19,7 +19,7 @@
             {% elif errors %}
               <h4>{{ errors }}</h4>
             {% else %}
-            <form action="{% url 'postia' %}" method="POST">
+            <form action="{% url 'submit_od' %}" method="POST" enctype="multipart/form-data">
               {% csrf_token %}
               <label>Attending : </label>
               <select name="od-type" required>
