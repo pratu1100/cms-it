@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,Year,Division,Room,Batch,MakeupLecture,IA,GuestLecture
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,Year,Division,Room,Batch,MakeupLecture,IA,GuestLecture,OD
 
 # Register your models here.
 
@@ -56,3 +56,9 @@ class GuestLectureAdmin(admin.ModelAdmin):
 	list_display_links = ('lec_subject',)
 
 admin.site.register(GuestLecture,GuestLectureAdmin)
+
+class ODAdmin(admin.ModelAdmin):
+	list_display = ('od_title','od_type','taken_by','approved_status')
+	list_display_links = ('od_title',)
+
+admin.site.register(OD,ODAdmin)

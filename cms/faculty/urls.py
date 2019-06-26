@@ -18,3 +18,5 @@ urlpatterns = [
     path('od/',od,name="od"),
     path('od/submit/',submit_od,name="submit_od")
 ]
+
+

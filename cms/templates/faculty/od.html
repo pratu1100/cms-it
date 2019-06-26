@@ -14,8 +14,31 @@
 
       <div class="col-sm-8 col-md-7">
           <div class="container border">
-            {% if success %}
-              <h4>Success</h4>
+            {% if od %}
+              <form>
+              	{% csrf_token %}
+					<h3>{{ od.od_type }}</h3>
+					<h4>{{ od.od_title }}</h4>
+					<h4>{{ od.od_details }}</h4>
+					<h4><b>Supporting Organisation : </b>{{ od.supporting_organisation }}</h4>
+					<h4><b>From : </b> {{ od.from_date.date }}</h4>
+					<h4><b>To : </b> {{ od.to_date.date }}</h4>
+					<h4><b>Last : </b> {{ od.last_date.date }}</h4>
+					<h4><b>Fees : </b> {{ od.fees }}</h4>
+					<h4><b>Scope : </b> {{ od.scope }}</h4>
+					<h4><a href="{{ od.correspondence.url }}" target="__blank">{{ od.correspondence.name }}</a></h4>
+					<h5 class="card-title">Load Shifts</h5>
+					{% for lec, adjs in adjust_opts.items %}
+						<h6 class="card-title mt-2">{{ lec.lname.sname }}</h6>
+						<input type="hidden" name="leave_id" value="{{ leave_id }}">
+						<input type="hidden" name="lecture_id" value="{{ lec.id }}">
+						<select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id">
+							{% for faculty in adjs %}
+								<option value="{{ faculty.id }}">{{ faculty.username }}</option>
+							{% endfor %}
+						</select>
+					{% endfor %}
+              </form>
             {% elif errors %}
               <h4>{{ errors }}</h4>
             {% else %}

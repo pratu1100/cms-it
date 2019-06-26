@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect,HttpResponse
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,MakeupLecture,Year, Division, Room,IA, GuestLecture
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,MakeupLecture,Year, Division, Room,IA, GuestLecture, OD
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 import datetime
@@ -8,7 +8,8 @@ import time
 import json
 from django.core import serializers
 from django.core.files.storage import default_storage
-
+import os
+from django.conf import settings
 # # Update leave as approved by HOD
 # def update_leave(request, leave_id):  
 #     Leave.objects.filter(id=leave_id).update(is_approved=True)
@@ -317,10 +318,10 @@ def od(request):
 
 def submit_od(request):
 	if(request.method == 'POST'):
-		od_type = request.POST.get('od_type')
+		od_type = request.POST.get('od-type')
 		title = request.POST.get('title')
 		og_details = request.POST.get('og-details')
-		supporting_og = request.POST.get('Supporting_og')
+		supporting_og = request.POST.get('Supporting-og')
 		from_date = datetime.datetime.strptime(request.POST.get('from_date'),'%m/%d/%Y')
 		to_date = datetime.datetime.strptime(request.POST.get('to_date'),'%m/%d/%Y')
 		last_date = datetime.datetime.strptime(request.POST.get('last_date'),'%m/%d/%Y')
@@ -328,11 +329,36 @@ def submit_od(request):
 		print(request.FILES)
 		correspondence_filename = request.FILES[u'correspondence'].name
 		correspondence_file = request.FILES['correspondence']
+		taken_by = request.user
+		# with default_storage.open('od/correspondence/'+correspondence_filename,'wb+') as destination:
+		# 	for chunk in correspondence_file.chunks():
+		# 		destination.write(chunk)
 
-		with default_storage.open('tmp/'+correspondence_filename,'wb+') as destination:
-			for chunk in correspondence_file.chunks():
-				destination.write(chunk)
+		# print(settings.MEDIA_ROOT)
 
+		# # file = open(correspondence_file)
+		# path = os.path.join(settings.MEDIA_ROOT,'od','correspondence',correspondence_filename)
+		# file = open(path,'wb+')
+
+		scope = request.POST.get('scope')
+
+		new_od = OD(od_type = od_type, od_title = title, od_details = og_details, supporting_organisation = supporting_og, from_date = from_date, to_date = to_date, last_date = last_date, fees = fees,scope = scope, taken_by = taken_by)
+		new_od.correspondence.save(correspondence_filename,correspondence_file)
+		new_od.save()
 		
+		lecs = Lecture.objects.filter(lec_day__id__in = range(from_date.weekday(),to_date.weekday()+1)).filter(taken_by = taken_by)
+		print(lecs)
+		adjust_opts = dict()
+		for lec in lecs:
+			adjust_opts[lec] = User.objects.exclude(id__in = [x.taken_by.id for x in Lecture.objects.filter(lec_time__start_time__gte = lec.lec_time.start_time).filter(lec_time__end_time__lte = lec.lec_time.end_time)])
+		print(adjust_opts)
 
-		print(request.POST)
+		context_data = {
+			"adjust_opts" : adjust_opts,
+			"od" : new_od
+		}
+
+		# print(request.POST)
+
+		return render(request,"faculty/od.html",context_data)
+

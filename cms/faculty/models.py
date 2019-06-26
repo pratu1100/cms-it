@@ -156,10 +156,14 @@ class OD(models.Model):
 	last_date = models.DateField(auto_now = False,auto_now_add = False)
 	fees = models.IntegerField(null=True,blank=True)
 	scope = models.TextField(max_length=255,null=True,blank=True)
-	correspondence = models.FileField(upload_to = 'od/correspondence/')
+	correspondence = models.FileField(upload_to = 'od/correspondence/',null=True,blank=True)
+	taken_by = models.ForeignKey("auth.User",on_delete= models.CASCADE)
+	approved_status = models.BooleanField(default=False, null=False)
 
 	def __str__(self):
 		return self.od_type+"--"+self.od_title
 
+	def filename(self):
+		return str(self.correspondence.name).split('/')[-1]
 
 
