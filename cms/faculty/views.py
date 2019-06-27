@@ -362,3 +362,21 @@ def submit_od(request):
 
 		return render(request,"faculty/od.html",context_data)
 
+def submit_od_loadshift(request):
+	if(request.method == 'POST'):
+		print(request.POST)
+		if(request.POST.get('od_id')):
+			od = OD.objects.get(pk = request.POST.get('od_id'))
+			# print(request.POST.getlist('lecture_id'))
+			if(request.POST.getlist('lecture_id')):
+				for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
+					LoadShift.objects.get_or_create(od = od,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
+				context_data = {
+					"success" : True,
+				}
+		else:
+			context_data = {
+				"errors" : "Contact Admin"
+ 			}
+			print("No load shifts")
+	return render(request,"faculty/od.html",context_data)

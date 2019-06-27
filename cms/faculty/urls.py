@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import create_leave,submit_leave,submit_load_shift,get_makeup,post_makeup,get_ia,post_ia,get_timeslots,get_available_rooms,guestlecture,guestlecture_schedule,od,submit_od
+from .views import create_leave,submit_leave,submit_load_shift,get_makeup,post_makeup,get_ia,post_ia,get_timeslots,get_available_rooms,guestlecture,guestlecture_schedule,od,submit_od,submit_od_loadshift
 
 urlpatterns = [
     # path('approve/<int:leave_id>/', update_leave)
@@ -16,7 +16,8 @@ urlpatterns = [
   	path('guestlecture/',guestlecture,name="guestlecture"),
   	path('guestlecture/schedule',guestlecture_schedule,name="guestlecture_schedule"),
     path('od/',od,name="od"),
-    path('od/submit/',submit_od,name="submit_od")
+    path('od/submit/',submit_od,name="submit_od"),
+    path('od/submit/loadshift',submit_od_loadshift,name = "submit_od_loadshift"),
 ]
 
 

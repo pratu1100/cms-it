@@ -96,15 +96,6 @@ class Lecture(models.Model):
 	# 	self.validate_unique(self,*args, **kwargs)
 	# 	super(Lecture, self).save(*args, **kwargs)
 
-
-class LoadShift(models.Model):
-	leave = models.ForeignKey(Leave, on_delete=models.CASCADE)
-	to_faculty = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name="to_faculty")
-	for_lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name="to_lecture")
-	
-	def __str__(self):
-		return self.leave.leave_taken_by.username +"--"+self.to_faculty.username
-
 class MakeupLecture(models.Model):
 	year = models.ForeignKey(Year,on_delete = models.CASCADE)
 	division = models.ForeignKey(Division,on_delete = models.CASCADE)
@@ -167,3 +158,17 @@ class OD(models.Model):
 		return str(self.correspondence.name).split('/')[-1]
 
 
+class LoadShift(models.Model):
+	leave = models.ForeignKey(Leave, on_delete=models.CASCADE,null=True,blank=True)
+	to_faculty = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name="to_faculty")
+	for_lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name="to_lecture")
+	od = models.ForeignKey(OD, on_delete=models.CASCADE,null=True,blank=True)
+	
+
+	def __str__(self):
+		try:
+			return self.leave.leave_taken_by.username +"--"+self.to_faculty.username
+		except:
+			return self.od.taken_by.username +"--"+self.to_faculty.username
+		else:
+			return "Unknown"

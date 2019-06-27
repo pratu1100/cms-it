@@ -15,7 +15,7 @@
       <div class="col-sm-8 col-md-7">
           <div class="container border">
             {% if od %}
-              <form>
+              <form method="POST" action="{% url 'submit_od_loadshift' %}">
               	{% csrf_token %}
 					<h3>{{ od.od_type }}</h3>
 					<h4>{{ od.od_title }}</h4>
@@ -27,20 +27,27 @@
 					<h4><b>Fees : </b> {{ od.fees }}</h4>
 					<h4><b>Scope : </b> {{ od.scope }}</h4>
 					<h4><a href="{{ od.correspondence.url }}" target="__blank">{{ od.correspondence.name }}</a></h4>
-					<h5 class="card-title">Load Shifts</h5>
-					{% for lec, adjs in adjust_opts.items %}
-						<h6 class="card-title mt-2">{{ lec.lname.sname }}</h6>
-						<input type="hidden" name="leave_id" value="{{ leave_id }}">
-						<input type="hidden" name="lecture_id" value="{{ lec.id }}">
-						<select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id">
-							{% for faculty in adjs %}
+					<div class="card-body text-center">
+						<h5 class="card-title">Load Shifts</h5>
+							<input type="hidden" name="od_id" value="{{ od.id }}">
+							{% for lec, adjs in adjust_opts.items %}
+							<h6 class="card-title mt-2">{{ lec.lname.sname }}</h6>
+							<input type="hidden" name="lecture_id" value="{{ lec.id }}">
+							<select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id">
+								{% for faculty in adjs %}
 								<option value="{{ faculty.id }}">{{ faculty.username }}</option>
-							{% endfor %}
-						</select>
-					{% endfor %}
+								{% endfor %}
+							</select>
+						{% endfor %}
+				</div>
+				<div class="card-footer text-center">
+					<button type="submit" class="btn btn-info" id="option_submit">Apply</button>
+				</div>
               </form>
             {% elif errors %}
               <h4>{{ errors }}</h4>
+            {% elif success %}
+            	<h4>Success</h4>
             {% else %}
             <form action="{% url 'submit_od' %}" method="POST" enctype="multipart/form-data">
               {% csrf_token %}
