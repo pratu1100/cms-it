@@ -1,0 +1,59 @@
+{% extends '../base.html' %} 
+{% block content %}
+
+    <div class="d-flex justify-content-center mt-5 pt-5 align-items-center align-self-center">
+        <div class="row col-md-12 justify-content-center">
+            {% for od,loads in od_loads_pairs %}
+                <div class="card col-md-7 mb-3 shadow border-0 rounded">
+                <form method="POST" action="{% url 'approve_ods' %}">
+                {% csrf_token %}
+                <input type="hidden" name="od_id" value="{{ od.id }}">
+                    <div class="card-header bg-white">
+                        <h4 class="card-title text-center font-weight-bold"><u>{{ od.od_type }}</u></h4>
+                        <h4 class="card-title text-center font-weight-bold">{{ od.od_title }}</h4>
+                        <h6 class="card-title text-center font-weight-normal"><b>Applied by:</b> {{ od.taken_by }}</h6>
+                        <div class="row">
+                            <div class="col-md m-2 p-3 text-center">
+                                <p class="card-text font-weight-normal h6"><b>From Date : </b>{{ od.from_date }}</p>
+                                <p class="card-text font-weight-normal h6"><b>To Date : </b>{{ od.to_date }}</p>
+                            </div>  
+                        </div>
+                        <div>
+                        <p class="card-text text-center font-weight-normal h6"><b>Organisation : </b>{{ od.od_details }}</p>
+                    <p class="card-text text-center font-weight-normal h6"><b>Supporting Organisation : </b>{{ od.supporting_organisation }}</p>
+                    <p class="card-text text-center font-weight-normal h6"><b>Last : </b> {{ od.last_date }}</p>
+                    <p class="card-text text-center font-weight-normal h6"><b>Fees : </b> {{ od.fees }}</p>
+                    <p class="card-text text-center font-weight-normal h6"><b>Scope : </b> {{ od.scope }}</p>
+                    <p class="card-text text-center font-weight-normal h6"><a href="{{ od.correspondence.url }}" target="__blank">{{ od.correspondence.name }}</a></p>
+                        </div>
+                    </div>
+                    {% if loads %}
+                    <div class="card-body bg-white">
+                        <h4 class="card-title text-center">Load Shifts</h4>
+                        {% for load in loads %}
+                                <div class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-md m-2 p-3 text-center">
+                                            <p class="card-text font-weight-normal h6"><b>Lecture : </b>{{ load.for_lecture }}</p>
+                                            <p class="card-text font-weight-normal h6"><b>Faculty : </b>{{ load.to_faculty }}</p>
+                                        </div>
+                                        <div class="col-md m-2 p-3 text-center">
+                                            <p class="card-text font-weight-normal h6"><b>Day : </b>{{ load.for_lecture.lec_day }}</p>
+                                            <p class="card-text font-weight-normal h6"><b>Time : </b>{{ load.for_lecture.lec_time }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="card-footer text-center bg-white">
+                        <button class="btn btn-danger" type="submit" name="_reject">Reject</button>
+                        <button class="btn btn-success" type="submit" name="_approve">Approve</button>
+                    </div>
+                </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock  %} 
+

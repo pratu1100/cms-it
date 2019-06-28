@@ -17,7 +17,7 @@ urlpatterns = [
   	path('guestlecture/schedule',guestlecture_schedule,name="guestlecture_schedule"),
     path('od/',od,name="od"),
     path('od/submit/',submit_od,name="submit_od"),
-    path('od/submit/loadshift',submit_od_loadshift,name = "submit_od_loadshift"),
+    path('od/submit/loadshift',submit_od_loadshift,name ="submit_od_loadshift"),
 ]
 
 
