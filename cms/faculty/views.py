@@ -10,6 +10,8 @@ from django.core import serializers
 from django.core.files.storage import default_storage
 import os
 from django.conf import settings
+from django.core.mail import send_mail
+
 # # Update leave as approved by HOD
 # def update_leave(request, leave_id):  
 #     Leave.objects.filter(id=leave_id).update(is_approved=True)
@@ -66,6 +68,15 @@ def submit_load_shift(request):
 			if(request.POST.getlist('lecture_id')):
 				for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
 					LoadShift.objects.get_or_create(leave = leave,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
+					# Email notificaion
+
+					subject = 'New Load Shift request'
+					message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
+					email_from = settings.EMAIL_HOST_USER
+					recipient_list = []
+					recipient_list.append(User.objects.get(pk = faculty_id).email)
+					send_mail(subject, message, email_from, recipient_list,fail_silently = False)
+
 		else:
 			print("No load shifts")
 		# print(user.username)
@@ -371,6 +382,17 @@ def submit_od_loadshift(request):
 			if(request.POST.getlist('lecture_id')):
 				for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
 					LoadShift.objects.get_or_create(od = od,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
+		
+					# Email notificaion
+
+					subject = 'New Load Shift request'
+					message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(od.taken_by.username)
+					email_from = settings.EMAIL_HOST_USER
+					recipient_list = []
+					recipient_list.append(User.objects.get(pk = faculty_id).email)
+					send_mail(subject, message, email_from, recipient_list,fail_silently = False)
+
+
 				context_data = {
 					"success" : True,
 				}
@@ -380,3 +402,15 @@ def submit_od_loadshift(request):
  			}
 			print("No load shifts")
 	return render(request,"faculty/od.html",context_data)
+
+
+def send_email(request):
+	subject = 'Test Mail'
+	message = 'This is a test mail from admin'
+	email_from = settings.EMAIL_HOST_USER
+	recipient_list = ['harshal.pm@somaiya.edu',]
+
+	send_mail(subject, message, email_from, recipient_list,fail_silently = False)
+
+	return HttpResponse("Success")
+
