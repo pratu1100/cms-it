@@ -38,23 +38,21 @@
 								</div>
 								<div class="col">
 									<div class="form-group">
-										<label for="leave_start_time">Start Time</label>
-										<input type="time" class="form-control" name="leave_start_time" placeholder="Enter Start Time">
+										<label for="leave_end_date">End Date</label>
+										<input type="text" class="form-control" data-provide="datepicker" data-date-format="dd/mm/yyyy" autocomplete="off" name="leave_end_date">
 									</div>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col">
 									<div class="form-group">
-										<label for="leave_end_date">End Date</label>
-										<input type="text" class="form-control" data-provide="datepicker" data-date-format="dd/mm/yyyy" autocomplete="off" name="leave_end_date">
-									</div>
-								</div>
-								<div class="col">
-									<div class="form-group">
-										<label for="leave_end_time">End Time</label>
-										<input type="time" class="form-control" name="leave_end_time" placeholder="Enter End Time">
-									</div>
+								<select class="form-control form-control-alternative" name="duration" required>
+									<option value="-1" disabled selected>Duration</option>
+									<option value="full">Full Day</option>
+									<option value="first_half">First half</option>
+									<option value="second_half">Second half</option>
+								</select>
+							</div>
 								</div>
 							</div>
 						</div>
@@ -109,6 +107,5 @@
 			Click on the add button to apply for a leave!
 			{% endif %}
 		</div>
-	</div>	
-
+	</div>
 {% endblock %}

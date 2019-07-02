@@ -27,8 +27,20 @@ def submit_leave(request):
 		user = User.objects.get(pk = request.user.id)
 		start_date_val = request.POST.get('leave_start_date')
 		end_date_val = request.POST.get('leave_end_date')	
-		start_time_val = request.POST.get('leave_start_time')
-		end_time_val = request.POST.get('leave_end_time')
+		duration = request.POST.get('duration')
+		start_time_val = ''
+		end_time_val = ''
+		if(duration == 'full'):
+			start_time_val = '10:30'
+			end_time_val = '17:15'
+		elif(duration == 'first_half'):
+			start_time_val = '10:30'
+			end_time_val = '01:15'
+		elif(duration == 'second_half'):
+			start_time_val = '01:15'
+			end_time_val = '17:15'
+		else:
+			return HttpResponse("Contact Admin")
 		start_date_time = start_date_val + 'T' + start_time_val
 		end_date_time = end_date_val + 'T' + end_time_val
 		# Python date time objects
@@ -37,10 +49,10 @@ def submit_leave(request):
 		lecs = Lecture.objects.filter(lec_day__id__in = range(start_date.weekday(),end_date.weekday()+1)).filter(taken_by = user).filter(lec_time__start_time__gte = datetime.datetime.time(start_date)).filter(lec_time__end_time__lte = datetime.datetime.time(end_date))
 		adjust_opts = dict()
 		new_leave = Leave.objects.get_or_create(leave_taken_by = user,leave_start_date=start_date.date(),leave_end_date = end_date.date(),leave_start_time=start_date.time(),leave_end_time = end_date.time())
-		print("####",new_leave)
+		# print("####",new_leave)
 		for lec in lecs:
 			adjust_opts[lec] = User.objects.exclude(id__in = [x.taken_by.id for x in Lecture.objects.filter(lec_time__start_time__gte = lec.lec_time.start_time).filter(lec_time__end_time__lte = lec.lec_time.end_time)])
-		print(adjust_opts)
+		# print(adjust_opts)
 		context_data ={
 			"start_date" : start_date_val,
 			"end_date" : end_date_val,
@@ -60,11 +72,11 @@ def submit_load_shift(request):
 	user = User.objects.get(pk = request.user.id)
 	load_shifts = LoadShift.objects.filter(to_faculty = user)
 	if request.method == 'POST':
-		print(request.POST)
+		# print(request.POST)
 		if(request.POST.get('leave_id')):
 			leave = Leave.objects.get(pk = request.POST.get('leave_id'))
-			print(leave)
-			print(request.POST.getlist('lecture_id'))
+			# print(leave)
+			# print(request.POST.getlist('lecture_id'))
 			if(request.POST.getlist('lecture_id')):
 				for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
 					LoadShift.objects.get_or_create(leave = leave,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
@@ -88,7 +100,7 @@ def submit_load_shift(request):
 def get_makeup(request):
 	days = DaysOfWeek.objects.all().exclude(day_name__in = ('Sunday','Saturday'))
 	m_lecs = MakeupLecture.objects.filter(lec_date__lte = datetime.datetime.now()+datetime.timedelta(days = 7))
-	print("$#$#$#",m_lecs)
+	# print("$#$#$#",m_lecs)
 	years = Year.objects.all()
 	divions = Division.objects.all()
 	subjects = Subject.objects.all()
@@ -100,7 +112,7 @@ def get_makeup(request):
 	free = dict()
 
 	for day in days:
-		print(day.id)
+		# print(day.id)
 		# m_lecs = MakeupLecture.objects.filter(lec_date__week_day = day.id)
 		free_ts = list()
 		for timeslot in timeslots:
@@ -127,14 +139,14 @@ def get_makeup(request):
 def post_makeup(request):
 	success = False
 	if(request.method == "POST"):
-		print(request.POST)
+		# print(request.POST)
 		year = Year.objects.get(pk = int(request.POST.get('year')))
 		subject = Subject.objects.get(pk = int(request.POST.get('subject')))
 		division = Division.objects.get(pk = int(request.POST.get('division')))
 		date = datetime.datetime.strptime(request.POST.get('makeup_date'),'%m/%d/%Y')
 		timeslot = TimeSlot.objects.get(pk = int(request.POST.get('timeslot')))
 		user = User.objects.get(pk = request.user.id)
-		print(year,"--",subject,"--",division,"--",date,"--",timeslot)
+		# print(year,"--",subject,"--",division,"--",date,"--",timeslot)
 		makeup_lec = MakeupLecture(year = year, lec_subject = subject, division = division,lec_date = date, lec_time = timeslot, lec_taken_by = user)
 		try:
 			makeup_lec.full_clean()
@@ -144,7 +156,7 @@ def post_makeup(request):
 				"success" : success ,
 			}
 		except Exception as e:
-			print("Cannnot save",e)
+			# print("Cannnot save",e)
 			success = False
 			context_data = {
 				"errors" : success ,
@@ -167,8 +179,8 @@ def post_makeup(request):
 # 	return HttpResponse("<h1>Test</h1>")
 
 def get_timeslots(request,syear,sdate):
-	print(syear)
-	print(sdate)
+	# print(syear)
+	# print(sdate)
 
 	if(syear!='-1'):
 		year = Year.objects.get(pk = int(syear))
@@ -208,14 +220,14 @@ def get_timeslots(request,syear,sdate):
 		# 	"timeslots" : ts_json,
 		# 	"rooms" : rooms_json
 		# }
-		print(ts_json)
+		# print(ts_json)
 		return HttpResponse(ts_json)
 	else:
 		return HttpResponse("Select Year")
 
 def get_available_rooms(request,sdate,slot):
-	print(sdate)
-	print(slot)
+	# print(sdate)
+	# print(slot)
 	if(slot!='-1'):
 		date = datetime.datetime.strptime(sdate,'%Y-%m-%d')
 		day = DaysOfWeek.objects.get(day_name = date.strftime('%A'))
@@ -255,7 +267,7 @@ def get_ia(request):
 
 def post_ia(request):
 	if(request.method == 'POST'):
-		print(request.POST)
+		# print(request.POST)
 		year = Year.objects.get(pk = int(request.POST.get('year')))
 		subject = Subject.objects.get(pk = int(request.POST.get('subject')))
 		date = datetime.datetime.strptime(request.POST.get('ia_date'),'%m/%d/%Y')
@@ -265,7 +277,7 @@ def post_ia(request):
 		try:
 			ia = IA(ia_year = year, ia_subject = subject,ia_date = date,ia_time = timeslot,ia_in = room)
 			ia.full_clean()
-			print(ia)
+			# print(ia)
 			ia.save()
 
 			context_data = {
@@ -296,7 +308,7 @@ def guestlecture(request):
 
 def guestlecture_schedule(request):
 	if(request.method == 'POST'):
-		print(request.POST)
+		# print(request.POST)
 		year = Year.objects.get(pk = int(request.POST.get('year')))
 		subject = Subject.objects.get(pk = int(request.POST.get('subject')))
 		date = datetime.datetime.strptime(request.POST.get('date'),'%m/%d/%Y')
@@ -306,7 +318,7 @@ def guestlecture_schedule(request):
 		try:
 			guest_lecture = GuestLecture(lec_year = year, lec_subject = subject,lec_date = date,lec_time = timeslot,lec_in = room)
 			guest_lecture.full_clean()
-			print(guest_lecture)
+			# print(guest_lecture)
 			guest_lecture.save()
 
 			context_data = {
@@ -337,7 +349,7 @@ def submit_od(request):
 		to_date = datetime.datetime.strptime(request.POST.get('to_date'),'%m/%d/%Y')
 		last_date = datetime.datetime.strptime(request.POST.get('last_date'),'%m/%d/%Y')
 		fees = request.POST.get('fees')
-		print(request.FILES)
+		# print(request.FILES)
 		correspondence_filename = request.FILES[u'correspondence'].name
 		correspondence_file = request.FILES['correspondence']
 		taken_by = request.user
@@ -358,11 +370,11 @@ def submit_od(request):
 		new_od.save()
 		
 		lecs = Lecture.objects.filter(lec_day__id__in = range(from_date.weekday(),to_date.weekday()+1)).filter(taken_by = taken_by)
-		print(lecs)
+		# print(lecs)
 		adjust_opts = dict()
 		for lec in lecs:
 			adjust_opts[lec] = User.objects.exclude(id__in = [x.taken_by.id for x in Lecture.objects.filter(lec_time__start_time__gte = lec.lec_time.start_time).filter(lec_time__end_time__lte = lec.lec_time.end_time)])
-		print(adjust_opts)
+		# print(adjust_opts)
 
 		context_data = {
 			"adjust_opts" : adjust_opts,
@@ -375,7 +387,7 @@ def submit_od(request):
 
 def submit_od_loadshift(request):
 	if(request.method == 'POST'):
-		print(request.POST)
+		# print(request.POST)
 		if(request.POST.get('od_id')):
 			od = OD.objects.get(pk = request.POST.get('od_id'))
 			# print(request.POST.getlist('lecture_id'))
@@ -400,7 +412,7 @@ def submit_od_loadshift(request):
 			context_data = {
 				"errors" : "Contact Admin"
  			}
-			print("No load shifts")
+			# print("No load shifts")
 	return render(request,"faculty/od.html",context_data)
 
 

@@ -27,7 +27,7 @@ def get_leaves(request):
 		context_data = {
 			'leave_loads_pairs' : leave_loads_pairs
 		}
-		print(context_data)
+		# print(context_data)
 
 		return render(request, 'hod/leaves.html', context_data)
 

@@ -83,16 +83,16 @@ def get_timetable(request):
 		t_year = Year.objects.filter(year = request.POST.get('yearopt'))[0]
 		t_div = Division.objects.filter(division = request.POST.get('divopt'))[0]
 		t_day = DaysOfWeek.objects.filter(day_name = request.POST.get('dayopt'))[0]
-		print(request.POST)
+		# print(request.POST)
 		ts = TimeSlot.objects.all();
 		for t in ts:
 			tavail = request.POST.get(str(t))
 			if(tavail!='0' and tavail!=None):
-				print(t)
-				print("###")
-				print(tavail)
-				print(tavail.split("-")[0])
-				print(tavail.split("-")[1])
+				# print(t)
+				# print("###")
+				# print(tavail)
+				# print(tavail.split("-")[0])
+				# print(tavail.split("-")[1])
 
 				u = User.objects.get(pk= int(tavail.split("-")[1]))
 				s = Subject.objects.filter(sname = tavail.split("-")[0])[0]
@@ -103,16 +103,16 @@ def get_timetable(request):
 				rooms_for_lecture = list()
 				for batch in batches:
 					try:
-						print(request.POST.get(str(t)+"-"+str(batch.batch)))
+						# print(request.POST.get(str(t)+"-"+str(batch.batch)))
 						r = Room.objects.get(pk = int(request.POST.get(str(t)+"-"+str(batch.batch))))
 						# rooms_for_lecture.append(Room.objects.get(pk = int(request.POST.get(str(t)+"-"+str(batch.batch)))))
-						print(r)
+						# print(r)
 						try:
 							lec = Lecture(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div, lec_in = r, lec_batch = batch)
 							lec.full_clean()
 							lec.save()
 						except:
-							print("Already exist at same time")
+							# print("Already exist at same time")
 							errors = 'Conflicting timeslot ' + str(t)
 					except:
 						print("No ts")
