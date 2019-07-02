@@ -15,7 +15,6 @@ Pipfile.lock
 *.pyc
 __pycache__/
 local_settings.py
-cms/db.sqlite3
 media
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
