@@ -1,5 +1,7 @@
 dj-database-url==0.5.0
 Django==2.2.1
+django-mailer==1.2.6
+lockfile==0.12.2
 python-decouple==3.1
 pytz==2019.1
 sqlparse==0.3.0

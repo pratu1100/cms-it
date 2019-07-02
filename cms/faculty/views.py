@@ -10,7 +10,7 @@ from django.core import serializers
 from django.core.files.storage import default_storage
 import os
 from django.conf import settings
-from django.core.mail import send_mail
+from mailer import send_mail
 
 # # Update leave as approved by HOD
 # def update_leave(request, leave_id):  
