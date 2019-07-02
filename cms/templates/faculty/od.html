@@ -2,9 +2,9 @@
 {% load static %}
 
 {% block nav-content %}
-	<li class="nav-item" role="presentation">
-		<a class="nav-link pr-3" href="{% url 'request_leave' %}" style="color: white;">IA</a>
-	</li>
+<li class="nav-item" role="presentation">
+	<a class="nav-link pr-3" href="{% url 'request_leave' %}" style="color: white;">IA</a>
+</li>
 {% endblock %}
 
 {% block content %}
@@ -12,11 +12,11 @@
 	<div class="row mt-3 ml-2">
 		{% include '../includes/sidebar.html' %}
 
-      <div class="col-sm-8 col-md-7">
-          <div class="container border">
-            {% if od %}
-              <form method="POST" action="{% url 'submit_od_loadshift' %}">
-              	{% csrf_token %}
+		<div class="col-sm-8 col-md-7">
+			<div class="container border mb-5">
+				{% if od %}
+				<form method="POST" action="{% url 'submit_od_loadshift' %}">
+					{% csrf_token %}
 					<h3>{{ od.od_type }}</h3>
 					<h4>{{ od.od_title }}</h4>
 					<h4>{{ od.od_details }}</h4>
@@ -29,62 +29,143 @@
 					<h4><a href="{{ od.correspondence.url }}" target="__blank">{{ od.correspondence.name }}</a></h4>
 					<div class="card-body text-center">
 						<h5 class="card-title">Load Shifts</h5>
-							<input type="hidden" name="od_id" value="{{ od.id }}">
-							{% for lec, adjs in adjust_opts.items %}
-							<h6 class="card-title mt-2">{{ lec.lname.sname }}</h6>
-							<input type="hidden" name="lecture_id" value="{{ lec.id }}">
-							<select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id">
-								{% for faculty in adjs %}
-								<option value="{{ faculty.id }}">{{ faculty.username }}</option>
-								{% endfor %}
-							</select>
+						<input type="hidden" name="od_id" value="{{ od.id }}">
+						{% for lec, adjs in adjust_opts.items %}
+						<h6 class="card-title mt-2">{{ lec.lname.sname }}</h6>
+						<input type="hidden" name="lecture_id" value="{{ lec.id }}">
+						<select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id">
+							{% for faculty in adjs %}
+							<option value="{{ faculty.id }}">{{ faculty.username }}</option>
+							{% endfor %}
+						</select>
 						{% endfor %}
-				</div>
-				<div class="card-footer text-center">
-					<button type="submit" class="btn btn-info" id="option_submit">Apply</button>
-				</div>
-              </form>
-            {% elif errors %}
-              <h4>{{ errors }}</h4>
-            {% elif success %}
-            	<h4>Success</h4>
-            {% else %}
-            <form action="{% url 'submit_od' %}" method="POST" enctype="multipart/form-data">
-              {% csrf_token %}
-              <label>Attending : </label>
-              <select name="od-type" required>
-              	<option value="-1">Select Attending</option>
-              	<option value="STTP">STTP</option>
-              	<option value="Symposium">Symposium</option>
-              	<option value="Workshop">Workshop</option>
-              	<option value="Conference">Conference</option>
-              	<option value="Seminar">Seminar</option>
-              </select>
-              <label>Title</label>
-              <input type="text" name="title" required>
-              <label>Name and Address : </label>
-              <textarea name ="og-details" placeholder="Enter name and Address of the ogranisation"></textarea>
-              <label>Supporting Ogranisation</label>
-              <input type="text" name="Supporting-og">
-              <label>Date and Duration</label>
-              <label> FROM </label>
-              <input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="from_date" data-date-start-date="0d">
-              <label>TO</label>
-              <input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="to_date" data-date-start-date="0d">
-              <label>Last date of registration</label>
-              <input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="last_date" data-date-start-date="0d">
-              <label>Registration Fee</label>
-              <input type="text" name="fees">
-              <label>Attach email or correspondence</label>
-              <input type="file" name="correspondence">
-              <label>Purpose/Scope</label>
-              <textarea name="scope" placeholder="Purpose or Scope for attending"></textarea>
-              <input type="submit" value="Submit">
-            </form>
-          	{% endif %}
-          </div>
-      </div>
- 
-    </div>
-  </main>
+					</div>
+					<div class="card-footer text-center">
+						<button type="submit" class="btn btn-info" id="option_submit">Apply</button>
+					</div>
+				</form>
+				{% elif errors %}
+				<h4>{{ errors }}</h4>
+				{% elif success %}
+				<h4>Success</h4>
+				{% else %}
+				<form action="{% url 'submit_od' %}" method="POST" enctype="multipart/form-data">
+					{% csrf_token %}
+					<p class="d-block font-weight-bold mb-3 mt-4 ml-2">OD details</p>
+					<div class="row">
+						<div class="col-md-6">
+							<small class="d-block font-weight-bold mb-1 ml-2">Attending</small>
+							<div class="form-group">
+								<select class="form-control form-control-alternative" name="od-type" required>
+									<option value="-1" disabled selected>Select Attending</option>
+									<option value="STTP">STTP</option>
+									<option value="Symposium">Symposium</option>
+									<option value="Workshop">Workshop</option>
+									<option value="Conference">Conference</option>
+									<option value="Seminar">Seminar</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<small class="d-block font-weight-bold mb-1 ml-2">Title</small>
+							<div class="form-group">
+								<input class="form-control form-control-alternative" placeholder="Title" type="text" name="title" required>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<small class="d-block font-weight-bold mb-1 ml-2">Name & Address</small>
+							<div class="form-group">
+								<textarea class="form-control form-control-alternative" rows="3" name="og-details" placeholder="Enter name and Address of the ogranisation"></textarea>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<small class="d-block font-weight-bold mb-1 ml-2">Supporting Ogranisation</small>
+							<div class="form-group">
+								<input class="form-control form-control-alternative" placeholder="Supporting Ogranisation" type="text" name="Supporting-og">
+							</div>
+						</div>
+					</div>
+
+
+					<p class="d-block font-weight-bold mb-3 mt-3 ml-2">Date & Duration</p>
+					<div class="row">
+						<div class="col-md-6">
+							<small class="d-block font-weight-bold mb-1 ml-2">From</small>
+							<div class="form-group">
+								<div class="input-group input-group-alternative">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+									</div>
+									<input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
+									data-date-format="mm/dd/yyyy" autocomplete="off" name="from_date" data-date-start-date="0d">
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<small class="d-block font-weight-bold mb-1 ml-2">To</small>
+							<div class="form-group">
+								<div class="input-group input-group-alternative">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+									</div>
+									<input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
+									data-date-format="mm/dd/yyyy" autocomplete="off" name="to_date" data-date-start-date="0d">
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<small class="d-block font-weight-bold mb-1 ml-2">Last date of registration</small>
+							<div class="form-group">
+								<div class="input-group input-group-alternative">
+									<div class="input-group-prepend">
+										<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+									</div>
+									<input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
+									data-date-format="mm/dd/yyyy" autocomplete="off" name="last_date" data-date-start-date="0d">
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<p class="d-block font-weight-bold mb-3 mt-3 ml-2">Extra</p>
+					<div class="row">
+						<div class="col-md-6">
+							<small class="d-block font-weight-bold mb-1 ml-2">Registration Fee</small>
+							<div class="form-group">
+								<input class="form-control form-control-alternative" placeholder="Registration Fee" type="text" name="fees">
+							</div>
+
+							<small class="d-block font-weight-bold mb-1 ml-2">Attach email or correspondence</small>
+							<div class="form-group">
+								<input class="form-control form-control-alternative" type="file" name="correspondence">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<small class="d-block font-weight-bold mb-1 ml-2">Purpose/Scope</small>
+							<div class="form-group">
+								<textarea class="form-control form-control-alternative" rows="6" name="scope"
+								placeholder="Purpose or Scope for attending"></textarea>
+							</div>
+						</div>
+					</div>
+
+					<div class="row mb-3">
+						<div class="col-md-12 d-flex justify-content-center align-items">
+							<button type="submit" class="btn btn-primary">Submit</button>
+						</div>
+					</div>
+
+				</form>
+				{% endif %}
+			</div>
+		</div>
+
+	</div>
+</main>
 {% endblock %}
