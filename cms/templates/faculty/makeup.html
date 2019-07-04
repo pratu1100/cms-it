@@ -2,145 +2,142 @@
 {% load static %}
 
 {% block nav-content %}
-	<li class="nav-item" role="presentation">
-		<a class="nav-link pr-3" href="{% url 'request_leave' %}" style="color: white;">Makeup</a>
-	</li>
+<li class="nav-item" role="presentation">
+	<a class="nav-link pr-3" href="{% url 'request_leave' %}" style="color: white;">Makeup</a>
+</li>
 {% endblock %}
 
 {% block content %}
 <main>
-    <div class="row mt-3 ml-2">
-      {% include '../includes/sidebar.html' %}
-      <div class="col-sm-8 col-md-7">
-          <div class="container border">
-          	{% if success %}
+	<div class="row mt-3 ml-2">
+		{% include '../includes/sidebar.html' %}
+
+		<div class="col-sm-8 col-md-7">
+			<div class="container border">
+				{% if success %}
 				<h4>Reserved</h4>
-			{% elif errors %}
+				{% elif errors %}
 				<h4>Cannot reserve contact admin</h4>
-			{% else %}
-          	<form method="POST" action="{% url 'reserve' %}">
-			{% csrf_token %}
-            <div class="title text-center mt-2">
-              <p class="h4 font-weight-bold text-dark">Reserve</p>
-            </div>
-            <!-- Year -->
-            <div class="year text-center">
-              <div class="year-text">
-                <p class="h5 text-dark">Year: </p>
-              </div>
-              <div class="year-dropdown">
-                <div class="dropdown">
-                  <select class="custom-select text-dark" name="year">
-                  	<option class="text-dark" value="-1">Please Select</option>
-                  	{% for year in years %}
-						<option class="text-dark" value="{{ year.id }}">{{ year }}</option>
-					{% endfor %}
-                  </select>
-                </div>
-              </div>
-            </div>
-            <!-- Division -->
-            <div class="lecture text-center mt-4">
-              <div class="lecture-text">
-                <p class="h5 text-dark">Division: </p>
-              </div>
-              <div class="lecture-dropdown">
-                <div class="dropdown">
-                  <select class="custom-select text-dark" name="division">
-                  	<option class="text-dark" value="-1">Please Select</option>
-                  	{% for div in divisions %}
-                  		<option class="text-dark" value="{{ div.id }}">{{ div }}</option>
-					{%  endfor %}
-                  </select>
-                </div>
-              </div>
-            </div>
-            <!-- Subject -->
-            <div class="lecture text-center mt-4">
-              <div class="lecture-text">
-                <p class="h5 text-dark">Subject: </p>
-              </div>
-              <div class="lecture-dropdown">
-                <div class="dropdown">
-                  <select class="custom-select text-dark" name="subject">
-                  </select>
-                </div>
-              </div>
-            </div>
-			
-			<!-- Day -->
-			<div class="day text-center mt-4">
-              <div class="day-text">
-                <p class="h5 text-dark">Day: </p>
-              </div>
-              <div class="slot-dropdown">
-                <div class="dropdown">
-                 	<input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="makeup_date" data-date-end-date="+7d" data-date-start-date="0d">
-                </div>
-              </div>
-            </div>
+				{% else %}
+				<form method="POST" action="{% url 'reserve' %}">
+					{% csrf_token %}
+					<div class="col-md-12 d-flex justify-content-center align-items">
+						<p class="d-block font-weight-bold mb-3 mt-4 ml-2">Reserve</p>
+					</div>
+					{% comment %} <div class="title text-center mt-2">
+						<p class="h4 font-weight-bold text-dark">Reserve</p>
+					</div> {% endcomment %}
+					<!-- Year -->
+					<div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <small class="d-block font-weight-bold mb-1 ml-2">Year</small>
+                                <select class="form-control form-control-alternative" name="year" required>
+                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                    {% for year in years %}
+                                        <option class="text-dark" value="{{ year.id }}">{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <small class="d-block font-weight-bold mb-1 ml-2">Division</small>
+                                <select class="form-control form-control-alternative" name="division" required>
+                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                    {% for div in divisions %}
+										<option class="text-dark" value="{{ div.id }}">{{ div }}</option>
+									{%  endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- Slot -->
-            <div class="slot text-center mt-4">
-              <div class="slot-text">
-                <p class="h5 text-dark">Slot: </p>
-              </div>
-              <div class="slot-dropdown">
-                <div class="dropdown">
-                  <select class="custom-select text-dark" name="timeslot">
-                  </select>
-                </div>
-              </div>
-            </div>
+					<div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <small class="d-block font-weight-bold mb-1 ml-2">Subject</small>
+                                <select class="form-control form-control-alternative" name="subject" required>
+                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                </select>
+                            </div>
+                        </div>
+						<div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">Day</small>
+                            <div class="form-group">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
+									data-date-format="mm/dd/yyyy" autocomplete="off" name="makeup_date"
+									data-date-end-date="+7d" data-date-start-date="0d">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="text-center">
-              <input type="submit"  style="background-color: #481380;" class="btn my-5 mr-3 text-white" value="Reserve" />
-            </div>
-          </div>
-      </div>
-  	</form>
-  	{% endif %}
-    </div>
-  </main>
+					<div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <small class="d-block font-weight-bold mb-1 ml-2">Slot</small>
+                                <select class="form-control form-control-alternative" name="timeslot" required>
+                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12 d-flex justify-content-center align-items">
+                            <button type="submit" class="btn btn-primary">Reserve</button>
+                        </div>
+                    </div>
+			</div>
+		</div>
+		</form>
+		{% endif %}
+	</div>
+</main>
 
 
-	
+
 <script>
-$(document).ready(function(){
+	$(document).ready(function () {
 		day = $('[name = makeup_date ]');
 		// console.log("{{ request.user }}")
 		year = $('[name = year]');
 
-		year.change(function(){
+		year.change(function () {
 			console.log("{{ request.user }}")
 			$('[name=subject]').empty();
 			var html = "";
 			{% for subject in subjects %}
-				if("{{ subject.year.id }}" == $(this).val()){
+				if ("{{ subject.year.id }}" == $(this).val()) {
 					{% for faculty in subject.teaching_faculty.all %}
 						{% if faculty == request.user %}
-							html+="<option class='text-dark' value={{subject.id}}>{{ subject }}</option>"
+							html += "<option class='text-dark' value={{subject.id}}>{{ subject }}</option>"
 						{% endif %}
 					{% endfor %}
-
 				}
 			{% endfor %}
 			$('[name=subject]').append(html);
 		})
 
-		day.change(function(){
-			$('[name = "timeslot"]').empty();				
+		day.change(function () {
+			$('[name = "timeslot"]').empty();
 
 			newd = new Date($('[name = makeup_date]').val());
-			let weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][newd.getDay()];
+			let weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][
+				newd.getDay()
+			];
 			console.log(weekday)
 			var options = "";
-			{% for day,slots in free_slots.items %}
-
-				if("{{ day.day_name }}" == weekday){
+			{% for day, slots in free_slots.items %}
+				if ("{{ day.day_name }}" == weekday) {
 					{% for slot in slots %}
-					console.log("{{ slot }}")
-					options+= "<option class='text-dark' value='{{ slot.id }}'>{{ slot }}</option>"
+						console.log("{{ slot }}")
+						options += "<option class='text-dark' value='{{ slot.id }}'>{{ slot }}</option>"
 					{% endfor %}
 				}
 			{% endfor %}
@@ -148,27 +145,26 @@ $(document).ready(function(){
 			$('[name = "timeslot"]').append(options);
 			$('[name = "timeslot"]').show();
 
-
 		})
 
 
-			// var html = "";
-			// {% for slot in free_slots %}
-			// 	html+="<option value='{{ slot }}'>{{ slot }}</option>";
-			// {% endfor %}
-			// day.append(html)
-			// day.change(function(){
-			// 	console.log($('[name = makeup_date]').val())
-			// 	newd = new Date($('[name = makeup_date]').val());
-			// 	console.log(newd)
-			// 	console.log($(this).val())
-			// 	$('[name = "timeslot"]').empty();				
-				
+		// var html = "";
+		// {% for slot in free_slots %}
+		// 	html+="<option value='{{ slot }}'>{{ slot }}</option>";
+		// {% endfor %}
+		// day.append(html)
+		// day.change(function(){
+		// 	console.log($('[name = makeup_date]').val())
+		// 	newd = new Date($('[name = makeup_date]').val());
+		// 	console.log(newd)
+		// 	console.log($(this).val())
+		// 	$('[name = "timeslot"]').empty();
 
 
-			// })
-		
+
+		// })
+
 	});
-	</script>
+</script>
 
 {% endblock %}

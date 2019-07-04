@@ -2,165 +2,242 @@
 {% load static %}
 
 {% block nav-content %}
-	<li class="nav-item" role="presentation">
-		<a class="nav-link pr-3" href="{% url 'request_leave' %}" style="color: white;">IA</a>
-	</li>
+<li class="nav-item" role="presentation">
+    <a class="nav-link pr-3" href="{% url 'request_leave' %}" style="color: white;">IA</a>
+</li>
 {% endblock %}
 
 {% block content %}
 <main>
     <div class="row mt-3 ml-2">
-      {% include '../includes/sidebar.html' %}
-      
-      <div class="col-sm-8 col-md-7">
-          <div class="container border">
-            {% if success %}
-              <h4>Success</h4>
-            {% elif errors %}
-              <h4>{{ errors }}</h4>
-            {% else %}
-            <form method="POST" action="{% url 'guestlecture_schedule' %}">
-              {% csrf_token %}
-              <!-- Year -->
-            <div class="year text-center">
-              <div class="year-text">
-                <p class="h5 text-dark">Year: </p>
-              </div>
-              <div class="year-dropdown">
-                <div class="dropdown">
-                  <select class="custom-select text-dark" name="year">
-                    <option class="text-dark" value="-1">Please Select</option>
-                    {% for year in years %}
-                      <option class="text-dark" value="{{ year.id }}">{{ year }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-            </div>
-              
-              <!-- Subject -->
-            <div class="lecture text-center mt-4">
-              <div class="lecture-text">
-                <p class="h5 text-dark">Subject: </p>
-              </div>
-              <div class="lecture-dropdown">
-                <div class="dropdown">
-                  <select class="custom-select text-dark" name="subject" required>
-                  </select>
-                </div>
-              </div>
-            </div>
-              <!-- Day -->
-            <div class="day text-center mt-4">
-              <div class="day-text">
-                <p class="h5 text-dark">Date: </p>
-              </div>
-              <div class="slot-dropdown">
-                <div class="dropdown">
-                  <input type="text" class="form-control text-dark" data-provide="datepicker" data-date-format="mm/dd/yyyy" autocomplete="off" name="date" data-date-start-date="0d">
-                </div>
-              </div>
-            </div>
-                <!-- Slot -->
-            <div class="slot text-center mt-4">
-              <div class="slot-text">
-                <p class="h5 text-dark">Timeslot: </p>
-              </div>
-              <div class="slot-dropdown">
-                <div class="dropdown">
-                  <select class="custom-select text-dark" name="timeslot">
-                  </select>
-                </div>
-              </div>
-            </div>
+        {% include '../includes/sidebar.html' %}
 
-            <!-- Room -->
-            <div class="room text-center mt-4">
-              <div class="room-text">
-                <p class="h5 text-dark">Room: </p>
-              </div>
-              <div class="room-dropdown">
-                <div class="dropdown">
-                  <select class="custom-select text-dark" name="locations">
-                  </select>
-                </div>
-              </div>
-            </div>
+        <div class="col-sm-8 col-md-7">
+            <div class="container border">
+                {% if success %}
+                <h4>Success</h4>
+                {% elif errors %}
+                <h4>{{ errors }}</h4>
+                {% else %}
+                <form method="POST" action="{% url 'guestlecture_schedule' %}">
+                    {% csrf_token %}
+                    <div class="col-md-12 d-flex justify-content-center align-items">
+                        <p class="d-block font-weight-bold mb-3 mt-4 ml-2">Create Guest lecture</p>
+                    </div>
 
-            <div class="text-center">
-              <input type="submit"  style="background-color: #481380;" class="btn my-5 mr-3 text-white" value="Schedule" />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <small class="d-block font-weight-bold mb-1 ml-2">Year</small>
+                                <select class="form-control form-control-alternative" name="year" required>
+                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                    {% for year in years %}
+                                        <option class="text-dark" value="{{ year.id }}">{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <small class="d-block font-weight-bold mb-1 ml-2">Subject</small>
+                                <select class="form-control form-control-alternative" name="subject" required>
+                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">Date</small>
+                            <div class="form-group">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
+                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="ia_date" data-date-start-date="0d">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <small class="d-block font-weight-bold mb-1 ml-2">Slot</small>
+                                <select class="form-control form-control-alternative" name="timeslot" required>
+                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <small class="d-block font-weight-bold mb-1 ml-2">Room</small>
+                                <select class="form-control form-control-alternative" name="locations" required>
+                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12 d-flex justify-content-center align-items">
+                            <button type="submit" class="btn btn-primary">Schedule</button>
+                        </div>
+                    </div>
+                    <!-- Year -->
+                    {% comment %} <div class="year text-center">
+                        <div class="year-text">
+                            <p class="h5 text-dark">Year: </p>
+                        </div>
+                        <div class="year-dropdown">
+                            <div class="dropdown">
+                                <select class="custom-select text-dark" name="year">
+                                    <option class="text-dark" value="-1">Please Select</option>
+                                    {% for year in years %}
+                                    <option class="text-dark" value="{{ year.id }}">{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subject -->
+                    <div class="lecture text-center mt-4">
+                        <div class="lecture-text">
+                            <p class="h5 text-dark">Subject: </p>
+                        </div>
+                        <div class="lecture-dropdown">
+                            <div class="dropdown">
+                                <select class="custom-select text-dark" name="subject" required>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Day -->
+                    <div class="day text-center mt-4">
+                        <div class="day-text">
+                            <p class="h5 text-dark">Date: </p>
+                        </div>
+                        <div class="slot-dropdown">
+                            <div class="dropdown">
+                                <input type="text" class="form-control text-dark" data-provide="datepicker"
+                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="date"
+                                    data-date-start-date="0d">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slot -->
+                    <div class="slot text-center mt-4">
+                        <div class="slot-text">
+                            <p class="h5 text-dark">Timeslot: </p>
+                        </div>
+                        <div class="slot-dropdown">
+                            <div class="dropdown">
+                                <select class="custom-select text-dark" name="timeslot">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Room -->
+                    <div class="room text-center mt-4">
+                        <div class="room-text">
+                            <p class="h5 text-dark">Room: </p>
+                        </div>
+                        <div class="room-dropdown">
+                            <div class="dropdown">
+                                <select class="custom-select text-dark" name="locations">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <input type="submit" style="background-color: #481380;" class="btn my-5 mr-3 text-white"
+                            value="Schedule" />
+                    </div> {% endcomment %}
+                </form>
+
+                {% endif %}
             </div>
-            </form>
-            
-          	{% endif %}
-          </div>
-      </div>
- 
+        </div>
+
     </div>
     <script>
-      $(document).ready(function(){
-        $('[name = year]').change(function(){
-          $('[name = subject]').empty();
-          var html = "<option value=-1>Select Year</option>"
-          {% for subject in subjects %}
-            if("{{ subject.year.id }}" == $(this).val()){
-              html += "<option value={{ subject.id }}>{{ subject }}</option>";
-            }
-          {% endfor %}
-          $('[name = subject]').append(html); 
-        })
-        $('[name= date]').change(function(){
-          year = $('[name=year]').val()
-          d = new Date($(this).val())
-          // Timezone offset error correction
-          d.setDate(d.getDate() + 1);
-          date = d.toISOString().split('T')[0];
-          url_string = "{% url 'get_timeslots' 'year' 'sample' %}".replace('sample',date).replace('year',year);
-          console.log(url_string)
-          $.ajax({
-            url : url_string,
-            success: function(text){
-              // $('#resp').empty();
-              // $('#resp').append(text);
-              $('[name = timeslot]').empty();
-              // ts_json = text.split('$$')[0]
-              // rooms_json = text.split('$$')[1]
-              ts_result = $.parseJSON(text);
-              console.log(ts_result);
-              var html = "<option value=-1>Select Timeslot</option>";
-              for(i=0;i<ts_result.length;i++){
-                slot_start = ts_result[i].fields.start_time.split(':')[0]+ ":" + ts_result[i].fields.start_time.split(':')[1];
-                slot_end = ts_result[i].fields.end_time.split(':')[0]+ ":" +ts_result[i].fields.end_time.split(':')[1];
-                html+="<option value=" + ts_result[i].pk +">"+ slot_start +" - " + slot_end + "</option>"
-              }
-              $('[name = timeslot]').append(html);
-            }
-          });
-        })
-        $('[name = timeslot]').change(function(){
-          $('[name = locations]').empty();
-          d = new Date($('[name=date]').val());
-          d.setDate(d.getDate() + 1);
-          date = d.toISOString().split('T')[0];
-          timeslot = $(this).val(); 
-          url_string = "{% url 'available_rooms' 'date' 'timeslot' %}".replace('timeslot',timeslot).replace('date',date);
-          console.log(url_string)
-          $.ajax({
-            url : url_string,
-            success : function(text){
-              rooms_json = $.parseJSON(text);
-              // console.log(rooms_json);
-              var html = "<option value=-1>Select Room</option>";
-              for(i=0;i<rooms_json.length;i++){
-                html+="<option value=" + rooms_json[i].pk +">"+ rooms_json[i].fields.room + "</option>"
-              }
-              $('[name = locations]').append(html);
-            }
-          })
-        })
-      });
-  
+        $(document).ready(function () {
+            $('[name = year]').change(function () {
+                $('[name = subject]').empty();
+                var html = "<option value=-1 disabled selected>Select Subject</option>";
+                {% for subject in subjects %}
+                    if ("{{ subject.year.id }}" == $(this).val()) {
+                        html += "<option value={{ subject.id }}>{{ subject }}</option>"
+                    }
+                {% endfor %}
+                $('[name=subject]').append(html);
+            })
+            $('[name= date]').change(function () {
+                year = $('[name=year]').val()
+                d = new Date($(this).val())
+                // Timezone offset error correction
+                d.setDate(d.getDate() + 1);
+                date = d.toISOString().split('T')[0];
+                url_string = "{% url 'get_timeslots' 'year' 'sample' %}".replace('sample', date)
+                    .replace('year', year);
+                console.log(url_string)
+                $.ajax({
+                    url: url_string,
+                    success: function (text) {
+                        // $('#resp').empty();
+                        // $('#resp').append(text);
+                        $('[name = timeslot]').empty();
+                        // ts_json = text.split('$$')[0]
+                        // rooms_json = text.split('$$')[1]
+                        ts_result = $.parseJSON(text);
+                        console.log(ts_result);
+                        var html = "<option value=-1 disabled selected>Select Timeslot</option>";
+                        for (i = 0; i < ts_result.length; i++) {
+                            slot_start = ts_result[i].fields.start_time.split(':')[0] +
+                                ":" + ts_result[i].fields
+                                .start_time.split(':')[1];
+                            slot_end = ts_result[i].fields.end_time.split(':')[0] + ":" +
+                                ts_result[i].fields.end_time
+                                .split(':')[1];
+                            html += "<option value=" + ts_result[i].pk + ">" + slot_start +
+                                " - " + slot_end +
+                                "</option>"
+                        }
+                        $('[name = timeslot]').append(html);
+                    }
+                });
+            })
+            $('[name = timeslot]').change(function () {
+                $('[name = locations]').empty();
+                d = new Date($('[name=date]').val());
+                d.setDate(d.getDate() + 1);
+                date = d.toISOString().split('T')[0];
+                timeslot = $(this).val();
+                url_string = "{% url 'available_rooms' 'date' 'timeslot' %}".replace('timeslot',
+                    timeslot).replace(
+                    'date', date);
+                console.log(url_string)
+                $.ajax({
+                    url: url_string,
+                    success: function (text) {
+                        rooms_json = $.parseJSON(text);
+                        // console.log(rooms_json);
+                        var html = "<option value=-1 disabled selected>Select Room</option>";
+                        for (i = 0; i < rooms_json.length; i++) {
+                            html += "<option value=" + rooms_json[i].pk + ">" + rooms_json[
+                                i].fields.room + "</option>"
+                        }
+                        $('[name = locations]').append(html);
+                    }
+                })
+            })
+        });
     </script>
-  </main>
+</main>
 
 {% endblock %}

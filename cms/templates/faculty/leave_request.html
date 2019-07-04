@@ -2,110 +2,116 @@
 {% load static %}
 
 {% block nav-content %}
-	
+
 	<li class="nav-item" role="presentation">
 		<a class="nav-link pr-3" style="color: white;" href="{% url 'loadshifts' %}">Load Shifts</a>
 	</li>
-	
+
 {% endblock %}
 
 {% block content %}
+	<main>
+		<div class="row mt-3 ml-2">
+			{% include '../includes/sidebar.html' %}
 
-	<button type="button" data-toggle="modal" data-target="#request_modal" class="btn btn-dark mt-3" id="addbtn" style="position: fixed;bottom: 40px;right: 40px;border-radius: 50%;height:80px;width: 80px;">
-		<i class="fas fa-plus fa-2x mt-1"></i>
-		<!-- <span class="h6 px-1"> Request Leave </span> -->
-	</button>
+			<div class="col-sm-8 col-md-7">
+				<div class="container border mb-5">
+					<form method="POST" action="{% url 'submit_leave' %}">
+						{% csrf_token %}
+						<p class="d-block font-weight-bold mb-3 mt-4 ml-2">Request Leave</p>
 
-	<div role="dialog" tabindex="-1" id="request_modal" class="modal fade">
-		<div class="modal-dialog modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<form method="POST" action="{% url 'submit_leave' %}">
-					{% csrf_token %}
-					<div class="modal-header">
-						<h4 class="modal-title">Request Leave</h4>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">×</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<div class="container">
-							<div class="row">
-								<div class="col">
-									<div class="form-group">
-										<label for="leave_start_date">Start Date</label>
-										<input type="text" class="form-control" data-provide="datepicker" data-date-format="dd/mm/yyyy" autocomplete="off" name="leave_start_date">
-									</div>
-								</div>
-								<div class="col">
-									<div class="form-group">
-										<label for="leave_end_date">End Date</label>
-										<input type="text" class="form-control" data-provide="datepicker" data-date-format="dd/mm/yyyy" autocomplete="off" name="leave_end_date">
+						<div class="row">
+							<div class="col-md-6">
+								<small class="d-block font-weight-bold mb-1 ml-2">Start Date</small>
+								<div class="form-group">
+									<div class="input-group input-group-alternative">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+										</div>
+										<input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
+										data-date-format="mm/dd/yyyy" autocomplete="off" name="leave_start_date" data-date-start-date="0d">
 									</div>
 								</div>
 							</div>
-							<div class="row">
-								<div class="col">
-									<div class="form-group">
-								<select class="form-control form-control-alternative" name="duration" required>
-									<option value="-1" disabled selected>Duration</option>
-									<option value="full">Full Day</option>
-									<option value="first_half">First half</option>
-									<option value="second_half">Second half</option>
-								</select>
-							</div>
+							<div class="col-md-6">
+								<small class="d-block font-weight-bold mb-1 ml-2">End Date</small>
+								<div class="form-group">
+									<div class="input-group input-group-alternative">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+										</div>
+										<input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
+										data-date-format="mm/dd/yyyy" autocomplete="off" name="leave_end_date" data-date-start-date="0d">
+									</div>
 								</div>
 							</div>
 						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<small class="d-block font-weight-bold mb-1 ml-2">Duration</small>
+									<select class="form-control form-control-alternative" name="duration" required>
+										<option value="-1" disabled selected>Duration</option>
+										<option value="full">Full Day</option>
+										<option value="first_half">First half</option>
+										<option value="second_half">Second half</option>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-md-12 d-flex justify-content-center align-items">
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</div>
+						</div>
+
+					</form>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	{% if leave_id %}
+		<div class="d-flex justify-content-center mb-3">
+			<div class="card col-md-4" style="padding: 0;">
+
+				<div class="card-header">
+					<h4 class="card-title text-center">Leave Details</h4>
+					<div class="row">
+						<div class="col-md m-3 p-3">
+							<p class="card-text"><b>Start Date: </b>{{ start_date }}</p>
+							<p class="card-text"><b>Start Time: </b>{{ start_time }}</p>
+						</div>
+						<div class="col-md m-3 p-3">
+							<p class="card-text"><b>End Date: </b>{{ end_date }}</p>
+							<p class="card-text"><b>End Time: </b>{{ end_time }}</p>
+						</div>
 					</div>
-					<div class="modal-footer">
-						<button class="btn btn-dark" type="button" data-dismiss="modal">Close</button>
-						<button class="btn btn-dark" type="submit">Submit</button>
+				</div>
+				<form method="POST" action="{% url 'loadshifts' %}">
+					{% csrf_token %}
+					<div class="card-body text-center">
+						{% if adjust_opts %}
+							<h5 class="card-title">Load Shifts</h5>
+							{% for lec, adjs in adjust_opts.items %}
+								<h6 class="card-title mt-2">{{ lec.lname.sname }}</h6>
+								<input type="hidden" name="leave_id" value="{{ leave_id }}">
+								<input type="hidden" name="lecture_id" value="{{ lec.id }}">
+								<select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id">
+									{% for faculty in adjs %}
+										<option value="{{ faculty.id }}">{{ faculty.username }}</option>
+									{% endfor %}
+								</select>
+							{% endfor %}
+						{% endif %}
+					</div>
+					<div class="card-footer text-center">
+						<button type="submit" class="btn btn-info" id="option_submit">Apply</button>
 					</div>
 				</form>
 			</div>
 		</div>
-	</div>	
 
-	<div class="d-flex justify-content-center pt-5 mt-5">
-		<div class="card col-md-4">
-			{% if leave_id %}
-			<div class="card-header">
-				<h4 class="card-title text-center">Leave Details</h4>
-				<div class="row">
-					<div class="col-md m-3 p-3">
-						<p class="card-text"><b>Start Date: </b>{{ start_date }}</p>
-						<p class="card-text"><b>Start Time: </b>{{ start_time }}</p>
-					</div>	
-					<div class="col-md m-3 p-3">
-						<p class="card-text"><b>End Date: </b>{{ end_date }}</p>
-						<p class="card-text"><b>End Time: </b>{{ end_time }}</p>
-					</div>
-				</div>
-			</div>
-			<form method="POST" action="{% url 'loadshifts' %}">
-				{% csrf_token %}
-				<div class="card-body text-center">
-					{% if adjust_opts %}
-					<h5 class="card-title">Load Shifts</h5>
-					{% for lec, adjs in adjust_opts.items %}
-						<h6 class="card-title mt-2">{{ lec.lname.sname }}</h6>
-						<input type="hidden" name="leave_id" value="{{ leave_id }}">
-						<input type="hidden" name="lecture_id" value="{{ lec.id }}">
-						<select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id">
-							{% for faculty in adjs %}
-								<option value="{{ faculty.id }}">{{ faculty.username }}</option>
-							{% endfor %}
-						</select>
-					{% endfor %}
-					{% endif %}
-				</div>
-				<div class="card-footer text-center">
-					<button type="submit" class="btn btn-info" id="option_submit">Apply</button>
-				</div>
-			</form>
-			{% else %}
-			Click on the add button to apply for a leave!
-			{% endif %}
-		</div>
-	</div>
+	{% endif %}
 {% endblock %}

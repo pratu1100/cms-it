@@ -1,5 +1,6 @@
 {% extends '../base.html' %}
 {% load static %}
+{% load faculty_filters %}
 
 {% block nav-content %}
 <li class="nav-item" role="presentation">
@@ -26,7 +27,10 @@
 					<h4><b>Last : </b> {{ od.last_date.date }}</h4>
 					<h4><b>Fees : </b> {{ od.fees }}</h4>
 					<h4><b>Scope : </b> {{ od.scope }}</h4>
-					<h4><a href="{{ od.correspondence.url }}" target="__blank">{{ od.correspondence.name }}</a></h4>
+					<h4><a href="{{ od.correspondence.url }}" target="__blank">
+					{% with od.correspondence.name|split:"/" as fname %}
+						{{ fname|last }}</br>
+					{% endwith %}</a></h4>
 					<div class="card-body text-center">
 						<h5 class="card-title">Load Shifts</h5>
 						<input type="hidden" name="od_id" value="{{ od.id }}">
@@ -35,7 +39,7 @@
 						<input type="hidden" name="lecture_id" value="{{ lec.id }}">
 						<select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id">
 							{% for faculty in adjs %}
-							<option value="{{ faculty.id }}">{{ faculty.username }}</option>
+								<option value="{{ faculty.id }}">{{ faculty.username }}</option>
 							{% endfor %}
 						</select>
 						{% endfor %}
