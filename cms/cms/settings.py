@@ -39,6 +39,7 @@ LOGOUT_REDIRECT_URL = '/accounts/login'
 
 INSTALLED_APPS = [
     'jet',
+    'jet.dashboard',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
