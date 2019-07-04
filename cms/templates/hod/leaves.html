@@ -37,6 +37,13 @@
                                             <p class="card-text font-weight-normal h6"><b>Time : </b>{{ load.for_lecture.lec_time }}</p>
                                         </div>
                                     </div>
+                                    <div>
+                                        {% if load.approved_status %}
+                                        <b>Accepted</b>
+                                        {% else %}
+                                        <b>Pending</b>
+                                        {% endif %}
+                                    </div>
                                 </div>
                         {% endfor %}
                     </div>

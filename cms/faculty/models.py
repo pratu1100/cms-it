@@ -163,7 +163,7 @@ class LoadShift(models.Model):
 	to_faculty = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name="to_faculty")
 	for_lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name="to_lecture")
 	od = models.ForeignKey(OD, on_delete=models.CASCADE,null=True,blank=True)
-	
+	approved_status = models.BooleanField(default = False, null = False)	
 
 	def __str__(self):
 		try:

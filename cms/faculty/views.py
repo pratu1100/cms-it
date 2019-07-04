@@ -97,6 +97,21 @@ def submit_load_shift(request):
 	return render(request,"faculty/loadshift.html",{"load_shifts":load_shifts})
 
 @login_required
+def view_load_shifts(request):
+	if request.method == 'POST':
+		load_shift = LoadShift.objects.get(pk = request.POST.get('load_shift'))
+		if '_reject' in request.POST:
+				load_shift.delete()	
+		elif '_approve' in request.POST:
+				load_shift.approved_status = True
+				load_shift.save() 
+
+	user = User.objects.get(pk = request.user.id)
+	load_shifts = LoadShift.objects.filter(to_faculty = user)
+	
+	return render(request,"faculty/loadshift.html",{"load_shifts":load_shifts})
+
+@login_required
 def get_makeup(request):
 	days = DaysOfWeek.objects.all().exclude(day_name__in = ('Sunday','Saturday'))
 	m_lecs = MakeupLecture.objects.filter(lec_date__lte = datetime.datetime.now()+datetime.timedelta(days = 7))

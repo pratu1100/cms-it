@@ -17,15 +17,36 @@
 			<th>Lecture</th>
 			<th><i class="far fa-calendar-alt"></i></th>
 			<th><i class="far fa-clock"></i></th>
+			<th>Status</th>
 		</tr>
 		</thead>
 
-		<tbody>
+			<tbody>
 			{% for load_shift in load_shifts %}
-				<td>{{ load_shift.leave.leave_taken_by.username }}</td>
-				<td>{{ load_shift.for_lecture.lname.sname }}</td>
-				<td>{{ load_shift.for_lecture.lec_day }}</td>
-				<td>{{ load_shift.for_lecture.lec_time }}</td>
+				<tr>
+					{% if load_shift.leave %}
+					<td>{{ load_shift.leave.leave_taken_by.username }}</td>
+					{% elif load_shift.od %}
+					<td>{{ load_shift.od.taken_by.username }}</td>
+					{% else %}
+					<td>--</td>
+					{% endif %}
+					<td>{{ load_shift.for_lecture.lname.sname }}</td>
+					<td>{{ load_shift.for_lecture.lec_day }}</td>
+					<td>{{ load_shift.for_lecture.lec_time }}</td>
+					<td>
+						{% if load_shift.approved_status %}
+						Accepted
+						{% else %}
+						<form method="POST" action="{% url 'view_load_shifts' %}">
+							{% csrf_token %}
+							<input type="hidden" name="load_shift" value="{{ load_shift.id }}">
+							<button class="btn btn-sm btn-danger" type="submit" name="_reject">Reject</button>
+       		                 <button class="btn btn-sm btn-success" type="submit" name="_approve">Approve</button>
+                        </form>
+                        {% endif %}
+                    </td>
+				</tr>
 			{% endfor %}
 		</tbody>
 		</table>

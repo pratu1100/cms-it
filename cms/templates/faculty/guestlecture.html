@@ -56,7 +56,7 @@
                                         <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
                                     </div>
                                     <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
-                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="ia_date" data-date-start-date="0d">
+                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="guestlec_date" data-date-start-date="0d">
                                 </div>
                             </div>
                         </div>
@@ -177,7 +177,7 @@
                 {% endfor %}
                 $('[name=subject]').append(html);
             })
-            $('[name= date]').change(function () {
+            $('[name = guestlec_date]').change(function () {
                 year = $('[name=year]').val()
                 d = new Date($(this).val())
                 // Timezone offset error correction
@@ -214,7 +214,7 @@
             })
             $('[name = timeslot]').change(function () {
                 $('[name = locations]').empty();
-                d = new Date($('[name=date]').val());
+                d = new Date($('[name = guestlec_date]').val());
                 d.setDate(d.getDate() + 1);
                 date = d.toISOString().split('T')[0];
                 timeslot = $(this).val();
