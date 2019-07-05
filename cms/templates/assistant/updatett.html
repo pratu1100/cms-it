@@ -344,11 +344,12 @@
 				// console.log(value);
 				// console.log(value2);
 				{% for t in timeslots %}
-            	html = `<div class="col-md-4 text-center">
-            		
-            		<label class="custom-select">{{ t }}</label>
-                    <select class="form-control custom-select lec-select" name="{{ t }}">
-						  <option value="0" selected> --- </option>`
+				{% if t in pracsts %}
+					html = `<div class="col-md-6 text-center"><div class="col-md-12"><label class="custom-select">{{ t }}</label></div>`
+					{% for batch in batches %}
+						if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value){
+						html += `<div class='col-md-3 batch-drp'><select class="form-control custom-select lec-select" name="{{ t }}@{{ batch }}">`
+						html += `<option value="0" selected> --- </option>`
 					{% for sub in subjects %}
 						if(value == "{{ sub.year }}"){
 							{% for fac in sub.teaching_faculty.all %}
@@ -358,7 +359,12 @@
 						
 						}
 					{% endfor %}
-						
+					html += `</select></div>`
+				}
+					{% endfor %}
+					
+            		
+            		
 					html += `</select>
 					<div class="batch-room-select">`
 					{% for batch in batches %}
@@ -373,6 +379,29 @@
 					{% endfor %}
 
 					html += `</div></div>`
+                    
+				{% else %}
+			
+            	html = `<div class="col-md-3 text-center">
+            		
+            		<label class="custom-select">{{ t }}</label>
+                    <select class="form-control custom-select lec-select" name="{{ t }}">
+						  <option value="0" selected> --- </option>`
+					{% for sub in subjects %}
+						if(value == "{{ sub.year }}"){
+							{% for fac in sub.teaching_faculty.all %}
+								// console.log("{{ fac }}")
+								html += "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
+							{% endfor %}
+						}
+					{% endfor %}
+							html +=`</select><label>Room</label>
+							<select class='form-control batch-drp' name='{{ t }}'><option value=None>---</option>"`
+								{% for room in rooms %}
+									html += "<option value='{{ room.id }}'>{{ room }}</option>"
+								{% endfor %}
+
+				{% endif %}
 				$('.lec_batch_opts').append(html);
 			{% endfor %}
 			}

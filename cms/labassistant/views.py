@@ -145,7 +145,11 @@ def get_timetable(request):
 	time_slots = TimeSlot.objects.annotate(
     diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
 	).filter(diff__lte=datetime.timedelta(hours = 2))
-	
+
+	pracs_ts = TimeSlot.objects.annotate(
+    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
+	).filter(diff=datetime.timedelta(hours = 2))
+
 	subjects = Subject.objects.all();
 
 	batches = Batch.objects.all();
@@ -155,6 +159,7 @@ def get_timetable(request):
 	context_data = {
 		"errors" : errors,
 		"timeslots" : time_slots,
+		"pracsts" : pracs_ts,
 		"subjects" : subjects,
 		"batches" : batches,
 		"rooms" : rooms
