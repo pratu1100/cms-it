@@ -1,23 +1,33 @@
 {% load static %}
 <div class="col-sm-4 col-md-3 sidebar d-none d-sm-none d-md-none d-lg-block">
   <div class="list-group">
-    <a href="{% url 'request_leave' %}" class="list-group-item bg-white text-dark">
+    <a href="{% url 'request_leave' %}" id="request_leave" class="list-group-item bg-white text-dark">
         Request Leave
     </a>
-    <a href="{% url 'loadshifts' %}" class="list-group-item bg-white text-dark">
+    <a href="{% url 'loadshifts' %}" id="load_shifts" class="list-group-item bg-white text-dark">
         Load Shifts
     </a>
-    <a href="{% url 'IA' %}" class="list-group-item bg-white text-dark">
+    <a href="{% url 'IA' %}" id="ia" class="list-group-item bg-white text-dark">
        IA
     </a>
-    <a href="{% url 'makeup' %}" class="list-group-item bg-white text-dark">
+    <a href="{% url 'makeup' %}" id="makeuplecture" class="list-group-item bg-white text-dark">
       Makeup Lecture
    </a>
-   <a href="{% url 'guestlecture' %}" class="list-group-item bg-white text-dark">
+   <a href="{% url 'guestlecture' %}" id="guestlecture" class="list-group-item bg-white text-dark">
       Guest Lecture
     </a>
-    <a href="{% url 'od' %}" class="list-group-item bg-white text-dark">
+    <a href="{% url 'od' %}" id="od" class="list-group-item bg-white text-dark">
       OD
     </a>
   </div>        
 </div>
+
+<script>
+  $(document).ready(function () {
+  var id = "{{ id }}";
+  $("#" + id).addClass("active").css({
+    "background-color": "#5E72E4 !important" ,
+    "color": "white !important"
+  });
+});
+</script>

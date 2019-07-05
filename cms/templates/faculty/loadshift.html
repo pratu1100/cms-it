@@ -7,59 +7,74 @@
 {% endblock %}
 
 {% block content %}
-	<div class="d-flex pt-5 mt-5 justify-content-center">
-	<div class="col-md-8 text-center">
-	{% if load_shifts %}
-		<table class="table table-striped table-bordered" id="load_shift_table">
-		<thead>
-		<tr>
-			<th>Name</th>
-			<th>Lecture</th>
-			<th><i class="far fa-calendar-alt"></i></th>
-			<th><i class="far fa-clock"></i></th>
-			<th>Status</th>
-		</tr>
-		</thead>
+<main>
+	<div class="row mt-3 ml-2">
+		{% include '../includes/sidebar.html' with id="load_shifts" %}
+		<div class="pt-2 justify-content-center" style="width: 70%;">
+			<div class="title text-center mb-3 pb-3">
+				<p class="h4">List of Load shifts</p>
+			</div>
+		<div class="col-lg-12 text-center">
+		{% if load_shifts %}
+			<table class="table table-striped table-bordered" id="load_shift_table">
+			<thead>
+			<tr>
+				<th>Name</th>
+				<th>Lecture</th>
+				<th><i class="far fa-calendar-alt"></i></th>
+				<th><i class="far fa-clock"></i></th>
+				<th>Status</th>
+			</tr>
+			</thead>
 
-			<tbody>
-			{% for load_shift in load_shifts %}
-				<tr>
-					{% if load_shift.leave %}
-					<td>{{ load_shift.leave.leave_taken_by.username }}</td>
-					{% elif load_shift.od %}
-					<td>{{ load_shift.od.taken_by.username }}</td>
-					{% else %}
-					<td>--</td>
-					{% endif %}
-					<td>{{ load_shift.for_lecture.lname.sname }}</td>
-					<td>{{ load_shift.for_lecture.lec_day }}</td>
-					<td>{{ load_shift.for_lecture.lec_time }}</td>
-					<td>
-						{% if load_shift.approved_status %}
-						Accepted
+				<tbody>
+				{% for load_shift in load_shifts %}
+					<tr>
+						{% if load_shift.leave %}
+						<td>{{ load_shift.leave.leave_taken_by.username }}</td>
+						{% elif load_shift.od %}
+						<td>{{ load_shift.od.taken_by.username }}</td>
 						{% else %}
-						<form method="POST" action="{% url 'view_load_shifts' %}">
-							{% csrf_token %}
-							<input type="hidden" name="load_shift" value="{{ load_shift.id }}">
-							<button class="btn btn-sm btn-danger" type="submit" name="_reject">Reject</button>
-       		                 <button class="btn btn-sm btn-success" type="submit" name="_approve">Approve</button>
-                        </form>
-                        {% endif %}
-                    </td>
-				</tr>
-			{% endfor %}
-		</tbody>
-		</table>
-	{% else %}
-		<h4 class="text-center">No load shifts</h4>
+						<td>--</td>
+						{% endif %}
+						<td>{{ load_shift.for_lecture.lname.sname }}</td>
+						<td>{{ load_shift.for_lecture.lec_day }}</td>
+						<td>{{ load_shift.for_lecture.lec_time }}</td>
+						<td>
+							{% if load_shift.approved_status %}
+							Accepted
+							{% else %}
+							<form method="POST" action="{% url 'view_load_shifts' %}">
+								{% csrf_token %}
+								<input type="hidden" name="load_shift" value="{{ load_shift.id }}">
+								<button class="btn btn-sm btn-danger" type="submit" name="_reject">Reject</button>
+								<button class="btn btn-sm btn-success" type="submit" name="_approve">Approve</button>
+							</form>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+			</table>
+		{% else %}
+			<h4 class="text-center">No load shifts</h4>
 
-	{% endif %}
-	
+		{% endif %}
+		
+		</div>
+		</div>
 	</div>
-	</div>
+</main>
 	<script>
 		$(function() {
-			$("#load_shift_table").DataTable();
+			$("#load_shift_table").DataTable({
+				language: {
+					paginate: {
+					next: '<i class="fa fa-arrow-right">',
+					previous: '<i class="fa fa-arrow-left">' 
+					}
+				}
+			});
 		});
 	</script>
 {% endblock %}

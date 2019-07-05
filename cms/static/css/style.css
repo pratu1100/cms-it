@@ -20,4 +20,20 @@
   padding: 0.75rem !important;
 }
 
+.accepted-square {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #2DCE89;
+  border-radius: 2px;
+  background-color: #2DCE89;
+  display: inline-block;
+}
 
+.pending-square {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #FB6340;
+  background-color: #FB6340;
+  border-radius: 2px;
+  display: inline-block;
+}
