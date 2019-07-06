@@ -1,81 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render,HttpResponse
 from faculty.models import TimeSlot,Lecture,Subject,Year,Division,DaysOfWeek,Batch,Room
 from django.db.models import DurationField, F, ExpressionWrapper
 from django.contrib.auth.models import User
+import json
+from django.core import serializers
+from django.http import JsonResponse
 
 import datetime
-# # Create your views here.
-# <QueryDict: 
-# {'csrfmiddlewaretoken': ['L25PIXgWSCAXzTMTmjJVsPcHA1gDkwUIzsrSNODtW8fZutyhHTO14mYZ5ToCMnkd'],
-#  'termopt': ['odd'],
-#   'yearopt': ['SY'], 
-#   'divopt': ['A'],
-#   'dayopt': ['monday'],
-#   '10:30 - 11:30': ['M4'], 
-#   '10:30 - 12:30': ['COA'], 
-#   '11:30 - 12:30': ['0'], 
-#   '13:15 - 14:15': ['0'], 
-#   '14:15 - 15:15': ['0'], 
-#   '13:15 - 15:15': ['DCN'], 
-#   '15:15 - 16:15': ['0'], 
-#   '16:15 - 17:15': ['0'], 
-#   '15:15 - 17:15': ['WP'], 
-#   'finish': ['Finish']
-#  }
-
-# dict = {
-#     'csrfmiddlewaretoken': ['A3V0O22VfP80ZY3xmVVq6xbdV0Lwbov8oth3TTpsjlN2UyPVHv0wI4XvqSTvDfVD '], '
-#         'termopt ': ['odd '],
-#         'yearopt ': ['SY '],
-#         'divopt ': ['A '], 
-#         'dayopt': ['Monday'], 
-#         '10:30 - 11:30': ['0'], 
-#         '10:30 - 11:30-A1': ['1'], 
-#         '10:30 - 11: 30 - A2 ': [' 1 '], 
-#         '10: 30 - 11: 30 - A3 ': [' 1 '], 
-#         '10: 30 - 11: 30 - A4 ': [' 1 '], 
-#         '10:30 - 12: 30 ': ['DCN - 4 '], 
-#         '10: 30 - 12: 30 - A1 ': [' 1 '], 
-#         '10: 30 - 12: 30 - A2 ': [' 1 '], 
-#         '10: 30 - 12: 30 - A3 ': [' 1 '], 
-#         '10: 30 - 12: 30 - A4 ': [' 1 '], 
-#         '11: 30 - 12: 30 ': [' 0 '], 
-#         '11:30 - 12: 30 - A1 ': [' 1 '], 
-#         '11: 30 - 12: 30 - A2 ': [' 1 '], 
-#         '11: 30 - 12: 30 - A3 ': [' 1 '], 
-#         '11: 30 - 12: 30 - A4 ': [' 1 '], 
-#         '13: 15 - 14: 15 ': [' 0 '], 
-#         '13: 15 - 14: 15 - A1 ': [' 1 '], 
-#         '13: 15 - 14: 15 - A2 ': [' 1 '], 
-#         '13: 15 - 14: 15 - A3 ': [' 1 '], 
-#         '13: 15 - 14: 15 - A4 ': [' 1 '], 
-#         '14:15 - 15: 15 ': [' 0 '], 
-#         '14: 15 - 15: 15 - A1 ': [' 1 '], 
-#         '14: 15 - 15: 15 - A2 ': [' 1 '], 
-#         '14: 15 - 15: 15 - A3 ': [' 1 '], 
-#         '14: 15 - 15: 15 - A4 ': [' 1 '], 
-#         '13: 15 - 15: 15 ': [' 0 '], 
-#         '13: 15 - 15: 15 - A1 ': [' 1 '], 
-#         '13: 15 - 15: 15 - A2 ': [' 1 '], 
-#         '13: 15 - 15: 15 - A3 ': [' 1 '], 
-#         '13: 15 - 15: 15 - A4 ': [' 1 '], 
-#         '15: 15 - 16: 15 ': [' 0 '], 
-#         '15: 15 - 16: 15 - A1 ': [' 1 '], 
-#         '15: 15 - 16: 15 - A2 ': [' 1 '], 
-#         '15: 15 - 16: 15 - A3 ': [' 1 '], 
-#         '15: 15 - 16: 15 - A4 ': [' 1 '], 
-#         '16: 15 - 17: 15 ': [' 0 '], 
-#         '16: 15 - 17: 15 - A1 ': [' 1 '], 
-#         '16: 15 - 17: 15 - A2 ': [' 1 '], 
-#         '16: 15 - 17: 15 - A3 ': [' 1 '], 
-#         '16: 15 - 17: 15 - A4 ': [' 1 '], 
-#         '15: 15 - 17: 15 ': [' 0 '], 
-#         '15: 15 - 17: 15 - A1 ': [' 1 '], 
-#         '15: 15 - 17: 15 - A2 ': [' 1 '], 
-#         '15: 15 - 17: 15 - A3 ': [' 1 '], 
-#         '15: 15 - 17: 15 - A4 ': [' 1 '], 
-#         'finish ': [' Finish ']
-#         }
 
 def get_timetable(request):
 	errors = None
@@ -165,3 +96,34 @@ def get_timetable(request):
 		"rooms" : rooms
 	}
 	return render(request,'assistant/updatett.html',context_data)
+
+
+def get_lec(request,year,division,timeslot,day,batch):
+	year = Year.objects.get(year = year)
+	print(year)
+	division = Division.objects.get(division = division)
+	print(division)
+	timeslot = TimeSlot.objects.get(pk = int(timeslot))
+	print(timeslot)
+	day = DaysOfWeek.objects.get(day_name = day)
+	print(day)
+
+	try:
+		lectures = list()
+		if(batch == 'None'):
+			lecture = Lecture.objects.get(lec_day = day,lec_time = timeslot,lec_div = division,lec_batch = None ,lname__year = year)
+			lectures.append(lecture)
+		else:
+			batch = Batch.objects.get(pk = batch)
+			print(batch)
+			lecture = Lecture.objects.get(lec_day = day,lec_time = timeslot,lec_div = division,lec_batch = batch,lname__year = year)
+			lectures.append(lecture)
+
+		lec_json = serializers.serialize("json",lectures)
+		print(lec_json)
+		return HttpResponse(lec_json)
+	except Exception as e:
+		print("Not found")
+		response = JsonResponse({"error": "Not found"})
+		response.status_code = 403
+		return response

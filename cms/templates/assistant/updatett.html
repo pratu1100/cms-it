@@ -271,75 +271,33 @@
 		console.log("Initial")
 		var value = $('[name="yearopt"]').val();
 		var value2 = $('[name="divopt"]').val();
-
+		var value3 = $('[name="dayopt"]').val();
 		$(document).ready(function(){
-			compute_lecs(value,value2)
+			compute_lecs(value,value2,value3);
 			$('[name="yearopt"]').change(function(){
 				console.log("Year changed")
 				value = $(this).val()
-				compute_lecs(value,value2)
+				compute_lecs(value,value2,value3)
 				console.log($(this).val())
 			});
 			$('[name="divopt"]').change(function(){
 				console.log("Division changed")
 				value2 = $(this).val()
 				console.log($(this).val())
-				compute_lecs(value,value2)
+				compute_lecs(value,value2,value3)
+
+			});
+			$('[name="dayopt"]').change(function(){
+				console.log("Day changed")
+				value3 = $(this).val()
+				console.log($(this).val())
+				compute_lecs(value,value2,value3)
 
 			});
 		});
 
 
-			// var room_str = "";
-			// $('[name="yearopt"]').change(function(){
-			// 	var value = $(this).val();
-			// 	console.log(value);
-			// 	$('.lec-select').find('option').not(':first').remove();
-			// 	{% for sub in subjects %}
-			// 	if(value == "{{ sub.year }}"){
-			// 		{% for fac in sub.teaching_faculty.all %}
-			// 			console.log("{{ fac }}")
-			// 			var html = "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
-			// 			$('.lec-select').append(html);
-			// 		{% endfor %}
-			// 	}
-			// {% endfor %}
-
-			// });
-			// $('[name="divopt"]').change(function(){
-			// 	var value2 = $(this).val();
-			// 	console.log(value2);
-			// 	$('[id^=batch-row]').empty();
-
-			// 	{% for batch in batches %}
-			// 	if(value2 == "{{ batch.batch_of_div }}" && value == "{{ batch.batch_of_year }}"){
-			// 			var room_str = "";
-			// 			{% for room in rooms %}
-			// 				room_str += '<option value="{{ room }}-{{ batch.id }}">{{ room }}</option>';
-			// 			{% endfor %}
-			// 			// console.log("{{ fac }}")
-						
-
-			// 			$.each($('[id^=batch-row]'),function(index, data){
-			// 				if($(this).hasClass('has-options')){
-			// 					var name = $(this).siblings(".lec-select").attr('name');
-			// 					var html = `<div class="col-sm-3 batch-drp">
-			// 						<label>{{ batch.batch }}</label>
-			// 						<select class="form-control custom-select" name="${name}-{{ batch.id }}">
-			// 							${room_str}
-			// 						</select>
-			// 						</div>`;
-			// 					$(this).append(html);
-			// 				}
-			// 			});
-					
-			// 		}
-			// 	{% endfor %}
-				
-			// });
-
-
-			function compute_lecs(value,value2){
+			function compute_lecs(value,value2,value3){
 				$('.lec_batch_opts').empty();
 				// console.log(value);
 				// console.log(value2);
@@ -354,7 +312,7 @@
 						if(value == "{{ sub.year }}"){
 							{% for fac in sub.teaching_faculty.all %}
 								// console.log("{{ fac }}")
-								html += "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
+								html += "<option value='{{ sub.id }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
 							{% endfor %}
 						
 						}
@@ -370,12 +328,17 @@
 					{% for batch in batches %}
 							if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value) {
 								// console.log("{{ batch.batch }}")
+								url_string = "{% url 'getlecture' 'year' 'division' 'timeslot' 'day' 'batch' %}".replace('year', value).replace('division',value2).replace('timeslot',"{{ t.id }}").replace('day',value3).replace('batch',"{{ batch.id }}");
+									console.log(url_string)
+								
 								html += "<div class='col-md-3 batch-drp'><label>{{ batch.batch }}</label><select class='form-control batch-drp' name='{{ t }}-{{ batch.batch }}'><option value=None>---</option>"
 								{% for room in rooms %}
 									html += "<option value='{{ room.id }}'>{{ room }}</option>"
 								{% endfor %}
 								html += "</select></div>"
+
 							}
+
 					{% endfor %}
 
 					html += `</div></div>`
@@ -387,11 +350,15 @@
             		<label class="custom-select">{{ t }}</label>
                     <select class="form-control custom-select lec-select" name="{{ t }}">
 						  <option value="0" selected> --- </option>`
+
+					url_string = "{% url 'getlecture' 'year' 'division' 'timeslot' 'day' 'batch' %}".replace('year', value).replace('division',value2).replace('timeslot',"{{ t.id }}").replace('day',value3).replace('batch',"None");
+					console.log(url_string)
+
 					{% for sub in subjects %}
 						if(value == "{{ sub.year }}"){
 							{% for fac in sub.teaching_faculty.all %}
 								// console.log("{{ fac }}")
-								html += "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
+								html += "<option value='{{ sub.id }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
 							{% endfor %}
 						}
 					{% endfor %}
@@ -405,97 +372,6 @@
 				$('.lec_batch_opts').append(html);
 			{% endfor %}
 			}
-
-			// {% for t in timeslots %}
-   //          	html = `<div class="col-md-4 text-center">
-            		
-   //          		<label>{{ t }}</label>
-   //                  <select class="form-control custom-select lec-select" name="{{ t }}">
-			// 			  <option value="0" selected> --- </option>`
-			// 		{% for sub in subjects %}
-			// 			if(value == "{{ sub.year }}"){
-			// 				{% for fac in sub.teaching_faculty.all %}
-			// 					console.log("{{ fac }}")
-			// 					html += "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
-			// 				{% endfor %}
-						
-			// 			}
-			// 		{% endfor %}
-						
-			// 		html += `</select>
-			// 		<div class="batch-room-select">`
-			// 		{% for batch in batches %}
-			// 				if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value) {
-			// 					console.log("{{ batch.batch }}")
-			// 					html += "<div class='col-md-3 batch-drp'><label>{{ batch.batch }}</label><select class='form-control' name='{{ t }}-{{ batch.batch }}'>"
-			// 					{% for room in rooms %}
-			// 						html += "<option value='{{ room.id }}'>{{ room }}</option>"
-			// 					{% endfor %}
-			// 					html += "</select></div>"
-			// 				}
-			// 		{% endfor %}
-
-			// 		html += `</div></div>`
-			// 	$('.lec_batch_opts').append(html);
-			// {% endfor %}
-
-
-
-			// {% for sub in subjects %}
-			// 	if(value == "{{ sub.year }}"){
-			// 		{% for fac in sub.teaching_faculty.all %}
-			// 			console.log("{{ fac }}")
-			// 			var html = "<option value='{{ sub.sname }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
-			// 			$('.lec-select').append(html);
-			// 		{% endfor %}
-						
-			// 	}
-			// {% endfor %}
-			// {% for batch in batches %}
-			// 				if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value) {
-			// 					console.log("{{ batch.batch }}")
-			// 					var html = "<label>{{ batch.batch }}</label><select name='{{ t }}-{{ batch.batch }}'>"
-			// 					{% for room in rooms %}
-			// 						html += "<option value='{{ room.id }}'>{{ room }}</option>"
-			// 					{% endfor %}
-			// 					html += "</select>"
-			// 					$('.batch-room-select').append(html)
-			// 				}
-			// {% endfor %}
-
-
-			
-
-			// $(document).on('change', '.lec-select', function(){
-			// 	var cur_val = $(this).val();
-			// 	if(cur_val != 0){
-			// 		var name = $(this).attr("name");
-			// 		$($(this).siblings('div')[0]).empty();
-			// 		$($(this).siblings('div')[0]).removeClass('has-options').addClass('has-options');
-			// 		{% for batch in batches %}
-			// 		if(value2 == "{{ batch.batch_of_div }}" && value == "{{ batch.batch_of_year }}"){
-			// 				room_str = "";
-			// 				{% for room in rooms %}
-			// 					room_str += '<option value="{{ room }}-{{ batch.id }}">{{ room }}</option>';
-			// 				{% endfor %}
-			// 				// console.log("{{ fac }}")
-			// 				var html = `<div class="col-sm-3 batch-drp">
-			// 							<label>{{ batch.batch }}</label>
-			// 							<select class="form-control custom-select" name="${name}-{{ batch.id }}">
-			// 								${room_str}
-			// 							</select>
-			// 							</div>`;
-
-			// 				$($(this).siblings('div')[0]).append(html);
-						
-			// 			}
-			// 	{% endfor %}
-
-			// 	}else{
-			// 		$($(this).siblings('div')[0]).removeClass('has-options');
-			// 		$($(this).siblings('div')[0]).empty();
-			// 	}
-			// });
 
 			
 	</script>
