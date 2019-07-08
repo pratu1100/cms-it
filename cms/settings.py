@@ -130,7 +130,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles", "static-root")
+STATIC_ROOT = os.path.join(BASE_DIR, "live-static-files", "static-root")
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_URL = '/static/'
 
@@ -140,7 +140,7 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_ROOT = os.path.join(BASE_DIR, "staticfiles", "media-root")
+MEDIA_ROOT = os.path.join(BASE_DIR, "live-static-files", "media-root")
 
 # Email
 EMAIL_BACKEND = 'mailer.backend.DbBackend'
