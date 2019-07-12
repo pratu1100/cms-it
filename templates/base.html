@@ -47,25 +47,33 @@
 			  {% if user.is_authenticated %}
 
 				<ul class="navbar-nav align-items-lg-center ml-lg-auto  d-lg-none d-xl-none">
-					<li class="nav-item">
-		                <a class="nav-link" id="request_leave" href="{% url 'request_leave' %}">Request Leave</a>
-		            </li>
-		            <li class="nav-item">
-		                <a class="nav-link" id="load_shifts" href="{% url 'loadshifts' %}">Load Shifts</a>
-		            </li>
-		            <li class="nav-item">
-		                <a class="nav-link" id="ia" href="{% url 'IA' %}">IA</a>
-		            </li>
-		            <li class="nav-item">
-		                <a class="nav-link" id="makeuplecture" href="{% url 'makeup' %}">Makeup Lecture</a>
-		            </li>
-		            <li class="nav-item">
-		                <a class="nav-link" id="guestlecture" href="{% url 'guestlecture' %}">Guest Lecture</a>
-		            </li>
-		            <li class="nav-item">
-		                <a class="nav-link" id="od" href="{% url 'od' %}">OD</a>
-		            </li>
-
+					{% if user.is_superuser %}
+						<li class="nav-item">
+							<a class="nav-link" id="approve_leaves" href="{% url 'leaves' %}">Approve Leaves</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="approve_ods" href="{% url 'approve_ods' %}">Approve ODs</a>
+						</li>
+					{% else %}
+						<li class="nav-item">
+							<a class="nav-link" id="request_leave" href="{% url 'request_leave' %}">Request Leave</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="load_shifts" href="{% url 'loadshifts' %}">Load Shifts</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="ia" href="{% url 'IA' %}">IA</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="makeuplecture" href="{% url 'makeup' %}">Makeup Lecture</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="guestlecture" href="{% url 'guestlecture' %}">Guest Lecture</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="od" href="{% url 'od' %}">OD</a>
+						</li>
+					{% endif %}
 
 
 		            <li class="nav-item">
