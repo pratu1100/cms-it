@@ -47,7 +47,7 @@ def get_timetable(request):
 							errors = 'Conflicting timeslot ' + str(t)
 					except:
 						print("No ts")
-					
+
 
 					# try:
 					# 	lec = Lecture.objects.get(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div,lec_in = r)
@@ -61,7 +61,7 @@ def get_timetable(request):
 					# 		print("Success")
 					# 	except Exception as e:
 					# 		print("Already exist at same time")
-					# 		errors = 'Conflicting timeslot ' + str(t) 
+					# 		errors = 'Conflicting timeslot ' + str(t)
 					# finally:
 					# 	lec.lec_batch.add(batch)
 					# 	try:
@@ -70,8 +70,8 @@ def get_timetable(request):
 					# 	except Exception as e:
 					# 		print("Already exist at same time")
 					# 		errors = 'Conflicting timeslot ' + str(t)
-				
-				
+
+
 
 	time_slots = TimeSlot.objects.annotate(
     diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
@@ -125,5 +125,5 @@ def get_lec(request,year,division,timeslot,day,batch):
 	except Exception as e:
 		print("Not found")
 		response = JsonResponse({"error": "Not found"})
-		response.status_code = 403
+		# response.status_code = 403
 		return response
