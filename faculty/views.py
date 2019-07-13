@@ -151,6 +151,7 @@ def get_makeup(request):
 
 	return render(request,"faculty/makeup.html",context_data)
 
+@login_required
 def post_makeup(request):
 	success = False
 	if(request.method == "POST"):
@@ -193,6 +194,7 @@ def post_makeup(request):
 
 # 	return HttpResponse("<h1>Test</h1>")
 
+@login_required
 def get_timeslots(request,syear,sdate):
 	# print(syear)
 	# print(sdate)
@@ -240,6 +242,7 @@ def get_timeslots(request,syear,sdate):
 	else:
 		return HttpResponse("Select Year")
 
+@login_required
 def get_available_rooms(request,sdate,slot):
 	# print(sdate)
 	# print(slot)
@@ -268,7 +271,7 @@ def get_available_rooms(request,sdate,slot):
 		return HttpResponse("Select TimeSlot")
 
 
-
+@login_required
 def get_ia(request):
 	years = Year.objects.all()
 	subjects = Subject.objects.all()
@@ -280,6 +283,7 @@ def get_ia(request):
 
 	return render(request,"faculty/ia.html",context_data)
 
+@login_required
 def post_ia(request):
 	if(request.method == 'POST'):
 		# print(request.POST)
@@ -309,7 +313,7 @@ def post_ia(request):
 	else:
 		return HttpResponseRedirect('./')
 
-
+@login_required
 def guestlecture(request):
 	years = Year.objects.all()
 	subjects = Subject.objects.all()
@@ -321,6 +325,7 @@ def guestlecture(request):
 
 	return render(request,"faculty/guestlecture.html",context_data)
 
+@login_required
 def guestlecture_schedule(request):
 	if(request.method == 'POST'):
 		# print(request.POST)
@@ -350,10 +355,12 @@ def guestlecture_schedule(request):
 	else:
 		return HttpResponseRedirect('./')
 
+@login_required
 def od(request):
 	context_data = {}
 	return render(request,"faculty/od.html",context_data)
 
+@login_required
 def submit_od(request):
 	if(request.method == 'POST'):
 		od_type = request.POST.get('od-type')
@@ -400,6 +407,7 @@ def submit_od(request):
 
 		return render(request,"faculty/od.html",context_data)
 
+@login_required
 def submit_od_loadshift(request):
 	if(request.method == 'POST'):
 		# print(request.POST)
@@ -430,7 +438,7 @@ def submit_od_loadshift(request):
 			# print("No load shifts")
 	return render(request,"faculty/od.html",context_data)
 
-
+@login_required
 def send_email(request):
 	subject = 'Test Mail'
 	message = 'This is a test mail from admin'
