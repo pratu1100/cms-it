@@ -1,9 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render,HttpResponseRedirect
 from faculty.models import Leave
 from django.contrib.auth.decorators import login_required
 from faculty.models import LoadShift,Leave, OD
 
 # Create your views here.
+@login_required
+def index(request):
+	if request.user.is_superuser:
+		return HttpResponseRedirect('/hod/approveleaves')
+
 @login_required
 def get_leaves(request):
 	if request.user.is_superuser:
@@ -31,6 +36,7 @@ def get_leaves(request):
 
 		return render(request, 'hod/leaves.html', context_data)
 
+@login_required
 def get_ods(request):
 	if request.user.is_superuser:
 		if request.method == 'POST':

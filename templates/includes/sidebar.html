@@ -1,26 +1,40 @@
 {% load static %}
-<div class="col-sm-4 col-md-3 sidebar d-none d-sm-none d-md-none d-lg-block">
-  <div class="list-group">
-    <a href="{% url 'request_leave' %}" id="request_leave" class="list-group-item bg-white text-dark">
-        Request Leave
-    </a>
-    <a href="{% url 'loadshifts' %}" id="load_shifts" class="list-group-item bg-white text-dark">
-        Load Shifts
-    </a>
-    <a href="{% url 'IA' %}" id="ia" class="list-group-item bg-white text-dark">
-       IA
-    </a>
-    <a href="{% url 'makeup' %}" id="makeuplecture" class="list-group-item bg-white text-dark">
-      Makeup Lecture
-   </a>
-   <a href="{% url 'guestlecture' %}" id="guestlecture" class="list-group-item bg-white text-dark">
-      Guest Lecture
-    </a>
-    <a href="{% url 'od' %}" id="od" class="list-group-item bg-white text-dark">
-      OD
-    </a>
-  </div>        
-</div>
+
+{% if user.is_superuser %}
+  <div class="col-sm-4 col-md-3 sidebar d-none d-sm-none d-md-none d-lg-block">
+    <div class="list-group">
+      <a href="{% url 'leaves' %}" id="approve_leaves" class="list-group-item bg-white text-dark">
+          Approve Leaves
+      </a>
+      <a href="{% url 'approve_ods' %}" id="approve_ods" class="list-group-item bg-white text-dark">
+          Approve ODs
+      </a>
+    </div>        
+  </div>
+{% else %}
+  <div class="col-sm-4 col-md-3 sidebar d-none d-sm-none d-md-none d-lg-block">
+    <div class="list-group">
+      <a href="{% url 'request_leave' %}" id="request_leave" class="list-group-item bg-white text-dark">
+          Request Leave
+      </a>
+      <a href="{% url 'loadshifts' %}" id="load_shifts" class="list-group-item bg-white text-dark">
+          Load Shifts
+      </a>
+      <a href="{% url 'IA' %}" id="ia" class="list-group-item bg-white text-dark">
+         IA
+      </a>
+      <a href="{% url 'makeup' %}" id="makeuplecture" class="list-group-item bg-white text-dark">
+        Makeup Lecture
+     </a>
+     <a href="{% url 'guestlecture' %}" id="guestlecture" class="list-group-item bg-white text-dark">
+        Guest Lecture
+      </a>
+      <a href="{% url 'od' %}" id="od" class="list-group-item bg-white text-dark">
+        OD
+      </a>
+    </div>        
+  </div>
+{% endif %}
 
 <script>
   $(document).ready(function () {
