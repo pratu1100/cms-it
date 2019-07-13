@@ -1,74 +1,76 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
+
 <head>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	<link rel="apple-touch-icon" sizes="76x76" href="{% static 'wizard/img/apple-icon.png' %}"/>
+	<link rel="apple-touch-icon" sizes="76x76" href="{% static 'wizard/img/apple-icon.png' %}" />
 	<link rel="icon" type="image/png" href="{% static 'wizard/img/favicon.png' %}" />
 	<title>Lab Assistant | CMS</title>
 
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="viewport" content="width=device-width" />
+	<meta name="viewport" content="width=device-width" />
 	<!-- CSS Files -->
-    <link href="{% static 'wizard/css/bootstrap.min.css'%}" rel="stylesheet" />
+	<link href="{% static 'wizard/css/bootstrap.min.css'%}" rel="stylesheet" />
 	<link href="{% static 'wizard/css/paper-bootstrap-wizard.css'%}" rel="stylesheet" />
 
 	<!-- CSS Just for demo purpose, don't include it in your project -->
 	<link href="{% static 'wizard/css/demo.css' %}" rel="stylesheet" />
 
 	<!-- Fonts and Icons -->
-    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.css" rel="stylesheet">
+	<link href="https://netdna.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.css" rel="stylesheet">
 	<link href='https://fonts.googleapis.com/css?family=Muli:400,300' rel='stylesheet' type='text/css'>
 	<link href="{% static 'wizard/css/themify-icons.css' %}" rel="stylesheet">
 	<style type="text/css">
-		.custom-select{
+		.custom-select {
 			padding-left: 8px;
 			margin: 10px 0;
 		}
 
-		.batch-drp{
+		.batch-drp {
 			padding: 0px 4px;
 		}
-/*
+
+		/*
 		.radio-tile, .radio-tile-label {
 			background-color: #2dce89 !important;
 			color: #fff !important;
 			border: 2px solid #2dce89 !important;
 		}*/
-
 	</style>
-	</head>
+</head>
 
-	<body>
+<body>
 	<div class="image-container set-full-height" style="background-image: url({% static 'wizard/img/paper-1.jpeg' %})">
-	    
 
-	    <!--   Big container   -->
-	    <div class="container">
-	        <div class="row">
-		        <div class="col-sm-12">
 
-		            <!--      Wizard container        -->
-		            <div class="wizard-container">
+		<!--   Big container   -->
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12">
 
-		                <div class="card wizard-card" data-color="orange" id="wizardProfile">
-		                    <form action="{%url 'updatett'%}" method="POST">
-		                    	{% csrf_token %}
-		                <!--        You can switch " data-color="orange" "  with one of the next bright colors: "blue", "green", "orange", "red", "azure"          -->
+					<!--      Wizard container        -->
+					<div class="wizard-container">
 
-		                    	<div class="wizard-header text-center" style="margin-bottom: 3rem;">
-		                    		{% if errors %}
-										<h3 class="text-danger">{{ errors }}</h3>
-					            	{% endif %}
+						<div class="card wizard-card" data-color="orange" id="wizardProfile">
+							<form action="{%url 'updatett'%}" method="POST">
+								{% csrf_token %}
+								<!--        You can switch " data-color="orange" "  with one of the next bright colors: "blue", "green", "orange", "red", "azure"          -->
 
-		                        	<p class="wizard-title font-weight-bold h3"><u>Update Time Table</u></p>
+								<div class="wizard-header text-center" style="margin-bottom: 3rem;">
+									{% if errors %}
+									<h3 class="text-danger">{{ errors }}</h3>
+									{% endif %}
+
+									<p class="wizard-title font-weight-bold h3"><u>Update Time Table</u></p>
 									<!-- <p class="category"></p> -->
-		                    	</div>
+								</div>
 
 								<div class="wizard-navigation">
 									<div class="progress-with-circle">
-									     <div class="progress-bar" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="3" style="width: 21%;"></div>
+										<div class="progress-bar" role="progressbar" aria-valuenow="1" aria-valuemin="1"
+											aria-valuemax="3" style="width: 21%;"></div>
 									</div>
 									<ul>
 										<li>
@@ -79,7 +81,7 @@
 												Term
 											</a>
 										</li>
-			                            <li>
+										<li>
 											<a href="#year" data-toggle="tab">
 												<div class="icon-circle">
 													<i class="ti-user"></i>
@@ -87,7 +89,7 @@
 												Year
 											</a>
 										</li>
-			                            <li>
+										<li>
 											<a href="#day" data-toggle="tab">
 												<div class="icon-circle">
 													<i class="ti-settings"></i>
@@ -95,7 +97,7 @@
 												Day
 											</a>
 										</li>
-			                            <li>
+										<li>
 											<a href="#submit" data-toggle="tab">
 												<div class="icon-circle">
 													<i class="ti-map"></i>
@@ -103,276 +105,366 @@
 												Submit
 											</a>
 										</li>
-			                        </ul>
+									</ul>
 								</div>
-		                        <div class="tab-content">
-		                            <div class="tab-pane" id="term" style="padding-top: 4.5rem;">
-		                            	<div class="row">
+								<div class="tab-content">
+									<div class="tab-pane" id="term" style="padding-top: 4.5rem;">
+										<div class="row">
 											<p class="info-text h5"><u>Please Select Term</u></p>
 											<div class="col-md-8 col-sm-offset-2 text-center">
-											  <div class="radio-tile-group">
-											    <div class="input-container">
-											      <input id="odd-term" class="radio-button" type="radio" name="termopt" value="odd" checked />
-											      <div class="radio-tile">
-											        <label for="odd-term" class="radio-tile-label">Odd Term</label>
-											      </div>
-											    </div>
+												<div class="radio-tile-group">
+													<div class="input-container">
+														<input id="odd-term" class="radio-button" type="radio"
+															name="termopt" value="odd" checked />
+														<div class="radio-tile">
+															<label for="odd-term" class="radio-tile-label">Odd
+																Term</label>
+														</div>
+													</div>
 
-											    <div class="input-container">
-											      <input id="even-term" class="radio-button" type="radio" name="termopt" value="even" />
-											      <div class="radio-tile">
-											        <label for="even-term" class="radio-tile-label">Even Term</label>
-											      </div>
-											    </div>
+													<div class="input-container">
+														<input id="even-term" class="radio-button" type="radio"
+															name="termopt" value="even" />
+														<div class="radio-tile">
+															<label for="even-term" class="radio-tile-label">Even
+																Term</label>
+														</div>
+													</div>
 
-											    
-											  </div>
+
+												</div>
 											</div>
 										</div>
-		                            </div>
-		                            <div class="tab-pane" id="year" style="padding-top: 4.5rem;">
-		                                <h5 class="info-text"> Please Select Year </h5>
-		                                <div class="col-md-12 text-center">
-											  <div class="radio-tile-group">
-											    <div class="input-container">
-											      <input id="sy-year" class="radio-button" type="radio" name="yearopt" value="SY" checked/>
-											      <div class="radio-tile">
-											        <label for="sy-year" class="radio-tile-label">Second Year</label>
-											      </div>
-											    </div>
+									</div>
+									<div class="tab-pane" id="year" style="padding-top: 4.5rem;">
+										<h5 class="info-text"> Please Select Year </h5>
+										<div class="col-md-12 text-center">
+											<div class="radio-tile-group">
+												<div class="input-container">
+													<input id="sy-year" class="radio-button" type="radio" name="yearopt"
+														value="SY" checked />
+													<div class="radio-tile">
+														<label for="sy-year" class="radio-tile-label">Second
+															Year</label>
+													</div>
+												</div>
 
-											    <div class="input-container">
-											      <input id="ty-year" class="radio-button" type="radio" name="yearopt" value="TY"/>
-											      <div class="radio-tile">
-											        <label for="ty-year" class="radio-tile-label">Third Year</label>
-											      </div>
-											    </div>
-											    <div class="input-container">
-											      <input id="last-year" class="radio-button" type="radio" name="yearopt" value="LY"/>
-											      <div class="radio-tile">
-											        <label for="last-year" class="radio-tile-label">Last Year</label>
-											      </div>
-											    </div>
+												<div class="input-container">
+													<input id="ty-year" class="radio-button" type="radio" name="yearopt"
+														value="TY" />
+													<div class="radio-tile">
+														<label for="ty-year" class="radio-tile-label">Third Year</label>
+													</div>
+												</div>
+												<div class="input-container">
+													<input id="last-year" class="radio-button" type="radio"
+														name="yearopt" value="LY" />
+													<div class="radio-tile">
+														<label for="last-year" class="radio-tile-label">Last
+															Year</label>
+													</div>
+												</div>
 
-											    
-											  </div>
+
 											</div>
-		                                		<h5 class="info-text"> Please Select Division </h5>
-											  <div class="col-md-12 text-center">
-											  <div class="radio-tile-group">
-											    <div class="input-container">
-											      <input id="a-div" class="radio-button" type="radio" name="divopt" value="A" checked/>
-											      <div class="radio-tile">
-											        <label for="a-div" class="radio-tile-label">A</label>
-											      </div>
-											    </div>
+										</div>
+										<h5 class="info-text"> Please Select Division </h5>
+										<div class="col-md-12 text-center">
+											<div class="radio-tile-group">
+												<div class="input-container">
+													<input id="a-div" class="radio-button" type="radio" name="divopt"
+														value="A" checked />
+													<div class="radio-tile">
+														<label for="a-div" class="radio-tile-label">A</label>
+													</div>
+												</div>
 
-											    <div class="input-container">
-											      <input id="b-div" class="radio-button" type="radio" name="divopt" value="B"/>
-											      <div class="radio-tile">
-											        <label for="b-div" class="radio-tile-label">B</label>
-											      </div>
-											    </div> 
-											  </div>
-											</div>		                         
-		                            </div>
-		                            <div class="tab-pane" id="day" style="padding-top: 4.5rem;"> 
-		                                <h5 class="info-text"> Please Select Day </h5>
-		                                <div class="col-md-12 text-center">
-											  <div class="radio-tile-group">
-											    <div class="input-container">
-											      <input id="monday-day" class="radio-button" type="radio" name="dayopt" value="Monday" checked/>
-											      <div class="radio-tile">
-											        <label for="monday-day" class="radio-tile-label">Monday</label>
-											      </div>
-											    </div>
-
-											    <div class="input-container">
-											      <input id="tuesday-day" class="radio-button" type="radio" name="dayopt" value="Tuesday"/>
-											      <div class="radio-tile">
-											        <label for="tuesday-day" class="radio-tile-label">Tuesday</label>
-											      </div>
-											    </div>
-											    <div class="input-container">
-											      <input id="wednesday-day" class="radio-button" type="radio" name="dayopt" value="Wednesday"/>
-											      <div class="radio-tile">
-											        <label for="wednesday-day" class="radio-tile-label">Wednesday</label>
-											      </div>
-											    </div>
-											    <div class="input-container">
-											      <input id="thursday-day" class="radio-button" type="radio" name="dayopt" value="Thursday"/>
-											      <div class="radio-tile">
-											        <label for="thursday-day" class="radio-tile-label">Thursday</label>
-											      </div>
-											    </div>
-											    <div class="input-container">
-											      <input id="friday-day" class="radio-button" type="radio" name="dayopt" value="Friday"/>
-											      <div class="radio-tile">
-											        <label for="friday-day" class="radio-tile-label">Friday</label>
-											      </div>
-											    </div>
-											    <div class="input-container">
-											      <input id="saturday-day" class="radio-button" type="radio" name="dayopt" value="Saturday"/>
-											      <div class="radio-tile">
-											        <label for="saturday-day" class="radio-tile-label">Saturday</label>
-											      </div>
-											    </div>
-
-											    
-											  </div>
+												<div class="input-container">
+													<input id="b-div" class="radio-button" type="radio" name="divopt"
+														value="B" />
+													<div class="radio-tile">
+														<label for="b-div" class="radio-tile-label">B</label>
+													</div>
+												</div>
 											</div>
-		                            </div>
-		                            <div class="tab-pane" id="submit">
-		                                <div class="row lec_batch_opts" style="margin-top: 15px;">
-											
-		                                </div>
-		                            </div>
-		                        </div>
-		                        <div class="wizard-footer">
-		                            <div class="pull-right">
-		                                <input type='button' class='btn btn-next btn-fill btn-warning btn-wd' name='next' value='Next' />
-		                                <input type='submit' class='btn btn-finish btn-fill btn-warning btn-wd' name='finish' value='Finish' />
-		                            </div>
+										</div>
+									</div>
+									<div class="tab-pane" id="day" style="padding-top: 4.5rem;">
+										<h5 class="info-text"> Please Select Day </h5>
+										<div class="col-md-12 text-center">
+											<div class="radio-tile-group">
+												<div class="input-container">
+													<input id="monday-day" class="radio-button" type="radio"
+														name="dayopt" value="Monday" checked />
+													<div class="radio-tile">
+														<label for="monday-day" class="radio-tile-label">Monday</label>
+													</div>
+												</div>
 
-		                            <div class="pull-left">
-		                                <input type='button' class='btn btn-previous btn-default btn-wd' name='previous' value='Previous' />
-		                            </div>
-		                            <div class="clearfix"></div>
-		                        </div>
-		                    </form>
-		                </div>
-		            </div> <!-- wizard container -->
-		        </div>
-	    	</div><!-- end row -->
+												<div class="input-container">
+													<input id="tuesday-day" class="radio-button" type="radio"
+														name="dayopt" value="Tuesday" />
+													<div class="radio-tile">
+														<label for="tuesday-day"
+															class="radio-tile-label">Tuesday</label>
+													</div>
+												</div>
+												<div class="input-container">
+													<input id="wednesday-day" class="radio-button" type="radio"
+														name="dayopt" value="Wednesday" />
+													<div class="radio-tile">
+														<label for="wednesday-day"
+															class="radio-tile-label">Wednesday</label>
+													</div>
+												</div>
+												<div class="input-container">
+													<input id="thursday-day" class="radio-button" type="radio"
+														name="dayopt" value="Thursday" />
+													<div class="radio-tile">
+														<label for="thursday-day"
+															class="radio-tile-label">Thursday</label>
+													</div>
+												</div>
+												<div class="input-container">
+													<input id="friday-day" class="radio-button" type="radio"
+														name="dayopt" value="Friday" />
+													<div class="radio-tile">
+														<label for="friday-day" class="radio-tile-label">Friday</label>
+													</div>
+												</div>
+												<div class="input-container">
+													<input id="saturday-day" class="radio-button" type="radio"
+														name="dayopt" value="Saturday" />
+													<div class="radio-tile">
+														<label for="saturday-day"
+															class="radio-tile-label">Saturday</label>
+													</div>
+												</div>
+
+
+											</div>
+										</div>
+									</div>
+									<div class="tab-pane" id="submit">
+										<div class="row lec_batch_opts" style="margin-top: 15px;">
+
+										</div>
+									</div>
+								</div>
+								<div class="wizard-footer">
+									<div class="pull-right">
+										<input type='button' class='btn btn-next btn-fill btn-warning btn-wd'
+											name='next' value='Next' />
+										<input type='submit' class='btn btn-finish btn-fill btn-warning btn-wd'
+											name='finish' value='Finish' />
+									</div>
+
+									<div class="pull-left">
+										<input type='button' class='btn btn-previous btn-default btn-wd' name='previous'
+											value='Previous' />
+									</div>
+									<div class="clearfix"></div>
+								</div>
+							</form>
+						</div>
+					</div> <!-- wizard container -->
+				</div>
+			</div><!-- end row -->
 		</div> <!--  big container -->
 
-	    <div class="footer">
-	        <div class="container text-center">
-	            Timetable
-	        </div>
-	    </div>
-		
+		<div class="footer">
+			<div class="container text-center">
+				Timetable
+			</div>
+		</div>
+
 	</div>
 
 </body>
 
-	<!--   Core JS Files   -->
-	<script src="{% static 'wizard/js/jquery-2.2.4.min.js' %}" type="text/javascript"></script>
-	<script src="{% static 'wizard/js/bootstrap.min.js' %}" type="text/javascript"></script>
-	<script src="{% static 'wizard/js/jquery.bootstrap.wizard.js' %}" type="text/javascript"></script>
+<!--   Core JS Files   -->
+<script src="{% static 'wizard/js/jquery-2.2.4.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'wizard/js/bootstrap.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'wizard/js/jquery.bootstrap.wizard.js' %}" type="text/javascript"></script>
 
-	<!--  Plugin for the Wizard -->
-	<script src="{% static 'wizard/js/demo.js' %}" type="text/javascript"></script>
-	<script src="{% static 'wizard/js/paper-bootstrap-wizard.js' %}" type="text/javascript"></script>
+<!--  Plugin for the Wizard -->
+<script src="{% static 'wizard/js/demo.js' %}" type="text/javascript"></script>
+<script src="{% static 'wizard/js/paper-bootstrap-wizard.js' %}" type="text/javascript"></script>
 
-	<!--  More information about jquery.validate here: https://jqueryvalidation.org/	 -->
-	<script src="{% static 'wizard/js/jquery.validate.min.js' %}" type="text/javascript"></script>
-	<script type="text/javascript">
-		console.log("Initial")
+<!--  More information about jquery.validate here: https://jqueryvalidation.org/	 -->
+<script src="{% static 'wizard/js/jquery.validate.min.js' %}" type="text/javascript"></script>
+<script type="text/javascript">
+	console.log("Initial")
+	var api_urls = [];
+	var name_list = [];
+	var room_names = [];
+	$(document).ready(function () {
 		var value = $('[name="yearopt"]').val();
 		var value2 = $('[name="divopt"]').val();
 		var value3 = $('[name="dayopt"]').val();
-		$(document).ready(function(){
-			compute_lecs(value,value2,value3);
-			$('[name="yearopt"]').change(function(){
-				console.log("Year changed")
-				value = $(this).val()
-				compute_lecs(value,value2,value3)
-				console.log($(this).val())
-			});
-			$('[name="divopt"]').change(function(){
-				console.log("Division changed")
-				value2 = $(this).val()
-				console.log($(this).val())
-				compute_lecs(value,value2,value3)
 
-			});
-			$('[name="dayopt"]').change(function(){
-				console.log("Day changed")
-				value3 = $(this).val()
-				console.log($(this).val())
-				compute_lecs(value,value2,value3)
 
+
+		compute_lecs(value, value2, value3);
+		$('[name="yearopt"]').change(function () {
+			console.log("Year changed")
+			value = $(this).val()
+			compute_lecs(value, value2, value3)
+			console.log($(this).val())
+		});
+		$('[name="divopt"]').change(function () {
+			console.log("Division changed")
+			value2 = $(this).val()
+			console.log($(this).val())
+			compute_lecs(value, value2, value3)
+
+		});
+		$('[name="dayopt"]').change(function () {
+			console.log("Day changed")
+			value3 = $(this).val()
+			console.log($(this).val())
+			compute_lecs(value, value2, value3)
+
+		});
+
+		$.ajaxSetup({
+			data: {
+				csrfmiddlewaretoken: '{{ csrf_token }}'
+			},
+		});
+
+		$.each(api_urls, function (index, value) {
+			$.ajax({
+				type: "POST",
+				url: value,
+				dataType: "json",
+				success: function (response) {
+
+					if(response[0] != undefined){
+						var sub_id = response[0].fields.lname;
+						var fac_id = response[0].fields.taken_by;
+						var room_id = response[0].fields.lec_in;
+						var req_opt_name = sub_id + '-' + fac_id;
+						$($('[name="' + name_list[index] + '"')[0]).val(req_opt_name);
+						if( room_id != null){
+							$('.batch-drp[name="' + room_names[index] + '"').val(room_id);
+						}
+					}
+				},
+				error: function (xhr, errorText, error) {
+					// console.log(xhr);
+				}
 			});
 		});
 
+	});
 
-			function compute_lecs(value,value2,value3){
-				$('.lec_batch_opts').empty();
-				// console.log(value);
-				// console.log(value2);
-				{% for t in timeslots %}
-				{% if t in pracsts %}
-					html = `<div class="col-md-6 text-center"><div class="col-md-12"><label class="custom-select">{{ t }}</label></div>`
-					{% for batch in batches %}
-						if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value){
-						html += `<div class='col-md-3 batch-drp'><select class="form-control custom-select lec-select" name="{{ t }}@{{ batch }}">`
-						html += `<option value="0" selected> --- </option>`
-					{% for sub in subjects %}
-						if(value == "{{ sub.year }}"){
-							{% for fac in sub.teaching_faculty.all %}
+
+	function compute_lecs(value, value2, value3) {
+		$('.lec_batch_opts').empty();
+		// console.log(value);
+		// console.log(value2);
+		{% for t in timeslots %}
+			{% if t in pracsts %}
+				html = `<div class="col-md-6 text-center">
+							<div class="col-md-12">
+								<label class="custom-select">
+									{{ t }}
+								</label>
+							</div>`;
+
+				{% for batch in batches %}
+					if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value) {
+						html += `<div class='col-md-3 batch-drp'>
+									<select class="form-control custom-select lec-select" name="{{ t }}@{{ batch }}">`;
+
+						html += `<option value="0" selected> --- </option>`;
+
+						name_list.push("{{ t }}@{{ batch }}");
+
+						{% for sub in subjects %}
+							if (value == "{{ sub.year }}") {
+								{% for fac in sub.teaching_faculty.all %}
 								// console.log("{{ fac }}")
-								html += "<option value='{{ sub.id }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
-							{% endfor %}
-						
-						}
-					{% endfor %}
-					html += `</select></div>`
-				}
-					{% endfor %}
-					
-            		
-            		
-					html += `</select>
-					<div class="batch-room-select">`
-					{% for batch in batches %}
-							if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value) {
-								// console.log("{{ batch.batch }}")
-								url_string = "{% url 'getlecture' 'year' 'division' 'timeslot' 'day' 'batch' %}".replace('year', value).replace('division',value2).replace('timeslot',"{{ t.id }}").replace('day',value3).replace('batch',"{{ batch.id }}");
-									console.log(url_string)
-								
-								html += "<div class='col-md-3 batch-drp'><label>{{ batch.batch }}</label><select class='form-control batch-drp' name='{{ t }}-{{ batch.batch }}'><option value=None>---</option>"
-								{% for room in rooms %}
-									html += "<option value='{{ room.id }}'>{{ room }}</option>"
+									html += "<option value='{{ sub.id }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
 								{% endfor %}
-								html += "</select></div>"
 
 							}
+						{% endfor %}
+						html += `</select></div>`;
+					}
+				{% endfor %}
 
-					{% endfor %}
+				html += `</select>
+						 <div class="batch-room-select">`;
 
-					html += `</div></div>`
-                    
-				{% else %}
-			
-            	html = `<div class="col-md-3 text-center">
-            		
-            		<label class="custom-select">{{ t }}</label>
-                    <select class="form-control custom-select lec-select" name="{{ t }}">
-						  <option value="0" selected> --- </option>`
+				{% for batch in batches %}
+					if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value) {
+						// console.log("{{ batch.batch }}")
+						url_string = "{% url 'getlecture' 'year' 'division' 'timeslot' 'day' 'batch' %}".replace('year', value)
+									.replace('division', value2).replace('timeslot', "{{ t.id }}").replace('day', value3).replace('batch',
+									"{{ batch.id }}");
+						// console.log(url_string);
+						api_urls.push(url_string);
 
-					url_string = "{% url 'getlecture' 'year' 'division' 'timeslot' 'day' 'batch' %}".replace('year', value).replace('division',value2).replace('timeslot',"{{ t.id }}").replace('day',value3).replace('batch',"None");
-					console.log(url_string)
+						html += `<div class='col-md-3 batch-drp'>
+									<label>
+										{{ batch.batch }}
+									</label>
+									<select class='form-control batch-drp' name='{{ t }}-{{ batch.batch }}'>
+										<option value=None>---</option>`;
+						room_names.push('{{ t }}-{{ batch.batch }}');
+						{% for room in rooms %}
+							html += "<option value='{{ room.id }}'>{{ room }}</option>";
+						{% endfor %}
 
-					{% for sub in subjects %}
-						if(value == "{{ sub.year }}"){
-							{% for fac in sub.teaching_faculty.all %}
-								// console.log("{{ fac }}")
-								html += "<option value='{{ sub.id }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
-							{% endfor %}
-						}
-					{% endfor %}
-							html +=`</select><label>Room</label>
-							<select class='form-control batch-drp' name='{{ t }}'><option value=None>---</option>"`
-								{% for room in rooms %}
-									html += "<option value='{{ room.id }}'>{{ room }}</option>"
-								{% endfor %}
+						html += `</select>
+								</div>`;
 
-				{% endif %}
-				$('.lec_batch_opts').append(html);
-			{% endfor %}
-			}
+					}
 
-			
-	</script>
+				{% endfor %}
+
+				html += `</div>
+						</div>`;
+
+			{% else %}
+
+				html = `<div class="col-md-3 text-center">
+							<label class="custom-select">
+								{{ t }}
+							</label>
+							<select class="form-control custom-select lec-select" name="{{ t }}">
+								<option value="0" selected> --- </option>`;
+
+				url_string = "{% url 'getlecture' 'year' 'division' 'timeslot' 'day' 'batch' %}".replace('year', value)
+								.replace('division', value2).replace('timeslot', "{{ t.id }}").replace('day', value3).replace('batch', "None");
+				// console.log(url_string)
+				api_urls.push(url_string);
+				name_list.push("{{ t }}");
+
+				{% for sub in subjects %}
+					if (value == "{{ sub.year }}") {
+						{% for fac in sub.teaching_faculty.all %}
+							// console.log("{{ fac }}")
+							html += "<option value='{{ sub.id }}-{{ fac.id }}'> {{ sub.sname }} - {{ fac }}</option>";
+						{% endfor %}
+					}
+				{% endfor %}
+
+				html += `</select>
+							<label>Room</label>
+							<select class='form-control batch-drp' name='{{ t }}'>
+								<option value=None>---</option>"`;
+				room_names.push('{{ t }}');
+				{% for room in rooms %}
+					html += "<option value='{{ room.id }}'>{{ room }}</option>";
+				{% endfor %}
+
+			{% endif %}
+			$('.lec_batch_opts').append(html);
+		{% endfor %}
+	}
+</script>
+
 </html>
