@@ -104,14 +104,26 @@ def submit_load_shift(request):
 				# print(request.POST.getlist('lecture_id'))
 				if(request.POST.getlist('lecture_id')):
 					for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
-						LoadShift.objects.get_or_create(leave = leave,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
+						l = LoadShift.objects.get_or_create(leave = leave,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
 						# Email notificaion
 
 						subject = 'New Load Shift request'
 						message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
+						
+						message_data = {
+							'load_shift' : l,
+						}
+
 						email_from = settings.EMAIL_HOST_USER
 						recipient_list = []
 						recipient_list.append(User.objects.get(pk = faculty_id).email)
+						html_content = render_to_string('email/loadShift_notification.html', message_data) # render with dynamic value
+						text_content = strip_tags(html_content)
+
+		msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+		msg.attach_alternative(html_content, "text/html")
+
+		msg.send()
 						send_mail(subject, message, email_from, recipient_list,fail_silently = False)
 
 			else:
