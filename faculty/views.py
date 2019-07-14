@@ -10,7 +10,9 @@ from django.core import serializers
 from django.core.files.storage import default_storage
 import os
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import send_mail,EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 # # Update leave as approved by HOD
 # def update_leave(request, leave_id):  
@@ -546,9 +548,14 @@ def send_email(request):
 		message = 'This is a test mail from admin'
 		email_from = settings.EMAIL_HOST_USER
 		recipient_list = ['harshal.pm@somaiya.edu',]
+		html_content = render_to_string('email/loadShift.html', {'varname':'value'}) # render with dynamic value
+		text_content = strip_tags(html_content)
 
-		send_mail(subject, message, email_from, recipient_list,fail_silently = False)
+		msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+		msg.attach_alternative(html_content, "text/html")
 
+		msg.send()
+		# return render(request,'email/loadshift.html',{})
 		return HttpResponse("Success")
 	html_error_data = {
 		"error_code" : "401",
