@@ -309,6 +309,7 @@
 		$('[name="yearopt"]').change(function () {
 			console.log("Year changed")
 			value = $(this).val()
+			api_urls.length = 0;
 			compute_lecs(value, value2, value3)
 			console.log($(this).val())
 		});
@@ -316,6 +317,7 @@
 			console.log("Division changed")
 			value2 = $(this).val()
 			console.log($(this).val())
+			api_urls.length = 0;
 			compute_lecs(value, value2, value3)
 
 		});
@@ -323,6 +325,7 @@
 			console.log("Day changed")
 			value3 = $(this).val()
 			console.log($(this).val())
+			api_urls.length = 0;
 			compute_lecs(value, value2, value3)
 
 		});
@@ -333,6 +336,20 @@
 			},
 		});
 
+		updatett_ajax();
+
+		$('[name="termopt"], [name="yearopt"], [name="divopt"], [name="dayopt"]').change(function(e){
+			reset_fields();
+			updatett_ajax();
+		});
+	});
+
+	function reset_fields() {
+		$('.lec-select').val(0);
+		$('.batch-drp').val("None");
+	}
+
+	function updatett_ajax() {
 		$.each(api_urls, function (index, value) {
 			$.ajax({
 				type: "POST",
@@ -356,8 +373,7 @@
 				}
 			});
 		});
-
-	});
+	}
 
 
 	function compute_lecs(value, value2, value3) {
