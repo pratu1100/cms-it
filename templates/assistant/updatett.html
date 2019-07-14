@@ -392,11 +392,11 @@
 				{% for batch in batches %}
 					if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value) {
 						html += `<div class='col-md-3 batch-drp'>
-									<select class="form-control custom-select lec-select" name="{{ t }}@{{ batch }}">`;
+									<select class="form-control custom-select lec-select" name="{{ t }}-{{ batch.batch }}">`;
 
 						html += `<option value="0" selected> --- </option>`;
 
-						name_list.push("{{ t }}@{{ batch }}");
+						name_list.push("{{ t }}-{{ batch.batch }}");
 
 						{% for sub in subjects %}
 							if (value == "{{ sub.year }}") {

@@ -548,7 +548,7 @@ def send_email(request):
 		message = 'This is a test mail from admin'
 		email_from = settings.EMAIL_HOST_USER
 		recipient_list = ['harshal.pm@somaiya.edu',]
-		html_content = render_to_string('email/loadShift.html', {'varname':'value'}) # render with dynamic value
+		html_content = render_to_string('email/loadShift_notification.html', {'varname':'value'}) # render with dynamic value
 		text_content = strip_tags(html_content)
 
 		msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
