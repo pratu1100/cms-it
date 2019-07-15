@@ -63,8 +63,8 @@ def submit_leave(request):
 			start_date_time = start_date_val + 'T' + start_time_val
 			end_date_time = end_date_val + 'T' + end_time_val
 			# Python date time objects
-			start_date = datetime.datetime.strptime(start_date_time, '%d/%m/%YT%H:%M')
-			end_date = datetime.datetime.strptime(end_date_time, '%d/%m/%YT%H:%M')
+			start_date = datetime.datetime.strptime(start_date_time, '%m/%d/%YT%H:%M')
+			end_date = datetime.datetime.strptime(end_date_time, '%m/%d/%YT%H:%M')
 			lecs = Lecture.objects.filter(lec_day__id__in = range(start_date.weekday(),end_date.weekday()+1)).filter(taken_by = user).filter(lec_time__start_time__gte = datetime.datetime.time(start_date)).filter(lec_time__end_time__lte = datetime.datetime.time(end_date))
 			adjust_opts = dict()
 			new_leave = Leave.objects.get_or_create(leave_taken_by = user,leave_start_date=start_date.date(),leave_end_date = end_date.date(),leave_start_time=start_date.time(),leave_end_time = end_date.time())
@@ -111,20 +111,22 @@ def submit_load_shift(request):
 						message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
 						
 						message_data = {
-							'load_shift' : l,
+							'loadshift' : l[0],
 						}
 
 						email_from = settings.EMAIL_HOST_USER
 						recipient_list = []
 						recipient_list.append(User.objects.get(pk = faculty_id).email)
-						html_content = render_to_string('email/loadShift_notification.html', message_data) # render with dynamic value
+						html_content = render_to_string('email/loadShift_notification.html', message_data,request) # render with dynamic value
 						text_content = strip_tags(html_content)
 
-		msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
-		msg.attach_alternative(html_content, "text/html")
+						msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+						msg.attach_alternative(html_content, "text/html")
+						print(l[0].for_lecture)
+						msg.send()
+						# return render(request,'email/loadShift_notification.html', message_data)
 
-		msg.send()
-						send_mail(subject, message, email_from, recipient_list,fail_silently = False)
+		# send_mail(subject, message, email_from, recipient_list,fail_silently = False)
 
 			else:
 				print("No load shifts")
@@ -137,6 +139,17 @@ def submit_load_shift(request):
 		"error_message" : "UNAUTHORIZED"
 	}
 	return render(request,"error.html",html_error_data)
+
+def email_accept_loadshift(request):
+	if request.method == 'POST':
+		load_shift = LoadShift.objects.get(pk = request.POST.get('load_shift'))
+		print(load_shift.id)
+		if '_reject' in request.POST:
+			load_shift.delete()	
+		elif '_approve' in request.POST:
+			load_shift.approved_status = True
+			load_shift.save()
+		return True 
 
 @login_required
 def view_load_shifts(request):
