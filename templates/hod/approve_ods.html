@@ -16,11 +16,7 @@
                     </div>
                     <div class="row col-md-12 justify-content-center"></div>
                     {% for od,loads in od_loads_pairs %}
-                        {% if od.approved_status %}
-                            <div class="card col-md-9 mb-3 shadow border border-success rounded">
-                        {% else %}
-                            <div class="card col-md-9 mb-3 shadow border border-warning rounded">
-                        {% endif %}
+                        <div class="card col-md-9 mb-3 shadow border rounded">
                         <form method="POST" action="{% url 'approve_ods' %}">
                         {% csrf_token %}
                         <input type="hidden" name="od_id" value="{{ od.id }}">
@@ -47,7 +43,8 @@
                             <div class="card-body bg-white">
                                 <h4 class="card-title text-center">Load Shifts</h4>
                                 {% for load in loads %}
-                                        <div class="list-group-item">
+                                    {% if load.approved_status %}
+                                        <div class="list-group-item border border-success rounded" style="margin-bottom: 5px;">
                                             <div class="row">
                                                 <div class="col-md m-2 p-3 text-center">
                                                     <p class="card-text font-weight-normal h6"><b>Lecture : </b>{{ load.for_lecture }}</p>
@@ -59,6 +56,20 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    {% else %}
+                                        <div class="list-group-item border border-warning rounded" style="margin-bottom: 5px;">
+                                            <div class="row">
+                                                <div class="col-md m-2 p-3 text-center">
+                                                    <p class="card-text font-weight-normal h6"><b>Lecture : </b>{{ load.for_lecture }}</p>
+                                                    <p class="card-text font-weight-normal h6"><b>Faculty : </b>{{ load.to_faculty }}</p>
+                                                </div>
+                                                <div class="col-md m-2 p-3 text-center">
+                                                    <p class="card-text font-weight-normal h6"><b>Day : </b>{{ load.for_lecture.lec_day }}</p>
+                                                    <p class="card-text font-weight-normal h6"><b>Time : </b>{{ load.for_lecture.lec_time }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                             {% endif %}
