@@ -18,7 +18,9 @@
 				<div class="container border mb-5">
 					<form method="POST" action="{% url 'submit_leave' %}">
 						{% csrf_token %}
-						<p class="d-block font-weight-bold mb-3 mt-4 ml-2">Request Leave</p>
+						<div class="text-center">
+							<p class="d-block font-weight-bold mb-3 mt-4 ml-2">Request Leave</p>
+						</div>
 
 						<div class="row">
 							<div class="col-md-6">

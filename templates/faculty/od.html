@@ -55,7 +55,9 @@
 				{% else %}
 				<form action="{% url 'submit_od' %}" method="POST" enctype="multipart/form-data">
 					{% csrf_token %}
-					<p class="d-block font-weight-bold mb-3 mt-4 ml-2">OD details</p>
+					<div class="text-center">
+						<p class="d-block font-weight-bold mb-3 mt-4 ml-2">OD Details</p>
+					</div>
 					<div class="row">
 						<div class="col-md-6">
 							<small class="d-block font-weight-bold mb-1 ml-2">Attending</small>
