@@ -97,7 +97,7 @@ WSGI_APPLICATION = 'cms.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'remotemysql.com',
+        'HOST': 'cmsdbinstance.cfxriz5zuq0g.ap-south-1.rds.amazonaws.com',
         'OPTIONS': {
             'read_default_file': os.path.join(BASE_DIR, 'db.cnf'),
         },

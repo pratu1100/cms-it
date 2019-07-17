@@ -1,5 +1,5 @@
 [client]
-database = wKAWSy2aME
-user = wKAWSy2aME
-password = fWPBEHzV6m
+database = cmsdb
+user = root
+password = balbasor
 default-character-set = utf8

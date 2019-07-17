@@ -34,14 +34,21 @@
       </a>
     </div>        
   </div>
+
+  <script>
+  $(document).ready(function () {
+    var id = "{{ id }}";
+
+    console.log(id);
+    // console.log($("#" + id));
+    // console.log(($("#" + id)[0]));
+
+    $($("#" + id)[0]).addClass("active");
+
+    // document.getElementById(id).style.setProperty('color', 'red', 'important');//color = "red";
+    // .style.setProperty('width', '100px', 'important');
+  });
+</script>
 {% endif %}
 
-<script>
-  $(document).ready(function () {
-  var id = "{{ id }}";
-  $("#" + id).addClass("active").css({
-    "background-color": "#5E72E4 !important" ,
-    "color": "white !important"
-  });
-});
-</script>
+
