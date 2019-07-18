@@ -11,6 +11,7 @@
       </a>
     </div>        
   </div>
+
 {% else %}
   <div class="col-sm-4 col-md-3 sidebar d-none d-sm-none d-md-none d-lg-block">
     <div class="list-group">
@@ -34,8 +35,10 @@
       </a>
     </div>        
   </div>
+{% endif %}
 
-  <script>
+
+<script>
   $(document).ready(function () {
     var id = "{{ id }}";
 
@@ -49,6 +52,3 @@
     // .style.setProperty('width', '100px', 'important');
   });
 </script>
-{% endif %}
-
-
