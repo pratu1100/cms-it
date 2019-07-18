@@ -3,7 +3,7 @@
 
 {% block nav-content %}
 <li class="nav-item" role="presentation">
-    <a class="nav-link pr-3" href="{% url 'request_leave' %}" style="color: white;">IA</a>
+    <a class="nav-link pr-3" href="{% url 'guestlecture' %}" style="color: white;">Guest Lecture</a>
 </li>
 {% endblock %}
 
@@ -15,9 +15,13 @@
         <div class="col-sm-8 col-md-7">
             <div class="container border">
                 {% if success %}
-                <h4>Success</h4>
+                    <div class="alert alert-success" role="alert">
+                        Guest Lecture is scheduled successfully!
+                    </div>
                 {% elif errors %}
-                <h4>{{ errors }}</h4>
+                    <div class="alert alert-danger" role="alert">
+                        <h4>{{ errors }}</h4>
+                    </div>
                 {% else %}
                 <form method="POST" action="{% url 'guestlecture_schedule' %}">
                     {% csrf_token %}
