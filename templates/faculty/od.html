@@ -16,21 +16,52 @@
 		<div class="col-sm-8 col-md-7">
 			<div class="container border mb-5">
 				{% if od %}
-				<form method="POST" action="{% url 'submit_od_loadshift' %}">
+				<form class=" border-primary" method="POST" action="{% url 'submit_od_loadshift' %}">
 					{% csrf_token %}
-					<h3>{{ od.od_type }}</h3>
-					<h4>{{ od.od_title }}</h4>
-					<h4>{{ od.od_details }}</h4>
-					<h4><b>Supporting Organisation : </b>{{ od.supporting_organisation }}</h4>
-					<h4><b>From : </b> {{ od.from_date.date }}</h4>
-					<h4><b>To : </b> {{ od.to_date.date }}</h4>
-					<h4><b>Last : </b> {{ od.last_date.date }}</h4>
-					<h4><b>Fees : </b> {{ od.fees }}</h4>
-					<h4><b>Scope : </b> {{ od.scope }}</h4>
-					<h4><a href="{{ od.correspondence.url }}" target="__blank">
-					{% with od.correspondence.name|split:"/" as fname %}
-						{{ fname|last }}</br>
-					{% endwith %}</a></h4>
+					<div class="card text-center mt-3">
+						<div class="card-header text-dark">
+							{{ od.od_title }}
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">Type: {{ od.od_type }}</h5>
+							<p class="card-text">
+								{{ od.od_details }}
+							</p>
+							<div class="row text-left mb-2">
+								<div class="col-sm-6">
+									<p class="card-text"><b>Supporting Organisation: </b>{{ od.supporting_organisation }}</p>
+								</div>
+								<div class="col-sm-6">
+									<p class="card-text"><b>Last Date: </b>{{ od.last_date.date }}</p>
+								</div>
+							</div>
+							<div class="row text-left mb-2">
+								<div class="col-sm-6">
+									<p class="card-text"><b>From: </b>{{ od.from_date.date }}</p>
+								</div>
+								<div class="col-sm-6">
+									<p class="card-text"><b>To: </b>{{ od.to_date.date }}</p>
+								</div>
+							</div>
+							<div class="row text-left">
+								<div class="col-sm-6">
+									<p class="card-text"><b>Fees: </b>{{ od.fees }}</p>
+								</div>
+								<div class="col-sm-6">
+									<p class="card-text"><b>Scope: </b>{{ od.scope }}</p>
+								</div>
+							</div>
+						</div>
+						<div class="p-3" style="border-top: 1px solid #eee">
+							OD File:
+							<a href="{{ od.correspondence.url }}" target="__blank">
+								{% with od.correspondence.name|split:"/" as fname %}
+									{{ fname|last }}</br>
+								{% endwith %}
+							</a>
+						</div>
+					</div>
+
 					<div class="card-body text-center">
 						<h5 class="card-title">Load Shifts</h5>
 						<input type="hidden" name="od_id" value="{{ od.id }}">
