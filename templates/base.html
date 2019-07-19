@@ -118,6 +118,12 @@
   {% endif %}
   {% endcomment %}
 
+  <script>
+  $(document).ready(function () {
+    var id = "{{ id }}";
+    $("a#" + id).css("background-color", "#E6E6E6");
+  });
+</script>
 
 </body>
 </html>

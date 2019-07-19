@@ -3,7 +3,7 @@
 
 {% block nav-content %}
 <li class="nav-item" role="presentation">
-	<a class="nav-link pr-3" href="{% url 'request_leave' %}" style="color: white;">Makeup</a>
+	<a class="nav-link pr-3" href="{% url 'makeup' %}" style="color: white;">Makeup</a>
 </li>
 {% endblock %}
 
@@ -15,14 +15,18 @@
 		<div class="col-sm-8 col-md-7">
 			<div class="container border">
 				{% if success %}
-				<h4>Reserved</h4>
+					<div class="alert alert-success" role="alert">
+                        Makeup Lecture is scheduled successfully!
+                    </div>
 				{% elif errors %}
-				<h4>Cannot reserve contact admin</h4>
+					<div class="alert alert-danger" role="alert">
+                        <h4>{{ errors }}</h4>
+                    </div>
 				{% else %}
 				<form method="POST" action="{% url 'reserve' %}">
 					{% csrf_token %}
 					<div class="col-md-12 d-flex justify-content-center align-items">
-						<p class="d-block font-weight-bold mb-3 mt-4 ml-2">Reserve</p>
+						<p class="d-block font-weight-bold mb-3 mt-4 ml-2">Create Makeup Lecture</p>
 					</div>
 					{% comment %} <div class="title text-center mt-2">
 						<p class="h4 font-weight-bold text-dark">Reserve</p>

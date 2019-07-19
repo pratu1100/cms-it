@@ -17,34 +17,34 @@ def get_timetable(request):
 			t_year = Year.objects.filter(year = request.POST.get('yearopt'))[0]
 			t_div = Division.objects.filter(division = request.POST.get('divopt'))[0]
 			t_day = DaysOfWeek.objects.filter(day_name = request.POST.get('dayopt'))[0]
-			print(request.POST)
+			# print(request.POST)
 			# For lectures
 			ts = TimeSlot.objects.annotate(
 	    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
 		).filter(diff__lt=datetime.timedelta(hours = 2))
 			
 			for t in ts:
-				print(t)
+				# print(t)
 				tavail = request.POST.getlist(str(t))
 				# print(tavail[0])
 				# print(tavail[1])
 				if(tavail[0]!='0' and tavail[1]!=None):
 					# print(t)
-					print("###")
-					print(tavail)
+					# print("###")
+					# print(tavail)
 					# print(tavail.split("-")[0])
 					# print(tavail.split("-")[1])
 
 					u = User.objects.get(pk= int(tavail[0].split("-")[1]))
 					s = Subject.objects.get(pk = tavail[0].split("-")[0])
 					r = Room.objects.get(pk = tavail[1])
-					print(u)
-					print(s)
-					print(r)
+					# print(u)
+					# print(s)
+					# print(r)
 
 					try:
 						l = Lecture.objects.get(lec_day = t_day,lec_time = t,lec_div = t_div) 
-						print(l)
+						# print(l)
 						if not (l.taken_by == u):
 							l.taken_by = u
 						if not (l.lname == s):
@@ -53,7 +53,7 @@ def get_timetable(request):
 							l.lec_in = r
 						l.save()
 					except:
-						print("Creating new lecture..")
+						# print("Creating new lecture..")
 						l = Lecture(lname = s, lec_day = t_day, lec_time = t, lec_div = t_div, taken_by = u, lec_in = r)
 						l.full_clean()
 						l.save()
@@ -63,13 +63,13 @@ def get_timetable(request):
 		).filter(diff=datetime.timedelta(hours = 2))
 
 			for t in ts: 
-				print(t)
+				# print(t)
 				for batch in Batch.objects.filter(batch_of_year = t_year,batch_of_div = t_div):
 					tavail = request.POST.getlist(str(t)+"-"+str(batch.batch))
 					
 					if(tavail[0]!='0' and tavail[1]!=None):
 
-						print(tavail)
+						# print(tavail)
 
 
 						u = User.objects.get(pk= int(tavail[0].split("-")[1]))
@@ -78,7 +78,7 @@ def get_timetable(request):
 
 						try:
 							l = Lecture.objects.get(lec_day = t_day,lec_time = t,lec_div = t_div,lec_batch = batch) 
-							print(l)
+							# print(l)
 							if not (l.taken_by == u):
 								l.taken_by = u
 							if not (l.lname == s):
@@ -88,7 +88,7 @@ def get_timetable(request):
 
 							l.save()
 						except:
-							print("Creating new lecture..")
+							# print("Creating new lecture..")
 							l = Lecture(lname = s, lec_day = t_day, lec_time = t, lec_div = t_div, taken_by = u, lec_in = r,lec_batch = batch)
 							l.full_clean()
 							l.save()
@@ -176,13 +176,13 @@ def get_timetable(request):
 def get_lec(request,year,division,timeslot,day,batch):
 	if request.user.is_staff:
 		year = Year.objects.get(year = year)
-		print(year)
+		# print(year)
 		division = Division.objects.get(division = division)
-		print(division)
+		# print(division)
 		timeslot = TimeSlot.objects.get(pk = int(timeslot))
-		print(timeslot)
+		# print(timeslot)
 		day = DaysOfWeek.objects.get(day_name = day)
-		print(day)
+		# print(day)
 
 		try:
 			lectures = list()
@@ -191,15 +191,15 @@ def get_lec(request,year,division,timeslot,day,batch):
 				lectures.append(lecture)
 			else:
 				batch = Batch.objects.get(pk = batch)
-				print(batch)
+				# print(batch)
 				lecture = Lecture.objects.get(lec_day = day,lec_time = timeslot,lec_div = division,lec_batch = batch,lname__year = year)
 				lectures.append(lecture)
 
 			lec_json = serializers.serialize("json",lectures)
-			print(lec_json)
+			# print(lec_json)
 			return HttpResponse(lec_json)
 		except Exception as e:
-			print("Not found")
+			# print("Not found")
 			response = JsonResponse({"error": "Not found"})
 			# response.status_code = 403
 			return response

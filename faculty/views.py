@@ -122,14 +122,18 @@ def submit_load_shift(request):
 
 						msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 						msg.attach_alternative(html_content, "text/html")
-						print(l[0].for_lecture)
+						# print(l[0].for_lecture)
 						msg.send()
 						# return render(request,'email/loadShift_notification.html', message_data)
 
 		# send_mail(subject, message, email_from, recipient_list,fail_silently = False)
 
 			else:
-				print("No load shifts")
+				html_error_data = {
+					"error_code" : "404",
+					"error_message" : "Loadshifts not found. Try again."
+				}
+				return render(request,"error.html",html_error_data)
 			# print(user.username)
 			# print(for_lec)
 			# print(to_faculty)
@@ -143,7 +147,7 @@ def submit_load_shift(request):
 def email_accept_loadshift(request):
 	if request.method == 'POST':
 		load_shift = LoadShift.objects.get(pk = request.POST.get('load_shift'))
-		print(load_shift.id)
+		# print(load_shift.id)
 		if '_reject' in request.POST:
 			load_shift.delete()	
 		elif '_approve' in request.POST:
@@ -193,11 +197,6 @@ def get_makeup(request):
 			# m_lecs = MakeupLecture.objects.filter(lec_date__week_day = day.id)
 			free_ts = list()
 			for timeslot in timeslots:
-				try:
-					print("******",MakeupLecture.objects.filter(lec_date__week_day = (day.id +1) , lec_time = timeslot)[0].lec_date.strftime("%A"))
-				
-				except:
-					pass
 				if(not(Lecture.objects.filter(lec_day = day,lec_time = timeslot).exists()) and not (MakeupLecture.objects.filter(lec_date__week_day = (day.id + 1),lec_time = timeslot).exists())):
 					free_ts.append(timeslot)
 
@@ -259,11 +258,11 @@ def post_makeup(request):
 
 
 # def get_subjects(request,yid):
-# 	print("request")
+	# print("request")
 # 	try:
 # 		year = Year.objects.get(pk = yid)
 # 		subjects = Subject.objects.filter(year = year)
-# 		print(subjects)
+		# print(subjects)
 # 	except:
 		
 

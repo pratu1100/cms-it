@@ -11,6 +11,7 @@
       </a>
     </div>        
   </div>
+
 {% else %}
   <div class="col-sm-4 col-md-3 sidebar d-none d-sm-none d-md-none d-lg-block">
     <div class="list-group">
@@ -36,12 +37,10 @@
   </div>
 {% endif %}
 
+
 <script>
   $(document).ready(function () {
-  var id = "{{ id }}";
-  $("#" + id).addClass("active").css({
-    "background-color": "#5E72E4 !important" ,
-    "color": "white !important"
+    var id = "{{ id }}";
+    $("a#" + id).addClass("active");
   });
-});
 </script>
