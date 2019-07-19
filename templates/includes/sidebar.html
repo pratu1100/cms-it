@@ -9,7 +9,7 @@
       <a href="{% url 'approve_ods' %}" id="approve_ods" class="list-group-item bg-white text-dark">
           Approve ODs
       </a>
-    </div>        
+    </div>
   </div>
 
 {% else %}
@@ -33,7 +33,7 @@
       <a href="{% url 'od' %}" id="od" class="list-group-item bg-white text-dark">
         OD
       </a>
-    </div>        
+    </div>
   </div>
 {% endif %}
 
@@ -41,6 +41,13 @@
 <script>
   $(document).ready(function () {
     var id = "{{ id }}";
+    console.log(id);
     $("a#" + id).addClass("active");
+
+    $("a#" + id).css({"z-index": "2",
+          "color": "#fff",
+          "border-color": "#5e72e4",
+          "background-color": "#e6e6e6 !important"});
+
   });
 </script>

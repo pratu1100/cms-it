@@ -15,19 +15,19 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 # # Update leave as approved by HOD
-# def update_leave(request, leave_id):  
+# def update_leave(request, leave_id):
 #     Leave.objects.filter(id=leave_id).update(is_approved=True)
 #     return HttpResponseRedirect('/hod/')
 
 @login_required
 def index(request):
-	if not request.user.is_superuser and not request.user.is_staff: 
+	if not request.user.is_superuser and not request.user.is_staff:
 		return HttpResponseRedirect('/faculty/requestleave')
 	html_error_data = {
 		"error_code" : "401",
 		"error_message" : "UNAUTHORIZED"
 	}
-	return render(request,"error.html",html_error_data) 
+	return render(request,"error.html",html_error_data)
 
 @login_required
 def create_leave(request):
@@ -45,7 +45,7 @@ def submit_leave(request):
 		if request.method == 'POST':
 			user = User.objects.get(pk = request.user.id)
 			start_date_val = request.POST.get('leave_start_date')
-			end_date_val = request.POST.get('leave_end_date')	
+			end_date_val = request.POST.get('leave_end_date')
 			duration = request.POST.get('duration')
 			start_time_val = ''
 			end_time_val = ''
@@ -82,7 +82,7 @@ def submit_leave(request):
 				"leave_id" : new_leave[0].id
 			}
 
-			return render(request,"faculty/leave_request.html",context_data)	
+			return render(request,"faculty/leave_request.html",context_data)
 			# LoadShift.objects.create()
 		return HttpResponse("Not logged in")
 	html_error_data = {
@@ -109,7 +109,7 @@ def submit_load_shift(request):
 
 						subject = 'New Load Shift request'
 						message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
-						
+
 						message_data = {
 							'loadshift' : l[0],
 						}
@@ -149,11 +149,11 @@ def email_accept_loadshift(request):
 		load_shift = LoadShift.objects.get(pk = request.POST.get('load_shift'))
 		# print(load_shift.id)
 		if '_reject' in request.POST:
-			load_shift.delete()	
+			load_shift.delete()
 		elif '_approve' in request.POST:
 			load_shift.approved_status = True
 			load_shift.save()
-		return True 
+		return True
 
 @login_required
 def view_load_shifts(request):
@@ -161,14 +161,14 @@ def view_load_shifts(request):
 		if request.method == 'POST':
 			load_shift = LoadShift.objects.get(pk = request.POST.get('load_shift'))
 			if '_reject' in request.POST:
-					load_shift.delete()	
+					load_shift.delete()
 			elif '_approve' in request.POST:
 					load_shift.approved_status = True
-					load_shift.save() 
+					load_shift.save()
 
 		user = User.objects.get(pk = request.user.id)
 		load_shifts = LoadShift.objects.filter(to_faculty = user)
-		
+
 		return render(request,"faculty/loadshift.html",{"load_shifts":load_shifts})
 	html_error_data = {
 		"error_code" : "401",
@@ -229,21 +229,20 @@ def post_makeup(request):
 			division = Division.objects.get(pk = int(request.POST.get('division')))
 			date = datetime.datetime.strptime(request.POST.get('makeup_date'),'%m/%d/%Y')
 			timeslot = TimeSlot.objects.get(pk = int(request.POST.get('timeslot')))
+			room = Room.objects.get(pk = int(request.POST.get('locations')))
 			user = User.objects.get(pk = request.user.id)
 			# print(year,"--",subject,"--",division,"--",date,"--",timeslot)
-			makeup_lec = MakeupLecture(year = year, lec_subject = subject, division = division,lec_date = date, lec_time = timeslot, lec_taken_by = user)
+			makeup_lec = MakeupLecture(year = year, lec_subject = subject, division = division,lec_date = date, lec_time = timeslot, lec_taken_by = user, lec_in=room)
 			try:
 				makeup_lec.full_clean()
 				makeup_lec.save()
-				success = True
 				context_data = {
-					"success" : success ,
+					"success" : 'true'
 				}
 			except Exception as e:
-				# print("Cannnot save",e)
-				success = False
+				print("Cannnot save",e)
 				context_data = {
-					"errors" : success ,
+					"errors" : e ,
 				}
 
 			return render(request,"faculty/makeup.html",context_data)
@@ -264,7 +263,7 @@ def post_makeup(request):
 # 		subjects = Subject.objects.filter(year = year)
 		# print(subjects)
 # 	except:
-		
+
 
 # 	return HttpResponse("<h1>Test</h1>")
 
@@ -290,13 +289,13 @@ def get_timeslots(request,syear,sdate):
 			# occupied_rooms = list()
 			free_ts = list()
 			for timeslot in timeslots:
-			
+
 				filtered_lecs = lecs.filter(lec_time__start_time__gte = timeslot.start_time, lec_time__end_time__lte = timeslot.end_time)
-				
+
 				filtered_makeup_lecs = makeup_lecs.filter(lec_time__start_time__gte = timeslot.start_time,lec_time__end_time__lte = timeslot.end_time)
-				
+
 				filtered_ia = ias.filter(ia_time__start_time__gte = timeslot.start_time,ia_time__end_time__lte = timeslot.end_time)
-				
+
 				filtered_guest_lecs = guest_lecs.filter(lec_time__start_time__gte = timeslot.start_time,lec_time__end_time__lte = timeslot.end_time)
 
 				if(not filtered_lecs.exists() and not filtered_makeup_lecs.exists() and not filtered_ia.exists() and not filtered_guest_lecs.exists()):
@@ -304,7 +303,7 @@ def get_timeslots(request,syear,sdate):
 			# print(lecs)
 			# print(makeup_lecs)
 			ts_json = serializers.serialize("json",free_ts)
-			
+
 			# rooms_json = serializers.serialize("json",occupied_rooms)
 
 			# data_json = {
@@ -395,7 +394,7 @@ def post_ia(request):
 				}
 
 			except Exception as e:
-				
+
 				context_data = {
 					"errors" : e
 				}
@@ -435,7 +434,7 @@ def guestlecture_schedule(request):
 			# print(request.POST)
 			year = Year.objects.get(pk = int(request.POST.get('year')))
 			subject = Subject.objects.get(pk = int(request.POST.get('subject')))
-			date = datetime.datetime.strptime(request.POST.get('date'),'%m/%d/%Y')
+			date = datetime.datetime.strptime(request.POST.get('guestlec_date'),'%m/%d/%Y')
 			timeslot = TimeSlot.objects.get(pk = int(request.POST.get('timeslot')))
 			room = Room.objects.get(pk = int(request.POST.get('locations')))
 
@@ -450,7 +449,7 @@ def guestlecture_schedule(request):
 				}
 
 			except Exception as e:
-				
+
 				context_data = {
 					"errors" : e
 				}
@@ -506,7 +505,7 @@ def submit_od(request):
 			new_od = OD(od_type = od_type, od_title = title, od_details = og_details, supporting_organisation = supporting_og, from_date = from_date, to_date = to_date, last_date = last_date, fees = fees,scope = scope, taken_by = taken_by)
 			new_od.correspondence.save(correspondence_filename,correspondence_file)
 			new_od.save()
-			
+
 			lecs = Lecture.objects.filter(lec_day__id__in = range(from_date.weekday(),to_date.weekday()+1)).filter(taken_by = taken_by)
 			# print(lecs)
 			adjust_opts = dict()
@@ -539,7 +538,7 @@ def submit_od_loadshift(request):
 				if(request.POST.getlist('lecture_id')):
 					for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
 						LoadShift.objects.get_or_create(od = od,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
-			
+
 						# Email notificaion
 
 						subject = 'New Load Shift request'
@@ -551,14 +550,14 @@ def submit_od_loadshift(request):
 
 
 					context_data = {
-						"success" : True,
+						"success" : 'true',
 					}
 			else:
 				context_data = {
 					"errors" : "Contact Admin"
 	 			}
 				# print("No load shifts")
-		return render(request,"faculty/od.html",context_data)
+			return render(request,"faculty/od.html",context_data)
 	html_error_data = {
 		"error_code" : "401",
 		"error_message" : "UNAUTHORIZED"

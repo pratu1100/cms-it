@@ -90,78 +90,7 @@
                             <button type="submit" class="btn btn-primary">Schedule</button>
                         </div>
                     </div>
-                    <!-- Year -->
-                    {% comment %} <div class="year text-center">
-                        <div class="year-text">
-                            <p class="h5 text-dark">Year: </p>
-                        </div>
-                        <div class="year-dropdown">
-                            <div class="dropdown">
-                                <select class="custom-select text-dark" name="year">
-                                    <option class="text-dark" value="-1">Please Select</option>
-                                    {% for year in years %}
-                                    <option class="text-dark" value="{{ year.id }}">{{ year }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Subject -->
-                    <div class="lecture text-center mt-4">
-                        <div class="lecture-text">
-                            <p class="h5 text-dark">Subject: </p>
-                        </div>
-                        <div class="lecture-dropdown">
-                            <div class="dropdown">
-                                <select class="custom-select text-dark" name="subject" required>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Day -->
-                    <div class="day text-center mt-4">
-                        <div class="day-text">
-                            <p class="h5 text-dark">Date: </p>
-                        </div>
-                        <div class="slot-dropdown">
-                            <div class="dropdown">
-                                <input type="text" class="form-control text-dark" data-provide="datepicker"
-                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="date"
-                                    data-date-start-date="0d">
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Slot -->
-                    <div class="slot text-center mt-4">
-                        <div class="slot-text">
-                            <p class="h5 text-dark">Timeslot: </p>
-                        </div>
-                        <div class="slot-dropdown">
-                            <div class="dropdown">
-                                <select class="custom-select text-dark" name="timeslot">
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Room -->
-                    <div class="room text-center mt-4">
-                        <div class="room-text">
-                            <p class="h5 text-dark">Room: </p>
-                        </div>
-                        <div class="room-dropdown">
-                            <div class="dropdown">
-                                <select class="custom-select text-dark" name="locations">
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="text-center">
-                        <input type="submit" style="background-color: #481380;" class="btn my-5 mr-3 text-white"
-                            value="Schedule" />
-                    </div> {% endcomment %}
                 </form>
 
                 {% endif %}

@@ -5,7 +5,7 @@
   <title>KJSCE - CMS | Content Management System</title><!-- Fonts -->
   <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     {% include 'includes/stylesheets.html' %}
     {% include 'includes/scripts.html' %}
@@ -20,7 +20,7 @@
 		  		Hello, {{ user.username }}
 			{% else %}
 				KJSCE - CMS
-			{% endif %}	
+			{% endif %}
 		  </span>
 
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-default" aria-controls="navbar-default" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,14 +99,14 @@
 
   {% block logincontent %}
   {% endblock %}
-	
+
   {% if user.is_authenticated %}
 	  {% block content %}
 	  {% endblock %}
   {% endif %}
-  
 
-  {% comment %}	
+
+  {% comment %}
   {% if user.is_authenticated %}
   	<div class="row mt-3 ml-2">
   		{% include '../includes/sidebar.html' %}
@@ -118,12 +118,6 @@
   {% endif %}
   {% endcomment %}
 
-  <script>
-  $(document).ready(function () {
-    var id = "{{ id }}";
-    $("a#" + id).css("background-color", "#E6E6E6");
-  });
-</script>
 
 </body>
 </html>

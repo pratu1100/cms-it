@@ -89,8 +89,18 @@
                                     <option class="text-dark" value="-1" selected disabled>Please Select</option>
                                 </select>
                             </div>
+						</div>
+						<div class="col-md-6">
+                            <div class="form-group">
+                                <small class="d-block font-weight-bold mb-1 ml-2">Room</small>
+                                <select class="form-control form-control-alternative" name="locations" required>
+                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
+					</div>
+
+
 
                     <div class="row mb-3">
                         <div class="col-md-12 d-flex justify-content-center align-items">
@@ -167,7 +177,30 @@
 
 
 		// })
-
+		$('[name = timeslot]').change(function () {
+			$('[name = locations]').empty();
+			d = new Date($('[name = makeup_date]').val());
+			d.setDate(d.getDate() + 1);
+			date = d.toISOString().split('T')[0];
+			timeslot = $(this).val();
+			url_string = "{% url 'available_rooms' 'date' 'timeslot' %}".replace('timeslot',
+				timeslot).replace(
+				'date', date);
+			console.log(url_string)
+			$.ajax({
+				url: url_string,
+				success: function (text) {
+					rooms_json = $.parseJSON(text);
+					// console.log(rooms_json);
+					var html = "<option value=-1 disabled selected>Select Room</option>";
+					for (i = 0; i < rooms_json.length; i++) {
+						html += "<option value=" + rooms_json[i].pk + ">" + rooms_json[
+							i].fields.room + "</option>"
+					}
+					$('[name = locations]').append(html);
+				}
+			})
+		})
 	});
 </script>
 
