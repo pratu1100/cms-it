@@ -22,7 +22,15 @@ from django.utils.html import strip_tags
 @login_required
 def index(request):
 	if not request.user.is_superuser and not request.user.is_staff:
-		return HttpResponseRedirect('/faculty/requestleave')
+		ias = IA.objects.filter(ia_date__gte = datetime.datetime.now())
+		makeup_lecs = MakeupLecture.objects.filter(lec_date__gte = datetime.datetime.now())
+		guest_lecs = GuestLecture.objects.filter(lec_date__gte = datetime.datetime.now())
+		context_data = {
+			"ias" : ias,
+			"makeup_lecs" : makeup_lecs,
+			"guest_lecs" : guest_lecs,
+		}
+		return render(request,"faculty/faculty_index.html",context_data)
 	html_error_data = {
 		"error_code" : "401",
 		"error_message" : "UNAUTHORIZED"
@@ -117,7 +125,7 @@ def submit_load_shift(request):
 						email_from = settings.EMAIL_HOST_USER
 						recipient_list = []
 						recipient_list.append(User.objects.get(pk = faculty_id).email)
-						html_content = render_to_string('email/loadShift_notification.html', message_data,request) # render with dynamic value
+						html_content = render_to_string('email/loadshift_notification.html', message_data,request) # render with dynamic value
 						text_content = strip_tags(html_content)
 
 						msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
@@ -537,17 +545,27 @@ def submit_od_loadshift(request):
 				# print(request.POST.getlist('lecture_id'))
 				if(request.POST.getlist('lecture_id')):
 					for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
-						LoadShift.objects.get_or_create(od = od,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
+						l = LoadShift.objects.get_or_create(od = od,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
 
 						# Email notificaion
 
 						subject = 'New Load Shift request'
-						message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(od.taken_by.username)
+						message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
+
+						message_data = {
+							'loadshift' : l[0],
+						}
+
 						email_from = settings.EMAIL_HOST_USER
 						recipient_list = []
 						recipient_list.append(User.objects.get(pk = faculty_id).email)
-						send_mail(subject, message, email_from, recipient_list,fail_silently = False)
+						html_content = render_to_string('email/loadshift_notification.html', message_data,request) # render with dynamic value
+						text_content = strip_tags(html_content)
 
+						msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+						msg.attach_alternative(html_content, "text/html")
+						# print(l[0].for_lecture)
+						msg.send()
 
 					context_data = {
 						"success" : 'true',

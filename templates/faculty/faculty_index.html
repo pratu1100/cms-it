@@ -1,0 +1,75 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block nav-content %}
+
+	<li class="nav-item" role="presentation">
+		<a class="nav-link pr-3" href="{% url 'request_leave' %}" style="color: white;">Home</a>
+	</li>
+
+{% endblock %}
+
+{% block content %}
+	<main>
+		<div class="row mt-3 ml-2">
+			{% include '../includes/sidebar.html' with id="faculty_index" %}
+					<div class="col-sm-12 col-md-3">
+					{% for ia in ias %}
+						<div class="card mb-3">
+							<div class="card-header">
+								<div class="float-left"><strong>IA</strong></div>
+								<div class="float-right"><strong>{{ ia.ia_date }}</strong></div>
+							</div>
+							<div class="card-body">
+								<h5 class="float-left">
+									{{ia.ia_year}} - {{ ia }} 
+								</h5>
+							<div class="badge badge-info badge-lg float-right" style="font-size : 90%;">{{ ia.ia_time }}</div>
+							</div>			
+						</div>
+					{% endfor %}
+					</div>	
+					<div class="col-sm-12 col-md-4">
+					{% for lec in guest_lecs %}
+						<div class="card mb-3">
+							<div class="card-header bg-secondary">
+								<div class="float-left"><strong>Guest Lecture</strong></div>
+								<div class="float-right"><strong>{{ lec.lec_date }}</strong></div>
+							</div>
+							<div class="card-body">
+								<h5 class="float-left">
+									{{ lec.lec_year }}
+								</h5>
+								<div class="badge badge-info badge-lg float-right" style="font-size : 90%;">{{ lec.lec_time }}</div>
+								<div class="badge badge-warning badge-lg float-right" style="font-size : 90%;">{{ lec.lec_in }}</div>			
+							</div>
+							<div class="badge badge-success badge-lg" style="font-size : 90%;">
+								{{ lec.lec_subject }}
+							</div>
+						</div>
+					{% endfor %}	
+					{% for lec in makeup_lecs %}
+						<div class="card mb-3">
+							<div class="card-header bg-secondary">
+								<div class="float-left"><strong>Makeup</strong></div>
+								<div class="float-right"><strong>{{ lec.lec_date }}</strong></div>
+							</div>
+							<div class="card-body">
+								<h5 class="float-left">
+									{{ lec.year}} - {{ lec.division }} 
+								</h5>
+								<div class="badge badge-info badge-lg float-right" style="font-size : 90%;">{{ lec.lec_time }}</div>
+								<div class="badge badge-warning badge-lg float-right" style="font-size : 90%;">{{ lec.lec_in }}</div>			
+							</div>
+							<div class="badge badge-success badge-lg" style="font-size : 90%;">
+								{{ lec.lec_subject }} - {{ lec.lec_taken_by }}
+							</div>
+						</div>
+					{% endfor %}	
+					</div>	
+			                        
+		</div>
+	</main>
+
+	
+{% endblock %}

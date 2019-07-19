@@ -15,6 +15,9 @@
 {% else %}
   <div class="col-sm-4 col-md-3 sidebar d-none d-sm-none d-md-none d-lg-block">
     <div class="list-group">
+      <a href="{% url 'faculty_index' %}" id="faculty_index" class="list-group-item bg-white text-dark">
+          Home
+      </a>
       <a href="{% url 'request_leave' %}" id="request_leave" class="list-group-item bg-white text-dark">
           Request Leave
       </a>
