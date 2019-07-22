@@ -1,1 +1,1 @@
-web: gunicorn cms.wsgi --timeout 15 --keep-alive 5 --log-level debug
+web: gunicorn cms.wsgi --log-level debug
