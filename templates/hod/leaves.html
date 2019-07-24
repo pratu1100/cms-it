@@ -40,7 +40,7 @@
                                 {% for load in loads %}
                                         
                                                 {% if load.approved_status %}
-                                                <div class="list-group-item border border-success rounded" style="margin-bottom: 5px;">
+                                                <div class="list-group-item border border-success rounded" style="margin-bottom: 5px;  border-width:3px !important;">
                                                     <div class="row">
                                                         <div class="col-md m-2 p-3 text-center">
                                                             <p class="card-text font-weight-normal h6"><b>Lecture : </b>{{ load.for_lecture }}</p>
@@ -53,7 +53,7 @@
                                                     </div>
                                                 <div>
                                                 {% else %}
-                                                <div class="list-group-item border border-warning rounded" style="margin-bottom: 5px;">
+                                                <div class="list-group-item border border-warning rounded" style="margin-bottom: 5px;  border-width:3px !important;">
                                                     <div class="row">
                                                         <div class="col-md m-2 p-3 text-center">
                                                             <p class="card-text font-weight-normal h6"><b>Lecture : </b>{{ load.for_lecture }}</p>
