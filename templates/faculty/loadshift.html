@@ -8,10 +8,10 @@
 {% endblock %}
 
 {% block content %}
-<main>
+<main class="mx-auto">
+	<input id="page_loaded" value="loadshifts" style="display: none;">
 	<div class="row mt-3 ml-2">
-		{% include '../includes/sidebar.html' with id="load_shifts" %}
-		<div class="pt-2 justify-content-center" style="width: 70%;">
+		<div class="pt-2 col-md-12 justify-content-center" style="width: 70%;">
 			<div class="title text-center mb-3 pb-3">
 				<p class="h4">List of Load shifts</p>
 			</div>
@@ -74,7 +74,8 @@
 					next: '<i class="fa fa-arrow-right">',
 					previous: '<i class="fa fa-arrow-left">' 
 					}
-				}
+				},
+				responsive: true
 			});
 		});
 	</script>

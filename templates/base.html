@@ -11,116 +11,75 @@
     {% include 'includes/scripts.html' %}
 </head>
 <body>
-  <header class="header-global">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container">
+	<div class="wrapper">
+		{% if user.is_authenticated %}
+			{% include './includes/sidebar.html' %}
+		{% endif %}
+		<!-- Page Content  -->
+		<div id="content">
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+				{% if user.is_authenticated %}
+				<button type="button" id="sidebarCollapse" class="btn btn-dark">
+					<i class="fas fa-bars"></i>
+					<span></span>
+				</button>
+				{% endif %}
 
-		  <span class="navbar-brand" style="font-size: 20px;">
-		  	{% if user.is_authenticated %}
-		  		Hello, {{ user.username }}
-			{% else %}
-				KJSCE - CMS
-			{% endif %}
-		  </span>
-
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-default" aria-controls="navbar-default" aria-expanded="false" aria-label="Toggle navigation">
-          	<span class="navbar-toggler-icon"></span>
-          </button>
-
-          <div class="navbar-collapse collapse" id="navbar-default">
-	          <div class="navbar-collapse-header">
-	            <div class="row">
-	              <div class="col-6 collapse-brand">
-	                <a href="./index.html">
-	                  KJSCE - CMS
-	                </a>
-	              </div>
-	              <div class="col-6 collapse-close">
-	                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-default" aria-controls="navbar-default" aria-expanded="false" aria-label="Toggle navigation">
-	                  <span></span>
-	                  <span></span>
-	                </button>
-	              </div>
-	            </div>
-	          </div>
-
-			  {% if user.is_authenticated %}
-
-				<ul class="navbar-nav align-items-lg-center ml-lg-auto  d-lg-none d-xl-none">
-					{% if user.is_superuser %}
-						<li class="nav-item">
-							<a class="nav-link" id="approve_leaves" href="{% url 'leaves' %}">Approve Leaves</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="approve_ods" href="{% url 'approve_ods' %}">Approve ODs</a>
-						</li>
+				<span class="navbar-brand pl-5" style="font-size: 20px;">
+					{% if user.is_authenticated %}
+						Hello, {{ user.username }}
 					{% else %}
-						<li class="nav-item">
-							<a class="nav-link" id="faculty_index" href="{% url 'faculty_index' %}">Home</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="request_leave" href="{% url 'request_leave' %}">Request Leave</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="load_shifts" href="{% url 'loadshifts' %}">Load Shifts</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="ia" href="{% url 'IA' %}">IA</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="makeuplecture" href="{% url 'makeup' %}">Makeup Lecture</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="guestlecture" href="{% url 'guestlecture' %}">Guest Lecture</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" id="od" href="{% url 'od' %}">OD</a>
-						</li>
+						KJSCE - CMS
 					{% endif %}
+				</span>
 
 
-		            <li class="nav-item">
-		                <a class="nav-link" href="{% url 'logout' %}">Logout <span class="sr-only">(current)</span></a>
-		            </li>
-				</ul>
+				<div class="navbar-collapse collapse" id="navbar-default">
+					<div class="navbar-collapse-header">
+						<div class="row">
+							<div class="col-6 collapse-brand">
+								<a href="./index.html">
+								KJSCE - CMS
+								</a>
+							</div>
+							<div class="col-6 collapse-close">
+								<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-default" aria-controls="navbar-default" aria-expanded="false" aria-label="Toggle navigation">
+								<span></span>
+								<span></span>
+								</button>
+							</div>
+						</div>
+					</div>
+					{% if user.is_authenticated %}
+						<ul class="navbar-nav align-items-lg-center ml-lg-auto">
+							<li class="nav-item d-none d-lg-block ml-lg-4">
+								<a href="{% url 'logout' %}"  class="btn btn-icon btn-outline-danger">
+								<span class="nav-link-inner--text text-white">Logout</span>
+								</a>
+							</li>
+						</ul>
+					{% endif %}
+					
+				</div>
+			</nav>
+			{% block logincontent %}
+			{% endblock %}
 
-				<ul class="navbar-nav align-items-lg-center ml-lg-auto">
-	              <li class="nav-item d-none d-lg-block ml-lg-4">
-	                <a href="{% url 'logout' %}"  class="btn btn-icon btn-outline-danger">
-	                  <span class="nav-link-inner--text text-white">Logout</span>
-	                </a>
-	              </li>
-	            </ul>
-
-			  {% endif %}
-
-	      </div>
-        </div>
-      </div>
-    </nav>
-  </header>
-
-  {% block logincontent %}
-  {% endblock %}
-
-  {% if user.is_authenticated %}
-	  {% block content %}
-	  {% endblock %}
-  {% endif %}
-
-
-  {% comment %}
-  {% if user.is_authenticated %}
-  	<div class="row mt-3 ml-2">
-  		{% include '../includes/sidebar.html' %}
-  		<div class="col-sm-8 col-md-7">
-		  {% block content %}
-		  {% endblock %}
+			{% if user.is_authenticated %}
+				{% block content %}
+				{% endblock %}
+			{% endif %}
 		</div>
 	</div>
-  {% endif %}
-  {% endcomment %}
 
+	<script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+        });
+    </script>
 
 </body>
 </html>

@@ -8,11 +8,11 @@
 {% endblock %}
 
 {% block content %}
-<main>
-	<div class="row mt-3 ml-2">
-		{% include '../includes/sidebar.html'  with id="makeuplecture" %}
+<main class="mx-auto">
+	<input id="page_loaded" value="makeup" style="display: none;">
 
-		<div class="col-sm-8 col-md-7">
+	<div class="row mt-3 ml-2">
+		<div class="col-sm-12 col-md-12">
 			<div class="container border">
 				{% if success %}
 					<div class="alert alert-success" role="alert">

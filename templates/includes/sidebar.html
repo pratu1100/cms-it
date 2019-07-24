@@ -1,55 +1,70 @@
 {% load static %}
 
-{% if user.is_superuser %}
-  <div class="col-sm-4 col-md-3 sidebar d-none d-sm-none d-md-none d-lg-block">
-    <div class="list-group">
-      <a href="{% url 'leaves' %}" id="approve_leaves" class="list-group-item bg-white text-dark">
-          Approve Leaves
-      </a>
-      <a href="{% url 'approve_ods' %}" id="approve_ods" class="list-group-item bg-white text-dark">
-          Approve ODs
-      </a>
+<nav id="sidebar">
+    <div class="sidebar-header">
+     MENU
     </div>
-  </div>
 
-{% else %}
-  <div class="col-sm-4 col-md-3 sidebar d-none d-sm-none d-md-none d-lg-block">
-    <div class="list-group">
-      <a href="{% url 'faculty_index' %}" id="faculty_index" class="list-group-item bg-white text-dark">
-          Home
-      </a>
-      <a href="{% url 'request_leave' %}" id="request_leave" class="list-group-item bg-white text-dark">
-          Request Leave
-      </a>
-      <a href="{% url 'loadshifts' %}" id="load_shifts" class="list-group-item bg-white text-dark">
-          Load Shifts
-      </a>
-      <a href="{% url 'IA' %}" id="ia" class="list-group-item bg-white text-dark">
-         IA
-      </a>
-      <a href="{% url 'makeup' %}" id="makeuplecture" class="list-group-item bg-white text-dark">
-        Makeup Lecture
-     </a>
-     <a href="{% url 'guestlecture' %}" id="guestlecture" class="list-group-item bg-white text-dark">
-        Guest Lecture
-      </a>
-      <a href="{% url 'od' %}" id="od" class="list-group-item bg-white text-dark">
-        OD
-      </a>
-    </div>
-  </div>
-{% endif %}
+    {% if user.is_superuser %}
+      <ul class="list-unstyled components">
+        <li id="approve_leaves">
+            <a href="{% url 'leaves' %}">
+                Approve Leaves
+            </a>
+        </li>
+        <li id="approve_ods">
+          <a href="{% url 'approve_ods' %}">
+              Approve ODs
+          </a>
+        </li>
+      </ul>
+    {% else %}
+      <ul class="list-unstyled components">
+        <li id="faculty_home">
+          <a href="{% url 'faculty_index' %}">
+              Home
+          </a>
+        </li>
+        <li id="request_leave">
+          <a href="{% url 'request_leave' %}">
+              Request Leave
+          </a>
+        </li>
+        <li id="loadshifts">
+          <a href="{% url 'loadshifts' %}" >
+              Load Shifts
+          </a>
+        </li>
+        <li id="ia">
+          <a href="{% url 'IA' %}" >
+              IA
+          </a>
+        </li>
+        <li id="makeup">
+          <a href="{% url 'makeup' %}" >
+            Makeup Lecture
+          </a>
+        </li>
+        <li id="guestlecture">
+          <a href="{% url 'guestlecture' %}" >
+            Guest Lecture
+          </a>
+        </li>
+        <li  id="od">
+          <a href="{% url 'od' %}">
+            OD
+          </a>
+        </li>
+      </ul>
 
+    {% endif %}
+</nav>
 
 <script>
-  $(document).ready(function () {
-    var id = "{{ id }}";
-    console.log(id);
-    $("a#" + id).addClass("active");
-
-    $("a#" + id).css({"z-index": "2",
-          "color": "#fff",
-          "background-color": "#e6e6e6 !important"});
-
+  $(() => {
+    let page_loaded = $("#page_loaded").val();
+    $("#" + page_loaded).addClass("active").css(
+        "background-color", "#e6e6e6 !important"
+      );
   });
 </script>

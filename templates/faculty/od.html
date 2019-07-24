@@ -9,11 +9,12 @@
 {% endblock %}
 
 {% block content %}
-<main>
+<main class="mx-auto">
+	<input id="page_loaded" value="od" style="display: none;">
+	
 	<div class="row mt-3 ml-2">
-		{% include '../includes/sidebar.html' with id="od" %}
 
-		<div class="col-sm-8 col-md-7">
+		<div class="col-sm-12 col-md-12">
 			<div class="container border mb-5">
 				{% if od %}
 				<form class=" border-primary" method="POST" action="{% url 'submit_od_loadshift' %}">

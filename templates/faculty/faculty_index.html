@@ -11,8 +11,9 @@
 
 {% block content %}
 	<main>
+		<input id="page_loaded" value="faculty_home" style="display: none;">
+
 		<div class="row mt-3 ml-2">
-			{% include '../includes/sidebar.html' with id="faculty_index" %}
 					<div class="col-sm-12 col-md-3">
 					{% for ia in ias %}
 						<div class="card mb-3">
