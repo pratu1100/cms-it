@@ -35,7 +35,11 @@
                                         <div class="row">
                                             <div class="col-md m-2 p-3 text-center">
                                                 <p class="card-text font-weight-normal h6"><b>Lecture : </b>{{ load.for_lecture }}</p>
-                                                <p class="card-text font-weight-normal h6"><b>Faculty : </b>{{ load.to_faculty }}</p>
+                                                {% if load.approved_status %}
+                                                    {% for faculty in load.to_faculty.all %}
+                                                    <p class="card-text font-weight-normal h6"><b>Faculty : </b>{{ faculty }}</p>
+                                                    {% endfor %}
+                                                {% endif %}
                                             </div>
                                             <div class="col-md m-2 p-3 text-center">
                                                 <p class="card-text font-weight-normal h6"><b>Day : </b>{{ load.for_lecture.lec_day }}</p>

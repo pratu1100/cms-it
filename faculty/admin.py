@@ -30,7 +30,7 @@ admin.site.register(Subject)
 
 class LoadShiftAdmin(admin.ModelAdmin):
 # 	fields  = ('leave','to_faculty','for_lecture')
-	list_display = ('leave','od','to_faculty','for_lecture')
+	list_display = ('leave','od','for_lecture')
 	list_display_links = ('leave','od')
 
 admin.site.register(LoadShift,LoadShiftAdmin)

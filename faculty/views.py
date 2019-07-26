@@ -78,7 +78,7 @@ def submit_leave(request):
 			new_leave = Leave.objects.get_or_create(leave_taken_by = user,leave_start_date=start_date.date(),leave_end_date = end_date.date(),leave_start_time=start_date.time(),leave_end_time = end_date.time())
 			# print("####",new_leave)
 			for lec in lecs:
-				adjust_opts[lec] = User.objects.exclude(id__in = [x.taken_by.id for x in Lecture.objects.filter(lec_time__start_time__gte = lec.lec_time.start_time).filter(lec_time__end_time__lte = lec.lec_time.end_time)])
+				adjust_opts[lec] = User.objects.exclude(id__in = [x.taken_by.id for x in Lecture.objects.filter(lec_time__start_time__gte = lec.lec_time.start_time).filter(lec_time__end_time__lte = lec.lec_time.end_time)]).exclude(is_staff = True)
 			# print(adjust_opts)
 			context_data ={
 				"start_date" : start_date_val,
@@ -111,8 +111,17 @@ def submit_load_shift(request):
 				# print(leave)
 				# print(request.POST.getlist('lecture_id'))
 				if(request.POST.getlist('lecture_id')):
-					for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
-						l = LoadShift.objects.get_or_create(leave = leave,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
+					for lec_id in request.POST.getlist('lecture_id'):
+						lec = Lecture.objects.get(pk = lec_id)
+						# print(lec)
+						granted_to = list()
+						for x in request.POST.getlist(str(lec.id)):
+							granted_to.append(User.objects.get(pk = x))
+					# print(request.POST.getlist('faculty_id'))
+					# for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
+					# 	granted_to = faculty_id
+						l = LoadShift.objects.get_or_create(leave = leave,for_lecture = lec)
+						l[0].to_faculty.set(granted_to)
 						# Email notificaion
 
 						subject = 'New Load Shift request'
@@ -124,13 +133,15 @@ def submit_load_shift(request):
 
 						email_from = settings.EMAIL_HOST_USER
 						recipient_list = []
-						recipient_list.append(User.objects.get(pk = faculty_id).email)
+						for faculty in granted_to:
+							# print(faculty_id)
+							recipient_list.append(faculty.email)
 						html_content = render_to_string('email/loadshift_notification.html', message_data,request) # render with dynamic value
 						text_content = strip_tags(html_content)
 
 						msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 						msg.attach_alternative(html_content, "text/html")
-						# print(l[0].for_lecture)
+						print(l[0].for_lecture)
 						msg.send()
 						# return render(request,'email/loadShift_notification.html', message_data)
 
@@ -169,13 +180,15 @@ def view_load_shifts(request):
 		if request.method == 'POST':
 			load_shift = LoadShift.objects.get(pk = request.POST.get('load_shift'))
 			if '_reject' in request.POST:
-					load_shift.delete()
+				load_shift.to_faculty.remove(request.user)
 			elif '_approve' in request.POST:
-					load_shift.approved_status = True
-					load_shift.save()
+				load_shift.to_faculty.clear()
+				load_shift.approved_status = True
+				load_shift.to_faculty.set((request.user,))
+				load_shift.save()
 
-		user = User.objects.get(pk = request.user.id)
-		load_shifts = LoadShift.objects.filter(to_faculty = user)
+		# user = User.objects.get(pk = request.user.id)
+		load_shifts = LoadShift.objects.filter(to_faculty = request.user)
 
 		return render(request,"faculty/loadshift.html",{"load_shifts":load_shifts})
 	html_error_data = {

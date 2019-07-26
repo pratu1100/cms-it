@@ -160,15 +160,15 @@ class OD(models.Model):
 
 class LoadShift(models.Model):
 	leave = models.ForeignKey(Leave, on_delete=models.CASCADE,null=True,blank=True)
-	to_faculty = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name="to_faculty")
+	to_faculty = models.ManyToManyField("auth.User")
 	for_lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name="to_lecture")
 	od = models.ForeignKey(OD, on_delete=models.CASCADE,null=True,blank=True)
 	approved_status = models.BooleanField(default = False, null = False)	
 
 	def __str__(self):
 		try:
-			return self.leave.leave_taken_by.username +"--"+self.to_faculty.username
+			return self.leave.leave_taken_by.username
 		except:
-			return self.od.taken_by.username +"--"+self.to_faculty.username
+			return self.od.taken_by.username
 		else:
 			return "Unknown"

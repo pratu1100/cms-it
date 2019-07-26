@@ -76,18 +76,18 @@
 
 	{% if leave_id %}
 		<div class="d-flex justify-content-center mb-3">
-			<div class="card col-md-4" style="padding: 0;">
+			<div class="card col-md-6" style="padding: 0;">
 
 				<div class="card-header">
 					<h4 class="card-title text-center">Leave Details</h4>
 					<div class="row">
 						<div class="col-md m-3 p-3">
-							<p class="card-text"><b>Start Date: </b>{{ start_date }}</p>
-							<p class="card-text"><b>Start Time: </b>{{ start_time }}</p>
+							<p class="card-text"><b class="font-weight-bold">Start Date: </b>{{ start_date }}</p>
+							<p class="card-text"><b class="font-weight-bold">Start Time: </b>{{ start_time }}</p>
 						</div>
 						<div class="col-md m-3 p-3">
-							<p class="card-text"><b>End Date: </b>{{ end_date }}</p>
-							<p class="card-text"><b>End Time: </b>{{ end_time }}</p>
+							<p class="card-text"><b class="font-weight-bold">End Date: </b>{{ end_date }}</p>
+							<p class="card-text"><b class="font-weight-bold">End Time: </b>{{ end_time }}</p>
 						</div>
 					</div>
 				</div>
@@ -97,14 +97,23 @@
 						{% if adjust_opts %}
 							<h5 class="card-title">Load Shifts</h5>
 							{% for lec, adjs in adjust_opts.items %}
-								<h6 class="card-title mt-2">{{ lec.lname.sname }}</h6>
+								<div class="card mt-3">
+									<div class="card-header font-weight-bold">
+										{{ lec.lname.sname }}
+									</div>
+									<!-- <h6 class="card-title mt-2">{{ lec.lname.sname }}</h6> -->
 								<input type="hidden" name="leave_id" value="{{ leave_id }}">
 								<input type="hidden" name="lecture_id" value="{{ lec.id }}">
-								<select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id">
+								<!-- <select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id"> -->
 									{% for faculty in adjs %}
-										<option value="{{ faculty.id }}">{{ faculty.username }}</option>
+										<!-- <option value="{{ faculty.id }}">{{ faculty.username }}</option> -->
+									<div class="form-check m-2">
+										<input class="form-check-input" type="checkbox" name="{{ lec.id }}" value="{{ faculty.id }}">
+										<label class="form-check-label" for="{{ faculty.id }}">{{ faculty.username }}</label>
+									</div>
 									{% endfor %}
-								</select>
+									</div>
+								<!-- </select> -->
 							{% endfor %}
 						{% endif %}
 					</div>
