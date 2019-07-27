@@ -1,7 +1,7 @@
 {% extends '../base.html' %} 
 {% block content %}
-<main class="mx-auto"> 
-	<input id="page_loaded" value="approve_leaves" style="display: none;">
+<main>
+	<input id="page_loaded" value="leave_history" style="display: none;">
 
     <div class="row ml-2">
         <div class="col-sm-12 col-md-12">
@@ -12,7 +12,6 @@
                         <div class="card mr-2 mb-2 shadow border" style="width: 18rem;" id="{{ leave.id }}" onclick="displayModal(this.id);">
                             <div class="card-body text-center">
                               <h5 class="card-title">{{ leave.leave_type }}</h5>
-                              <h6 class="card-subtitle mb-2">{{ leave.leave_taken_by }}</h6>
                               <h6 class="card-subtitle mb-2 text-muted">{{ leave.leave_start_date }}</h6>
                             </div>
                             {% if leave.approved_status %}
@@ -35,7 +34,7 @@
                                 </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form method="POST" action="{% url 'leaves' %}">
+                                    <form method="POST" action="{% url 'leave_history' %}">
                                             {% csrf_token %}
                                             <input type="hidden" name="leave_id" value="{{ leave.id }}">
                                         <div class="card-header bg-white">
@@ -84,8 +83,11 @@
                             {% endif %}
 
                                         <div class="card-footer text-center bg-white">
-                                            <button class="btn btn-danger" type="submit" name="_reject">Reject</button>
-                                            <button class="btn btn-success" type="submit" name="_approve">Approve</button>
+                                            {% if leave.approved_status %}
+                                                <button class="btn btn-danger" type="submit" name="_reject">Reject</button>
+                                            {% elif leave.approved_status is False %}
+                                                <button class="btn btn-success" type="submit" name="_approve">Approve</button>
+                                            {% endif %}
                                         </div>
                                     </form>
                                 </div>
@@ -98,6 +100,8 @@
             </div>
         </div>
     </div>
+
+    
 </main>
 <script>
 

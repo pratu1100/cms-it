@@ -14,6 +14,11 @@ from django.contrib.auth.models import User
 def index(request):
 	if request.user.is_superuser:
 		return HttpResponseRedirect('/hod/approveleaves')
+	html_error_data = {
+		"error_code" : "401",
+		"error_message" : "UNAUTHORIZED"
+	}
+	return render(request,"error.html",html_error_data)
 
 @login_required
 def get_leaves(request):
@@ -39,7 +44,8 @@ def get_leaves(request):
 				
 				msg.send()
 				
-				leave.delete()
+				leave.approved_status = False;
+				leave.save()
 				
 			elif '_approve' in request.POST:
 				leave.approved_status = True
@@ -78,6 +84,79 @@ def get_leaves(request):
 
 		return render(request, 'hod/leaves.html', context_data)
 
+	html_error_data = {
+		"error_code" : "401",
+		"error_message" : "UNAUTHORIZED"
+	}
+	return render(request,"error.html",html_error_data)
+
+@login_required
+def leave_history(request):
+	if request.user.is_superuser:
+		if request.method == 'POST':
+			leave = Leave.objects.get(pk = request.POST.get('leave_id'))
+			if '_reject' in request.POST:
+
+				subject = 'Leave Notification'
+						
+				message_data = {
+					'leave' : leave,
+				}
+
+				email_from = settings.EMAIL_HOST_USER
+				recipient_list = []
+				recipient_list.append(leave.leave_taken_by.email)
+				html_content = render_to_string('email/approve_notification.html', message_data) # render with dynamic value
+				text_content = strip_tags(html_content)
+
+				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+				msg.attach_alternative(html_content, "text/html")
+				
+				msg.send()
+				
+				leave.approved_status = False;
+				leave.save()
+				
+			elif '_approve' in request.POST:
+				leave.approved_status = True
+				leave.save() 
+
+				subject = 'Leave Notification'
+						
+				message_data = {
+					'leave' : leave,
+				}
+
+				email_from = settings.EMAIL_HOST_USER
+				recipient_list = []
+				recipient_list.append(leave.leave_taken_by.email)
+				html_content = render_to_string('email/approve_notification.html', message_data) # render with dynamic value
+				text_content = strip_tags(html_content)
+
+				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+				msg.attach_alternative(html_content, "text/html")
+				
+				msg.send()
+		leaves = Leave.objects.exclude(approved_status = None)
+		leave_loads_pairs = list()
+		for leave in leaves:
+			loads_data = list()
+			loads = LoadShift.objects.filter(leave = leave)
+			for load in loads:
+				loads_data.append(load)
+			leave_loads_pairs.append((leave,loads_data))
+
+		context_data = {
+			'leave_loads_pairs' : leave_loads_pairs
+		}
+		return render(request,"hod/leave_history.html",context_data)
+	html_error_data = {
+		"error_code" : "401",
+		"error_message" : "UNAUTHORIZED"
+	}
+	return render(request,"error.html",html_error_data)
+
+
 @login_required
 def get_ods(request):
 	if request.user.is_superuser:
@@ -101,4 +180,9 @@ def get_ods(request):
 			"od_loads_pairs" : od_loads_pairs,
 		}
 		return render(request, 'hod/approve_ods.html', context_data)
+	html_error_data = {
+		"error_code" : "401",
+		"error_message" : "UNAUTHORIZED"
+	}
+	return render(request,"error.html",html_error_data)
 
