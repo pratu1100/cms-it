@@ -39,21 +39,28 @@ class TimeSlot(models.Model):
 		time = self.start_time.strftime("%H:%M") + " - " + self.end_time.strftime("%H:%M")
 		return time
 
+class LeaveType(models.Model):
+	leave_type = models.TextField(blank=False,null=False)
+
+	def __str__(self):
+		return self.leave_type
+
 class Leave(models.Model):
+    leave_type = models.ForeignKey(LeaveType, on_delete = models.SET_NULL,blank=False,null = True)
     leave_note = models.TextField(blank=False, null=False)
     leave_taken_by = models.ForeignKey("auth.User",on_delete = models.CASCADE,null=True)
-    approved_status = models.BooleanField(default=False, null=False)
+    approved_status = models.BooleanField(default= None, null=True)
     leave_start_date = models.DateField(auto_now = False,auto_now_add = False,)
     leave_end_date = models.DateField(auto_now = False,auto_now_add = False,)
     # leave_start_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE,null=True)
     leave_start_time = models.TimeField(auto_now=False,auto_now_add=False)
     leave_end_time = models.TimeField(auto_now=False,auto_now_add=False)
 
-
     def __str__(self):
     	# print(self.leave_taken_by.username + "@" + self.leave_start_date.strftime("%d/%m/%Y ")+ self.leave_time.start_time.strftime("%H:%M -"))
     	
     	return self.leave_taken_by.username + "@" + self.leave_start_date.strftime("%d/%m/%Y")+ "--"+self.leave_start_time.strftime("%H:%M")
+
 
 class DaysOfWeek(models.Model):
 	day_name = models.CharField(max_length = 255,blank=False,null=False)
@@ -149,7 +156,7 @@ class OD(models.Model):
 	scope = models.TextField(max_length=255,null=True,blank=True)
 	correspondence = models.FileField(upload_to = 'od/correspondence/',null=True,blank=True)
 	taken_by = models.ForeignKey("auth.User",on_delete= models.CASCADE)
-	approved_status = models.BooleanField(default=False, null=False)
+	approved_status = models.BooleanField(default= None, null=True)
 
 	def __str__(self):
 		return self.od_type+"--"+self.od_title

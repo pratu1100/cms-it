@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,Year,Division,Room,Batch,MakeupLecture,IA,GuestLecture,OD
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,Year,Division,Room,Batch,MakeupLecture,IA,GuestLecture,OD,LeaveType
 
 # Register your models here.
 
 class LeaveAdmin(admin.ModelAdmin):
-	list_display = ('leave_taken_by','leave_start_date','leave_end_date','approved_status')
+	list_display = ('leave_taken_by','leave_type','leave_start_date','leave_end_date','approved_status')
 	list_display_links = ('leave_taken_by',)
 
 admin.site.register(Leave,LeaveAdmin)
@@ -62,3 +62,4 @@ class ODAdmin(admin.ModelAdmin):
 	list_display_links = ('od_title',)
 
 admin.site.register(OD,ODAdmin)
+# admin.site.register(LeaveType)

@@ -62,7 +62,7 @@ def get_leaves(request):
 				
 				msg.send()
 
-		leaves = Leave.objects.filter(approved_status = False)
+		leaves = Leave.objects.filter(approved_status = None)
 		leave_loads_pairs = list()
 		for leave in leaves:
 			loads_data = list()

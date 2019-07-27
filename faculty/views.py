@@ -100,6 +100,33 @@ def submit_leave(request):
 	return render(request,"error.html",html_error_data)
 
 @login_required
+def view_leaves(request):
+	if not request.user.is_superuser and not request.user.is_staff:
+		if(request.method == 'POST'):
+			leave = Leave.objects.get(pk = request.POST.get('leave_id'))
+			if '_cancel' in request.POST:
+				leave.delete()
+		leaves = Leave.objects.filter(leave_taken_by = request.user)
+		leave_loads_pairs = list()
+		for leave in leaves:
+			loads_data = list()
+			loads = LoadShift.objects.filter(leave = leave)
+			for load in loads:
+				loads_data.append(load)
+			leave_loads_pairs.append((leave,loads_data))
+
+		context_data = {
+			'leave_loads_pairs' : leave_loads_pairs
+		}
+
+		return render(request,"faculty/view_leaves.html",context_data)
+	html_error_data = {
+		"error_code" : "401",
+		"error_message" : "UNAUTHORIZED"
+	}
+	return render(request,"error.html",html_error_data)
+
+@login_required
 def submit_load_shift(request):
 	if not request.user.is_superuser and not request.user.is_staff:
 		user = User.objects.get(pk = request.user.id)

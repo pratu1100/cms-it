@@ -1,0 +1,114 @@
+{% extends '../base.html' %} 
+{% block content %}
+<main>
+	<input id="page_loaded" value="view_leaves" style="display: none;">
+
+    <div class="row ml-2">
+        <div class="col-sm-12 col-md-12">
+            <div class="d-flex justify-content-center pt-5 align-items-center align-self-center">
+                <div class="row col-md-12 justify-content-center">
+                    <div class="row col-md-12 justify-content-center"></div>
+                    {% for leave,loads in leave_loads_pairs %}
+                        <div class="card mr-2 mb-2 shadow border" style="width: 18rem;" id="{{ leave.id }}" onclick="displayModal(this.id);">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">{{ leave.leave_type }}</h5>
+                              <h6 class="card-subtitle mb-2 text-muted">{{ leave.leave_start_date }}</h6>
+                            </div>
+                            {% if leave.approved_status %}
+                            <div class="badge badge-success badge-lg" style="font-size : 90%;">Approved</div>
+                            {% elif leave.approved_status is False %}
+                                <div class="badge badge-danger badge-lg" style="font-size : 90%;">Rejected</div>
+                            {% else %}
+                            <div class="badge badge-info badge-lg" style="font-size : 90%;">Pending</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Modal -->
+                        <div class="modal fade" id="modal{{ leave.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalCenterTitle">Leave Details</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="POST" action="{% url 'view_leaves' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="leave_id" value="{{ leave.id }}">
+                                        <div class="card-header bg-white">
+                                            <h4 class="card-title text-center font-weight-bold"><u>{{ leave.leave_type }}</u></h4>
+                                            <div class="row">
+                                        <div class="col-md m-2 p-3 text-center">
+                                            <p class="card-text font-weight-normal h6"><b>Start Date : </b>{{ leave.leave_start_date }}</p>
+                                            <p class="card-text font-weight-normal h6"><b>Start Time : </b>{{ leave.leave_start_time }}</p>
+                                        </div>  
+                                        <div class="col-md m-2 p-3 text-center">
+                                            <p class="card-text font-weight-normal h6"><b>End Date : </b>{{ leave.leave_end_date }}</p>
+                                            <p class="card-text font-weight-normal h6"><b>End Time : </b>{{ leave.leave_end_time }}</p>
+                                        </div>
+                                </div>
+                                        </div>
+                                        {% if loads %}
+                            <div class="card-body bg-white">
+                                <h4 class="card-title text-center">Load Shifts</h4>
+                                {% for load in loads %}  
+                                    <div class="card border" style="margin-bottom: 5px;  border-width:3px !important;">
+                                        <div class="card-body">     
+                                            <div class="row">
+                                                <div class="col-md p-3 text-center">
+                                                    <p class="card-text font-weight-normal h6"><b>Lecture : </b>{{ load.for_lecture }}</p>
+                                                    {% if load.approved_status %}
+                                                        {% for faculty in load.to_faculty.all %}
+                                                        <p class="card-text font-weight-normal h6"><b>Faculty : </b>{{ faculty }}</p>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-md p-3 text-center">
+                                                    <p class="card-text font-weight-normal h6"><b>Day : </b>{{ load.for_lecture.lec_day }}</p>
+                                                    <p class="card-text font-weight-normal h6"><b>Time : </b>{{ load.for_lecture.lec_time }}</p>
+                                                </div>
+                                                    
+                                            </div>
+                                        </div>
+                                        {% if load.approved_status %}
+                                                    <div class="badge badge-success badge-lg">Approved</div>
+                                                {% else %}
+                                                    <div class="badge badge-warning badge-lg">Pending</div>
+                                                {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                                        <div class="card-footer text-center bg-white">
+                                            <button class="btn btn-danger" type="submit" name="_cancel">Cancel Leave</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+</main>
+<script>
+
+    function displayModal(id) {
+        $("#modal" + id).modal('show');
+    }
+
+    function dismissModal(id) {
+        $("#modal" + id).modal('hide');
+    }
+
+    </script>
+{% endblock  %} 
+
