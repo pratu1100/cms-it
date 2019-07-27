@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'mailer',
     'faculty',
     'hod',
-    'labassistant'
+    'labassistant',
+    'guest'
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KJSCE - CMS | Content Management System</title><!-- Fonts -->
+  <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% include '../includes/stylesheets.html' %}
+    {% include '../includes/scripts.html' %}
+</head>
+<body>
+    <div class="wrapper">
+            {% include '../includes/sidebar.html' %}
+        <!-- Page Content  -->
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <button type="button" id="sidebarCollapse" class="btn btn-dark">
+                    <i class="fas fa-bars"></i>
+                    <span></span>
+                </button>
+                <span class="navbar-brand pl-5" style="font-size: 20px;">
+                        Hello, Guest
+                </span>
+
+
+                <div class="navbar-collapse collapse" id="navbar-default">
+                    <div class="navbar-collapse-header">
+                        <div class="row">
+                            <div class="col-6 collapse-brand">
+                                <a href="./index.html">
+                                KJSCE - CMS
+                                </a>
+                            </div>
+                            <div class="col-6 collapse-close">
+                                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-default" aria-controls="navbar-default" aria-expanded="false" aria-label="Toggle navigation">
+                                <span></span>
+                                <span></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                        <ul class="navbar-nav align-items-lg-center ml-lg-auto">
+                            <li class="nav-item d-none d-lg-block ml-lg-4">
+                                <a href="{% url 'logout' %}"  class="btn btn-icon btn-outline-danger">
+                                <span class="nav-link-inner--text text-white">Logout</span>
+                                </a>
+                            </li>
+                        </ul>
+                </div>
+            </nav>
+                <div>
+                    <main>
+                        <input id="page_loaded" value="guest_index" style="display: none;">
+
+                        <div class="row m-2">
+                                    <div class="col-sm-12 col-md-12">
+                                        <div class="card shadow">
+                                            <h3 class="text-center mt-3">DISCLAIMER</h3>
+                                            <h6 class="text-center m-5">
+                                                You are now accessing the CMS Portal of IT Department as a Guest User. Please provide appropriate identity and relevant information to avoid denial of resources. The department reserves sole rights to view, modify and restrict resources on its own discretion. Communications will be made in the form of email provided during acces. For further assistance contact department.
+                                            </h6>
+                                        </div>
+                                    </div>  
+                                                    
+                        </div>
+                    </main>
+                </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+        });
+    </script>
+
+</body>
+</html>
