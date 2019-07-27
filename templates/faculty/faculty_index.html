@@ -14,9 +14,9 @@
 		<input id="page_loaded" value="faculty_home" style="display: none;">
 
 		<div class="row mt-3 ml-2">
-					<div class="col-sm-12 col-md-3">
+					<div class="col-sm-12 col-md-4">
 					{% for ia in ias %}
-						<div class="card mb-3">
+						<div class="card shadow mb-3">
 							<div class="card-header">
 								<div class="float-left"><strong>IA</strong></div>
 								<div class="float-right"><strong>{{ ia.ia_date }}</strong></div>
@@ -25,14 +25,14 @@
 								<h5 class="float-left">
 									{{ia.ia_year}} - {{ ia }} 
 								</h5>
-							<div class="badge badge-info badge-lg float-right" style="font-size : 90%;">{{ ia.ia_time }}</div>
+							<div class="badge badge-info badge-lg float-right" style="font-size : 90%;">{{ ia.ia_start_time|time:'H:i' }} - {{ ia.ia_end_time|time:'H:i' }}</div>
 							</div>			
 						</div>
 					{% endfor %}
 					</div>	
 					<div class="col-sm-12 col-md-4">
 					{% for lec in guest_lecs %}
-						<div class="card mb-3">
+						<div class="card shadow mb-3">
 							<div class="card-header bg-secondary">
 								<div class="float-left"><strong>Guest Lecture</strong></div>
 								<div class="float-right"><strong>{{ lec.lec_date }}</strong></div>
@@ -50,7 +50,7 @@
 						</div>
 					{% endfor %}	
 					{% for lec in makeup_lecs %}
-						<div class="card mb-3">
+						<div class="card shadow mb-3">
 							<div class="card-header bg-secondary">
 								<div class="float-left"><strong>Makeup</strong></div>
 								<div class="float-right"><strong>{{ lec.lec_date }}</strong></div>

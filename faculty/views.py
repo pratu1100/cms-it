@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect,HttpResponse
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,MakeupLecture,Year, Division, Room,IA, GuestLecture, OD
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,MakeupLecture,Year, Division, Room,IA, GuestLecture, OD, Batch, IaBatchRoomMapping
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 import datetime
@@ -342,7 +342,7 @@ def get_timeslots(request,syear,sdate):
 
 				filtered_makeup_lecs = makeup_lecs.filter(lec_time__start_time__gte = timeslot.start_time,lec_time__end_time__lte = timeslot.end_time)
 
-				filtered_ia = ias.filter(ia_time__start_time__gte = timeslot.start_time,ia_time__end_time__lte = timeslot.end_time)
+				filtered_ia = ias.filter(ia_start_time__gte = timeslot.start_time,ia_end_time__lte = timeslot.end_time)
 
 				filtered_guest_lecs = guest_lecs.filter(lec_time__start_time__gte = timeslot.start_time,lec_time__end_time__lte = timeslot.end_time)
 
@@ -428,17 +428,23 @@ def post_ia(request):
 			year = Year.objects.get(pk = int(request.POST.get('year')))
 			subject = Subject.objects.get(pk = int(request.POST.get('subject')))
 			date = datetime.datetime.strptime(request.POST.get('ia_date'),'%m/%d/%Y')
-			timeslot = TimeSlot.objects.get(pk = int(request.POST.get('timeslot')))
-			room = Room.objects.get(pk = int(request.POST.get('locations')))
+			# timeslot = TimeSlot.objects.get(pk = int(request.POST.get('timeslot')))
+			# room = Room.objects.get(pk = int(request.POST.get('locations')))
+			start_time = datetime.datetime.strptime(request.POST.get('start_time'),'%H:%M').time()
+			end_time = datetime.datetime.strptime(request.POST.get('end_time'),'%H:%M').time()
+
 
 			try:
-				ia = IA(ia_year = year, ia_subject = subject,ia_date = date,ia_time = timeslot,ia_in = room)
-				ia.full_clean()
-				# print(ia)
-				ia.save()
+				ia = IA.objects.get_or_create(ia_year = year, ia_subject = subject,ia_date = date,ia_start_time = start_time,ia_end_time = end_time)
 
+				batches = Batch.objects.filter(batch_of_year = year)
+				rooms = Room.objects.all()
+				supervisors = User.objects.filter(is_superuser = False)
 				context_data = {
-					"success" : 'true'
+					"ia" : ia[0],
+					"rooms" : rooms,
+					"batches" : batches,
+					"supervisors" : supervisors,
 				}
 
 			except Exception as e:
@@ -450,6 +456,41 @@ def post_ia(request):
 			return render(request,"faculty/ia.html",context_data)
 		else:
 			return HttpResponseRedirect('./')
+	html_error_data = {
+		"error_code" : "401",
+		"error_message" : "UNAUTHORIZED"
+	}
+	return render(request,"error.html",html_error_data)
+
+@login_required
+def post_ia_arrangement(request):
+	if not request.user.is_superuser and not request.user.is_staff:
+		if request.method == 'POST':
+			ia = IA.objects.get(pk = request.POST.get('ia_id'))
+			for batch in Batch.objects.filter(batch_of_year = ia.ia_year):
+				batch_room_id = request.POST.get(str(batch)+"-room")
+				batch_supervisor_id = request.POST.get(str(batch)+"-supervisor")
+				print("###",batch_supervisor_id)
+				if(batch_room_id != "-1" and batch_supervisor_id != "-1"):
+					batch_room = Room.objects.get(pk = batch_room_id)
+					batch_supervisor = User.objects.get(pk = batch_supervisor_id)
+					print("###",batch_supervisor)
+
+					try:
+						mapping = IaBatchRoomMapping(ia= ia,batch = batch,room=batch_room,supervisor= batch_supervisor)
+						mapping.full_clean()
+						mapping.save()
+					except Exception as e:
+						context_data = {
+							"errors" : e
+						}
+			context_data = {
+				"success" : True,
+			}	
+			return render(request,"faculty/ia.html",context_data)
+		else:
+			return HttpResponseRedirect('./')
+
 	html_error_data = {
 		"error_code" : "401",
 		"error_message" : "UNAUTHORIZED"

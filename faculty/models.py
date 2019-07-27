@@ -118,18 +118,32 @@ class MakeupLecture(models.Model):
 	class Meta:
 		unique_together = ('year','division','lec_date','lec_time')
 
+
 class IA(models.Model):
 	ia_year = models.ForeignKey(Year,on_delete = models.CASCADE)
 	ia_date = models.DateField(auto_now = False,auto_now_add = False)
 	ia_subject = models.ForeignKey(Subject,on_delete = models.CASCADE)
-	ia_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE)
-	ia_in = models.ForeignKey(Room,on_delete = models.CASCADE,null = True)
+	ia_start_time = models.TimeField(auto_now=False, auto_now_add=False)
+	ia_end_time = models.TimeField(auto_now=False, auto_now_add=False)
+
+	# ia_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE)
+
+	# ia_in = models.ForeignKey(Room,on_delete = models.CASCADE,null = True)
 
 	def __str__(self):
 		return self.ia_subject.sname
 
 	class Meta:
-		unique_together = ('ia_year','ia_date','ia_time')
+		unique_together = ('ia_year','ia_date','ia_start_time','ia_end_time')
+
+class IaBatchRoomMapping(models.Model):
+	ia = models.ForeignKey(IA,on_delete=models.CASCADE)
+	batch = models.ForeignKey(Batch,on_delete=models.CASCADE)
+	room = models.ForeignKey(Room,on_delete = models.SET_NULL,null=True)
+	supervisor = models.ForeignKey("auth.User",on_delete=models.CASCADE,null=True,blank=False)
+
+	def __str__(self):
+		return str(self.batch)+str(self.room)
 
 class GuestLecture(models.Model):
 	lec_year = models.ForeignKey(Year,on_delete = models.CASCADE)
