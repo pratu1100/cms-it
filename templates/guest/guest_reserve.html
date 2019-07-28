@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KJSCE - CMS | Content Management System</title><!-- Fonts -->
+  <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% include '../includes/stylesheets.html' %}
+    {% include '../includes/scripts.html' %}
+</head>
+<body>
+    <div class="wrapper">
+            {% include '../includes/sidebar.html' %}
+        <!-- Page Content  -->
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <button type="button" id="sidebarCollapse" class="btn btn-dark">
+                    <i class="fas fa-bars"></i>
+                    <span></span>
+                </button>
+                <span class="navbar-brand pl-5" style="font-size: 20px;">
+                        Hello, Guest
+                </span>
+
+
+                <div class="navbar-collapse collapse" id="navbar-default">
+                    <div class="navbar-collapse-header">
+                        <div class="row">
+                            <div class="col-6 collapse-brand">
+                                <a href="./index.html">
+                                KJSCE - CMS
+                                </a>
+                            </div>
+                            <div class="col-6 collapse-close">
+                                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-default" aria-controls="navbar-default" aria-expanded="false" aria-label="Toggle navigation">
+                                <span></span>
+                                <span></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                        <ul class="navbar-nav align-items-lg-center ml-lg-auto">
+                            <li class="nav-item d-none d-lg-block ml-lg-4">
+                                <a href="{% url 'logout' %}"  class="btn btn-icon btn-outline-danger">
+                                <span class="nav-link-inner--text text-white">Logout</span>
+                                </a>
+                            </li>
+                        </ul>
+                </div>
+            </nav>
+                <div>
+                    <main class="mx-auto">
+    <input id="page_loaded" value="guest_reserve" style="display: none;">
+    
+    <div class="row m-3">
+
+        <div class="col-sm-12 col-md-12">
+            <div class="container border mb-5">
+                {% if od %}
+                <form class=" border-primary" method="POST" action="{% url 'submit_od_loadshift' %}">
+                    {% csrf_token %}
+                    <div class="card text-center mt-3">
+                        <div class="card-header text-dark">
+                            {{ od.od_title }}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Type: {{ od.od_type }}</h5>
+                            <p class="card-text">
+                                {{ od.od_details }}
+                            </p>
+                            <div class="row text-left mb-2">
+                                <div class="col-sm-6">
+                                    <p class="card-text"><b>Supporting Organisation: </b>{{ od.supporting_organisation }}</p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="card-text"><b>Last Date: </b>{{ od.last_date.date }}</p>
+                                </div>
+                            </div>
+                            <div class="row text-left mb-2">
+                                <div class="col-sm-6">
+                                    <p class="card-text"><b>From: </b>{{ od.from_date.date }}</p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="card-text"><b>To: </b>{{ od.to_date.date }}</p>
+                                </div>
+                            </div>
+                            <div class="row text-left">
+                                <div class="col-sm-6">
+                                    <p class="card-text"><b>Fees: </b>{{ od.fees }}</p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="card-text"><b>Scope: </b>{{ od.scope }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3" style="border-top: 1px solid #eee">
+                            OD File:
+                            <a href="{{ od.correspondence.url }}" target="__blank">
+                                EG
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Load Shifts</h5>
+                        <input type="hidden" name="od_id" value="{{ od.id }}">
+                        {% for lec, adjs in adjust_opts.items %}
+                        <h6 class="card-title mt-2">{{ lec.lname.sname }}</h6>
+                        <input type="hidden" name="lecture_id" value="{{ lec.id }}">
+                        <select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id">
+                            {% for faculty in adjs %}
+                                <option value="{{ faculty.id }}">{{ faculty.username }}</option>
+                            {% endfor %}
+                        </select>
+                        {% endfor %}
+                    </div>
+                    <div class="card-footer text-center">
+                        <button type="submit" class="btn btn-info" id="option_submit">Apply</button>
+                    </div>
+                </form>
+                {% elif errors %}
+                <h4>{{ errors }}</h4>
+                {% elif success %}
+                <h4>Success</h4>
+                {% else %}
+                <form action="{% url 'reserve' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <p class="d-block font-weight-bold mb-3 mt-4 ml-2">Event Details</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">Room</small>
+                            <div class="form-group">
+                                <select class="form-control form-control-alternative" name="room_id" required>
+                                    <option value="-1" disabled selected>Select Room</option>
+                                    {% for room in rooms %}
+                                        <option value="{{ room.id }}">{{ room }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">Institute</small>
+                            <div class="form-group">
+                                <input class="form-control form-control-alternative" placeholder="eg. KJSCE or SIMSR" type="text" name="institute" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">Department</small>
+                            <div class="form-group">
+                                <input class="form-control form-control-alternative" placeholder="eg. Mechanical or Finance" type="text" name="department">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">Purpose</small>
+                            <div class="form-group">
+                                <textarea class="form-control form-control-alternative" rows="3" name="purpose" placeholder="Name of Event/Workshop/Seminar"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <p class="d-block font-weight-bold mb-3 mt-3 ml-2">Date & Duration</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">Date</small>
+                            <div class="form-group">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
+                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="date" data-date-start-date="0d">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">To</small>
+                            <div class="form-group">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
+                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="to_date" data-date-start-date="0d">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">Last date of registration</small>
+                            <div class="form-group">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
+                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="last_date" data-date-start-date="0d">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="d-block font-weight-bold mb-3 mt-3 ml-2">Extra</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">Registration Fee</small>
+                            <div class="form-group">
+                                <input class="form-control form-control-alternative" placeholder="Registration Fee" type="text" name="fees">
+                            </div>
+
+                            <small class="d-block font-weight-bold mb-1 ml-2">Attach email or correspondence</small>
+                            <div class="form-group">
+                                <input class="form-control form-control-alternative" type="file" name="correspondence">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">Purpose/Scope</small>
+                            <div class="form-group">
+                                <textarea class="form-control form-control-alternative" rows="6" name="scope"
+                                placeholder="Purpose or Scope for attending"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12 d-flex justify-content-center align-items">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</main>
+                </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+        });
+    </script>
+
+</body>
+</html>
