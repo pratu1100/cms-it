@@ -178,30 +178,28 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <small class="d-block font-weight-bold mb-1 ml-2">To</small>
-                            <div class="form-group">
-                                <div class="input-group input-group-alternative">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
-                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="to_date" data-date-start-date="0d">
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
-                            <small class="d-block font-weight-bold mb-1 ml-2">Last date of registration</small>
+                       <div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">Start Time</small>
                             <div class="form-group">
                                 <div class="input-group input-group-alternative">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
                                     </div>
-                                    <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
-                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="last_date" data-date-start-date="0d">
+                                    <input type="text" class="form-control text-dark" name="start_time" disabled="true">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">End Time</small>
+                            <div class="form-group">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control text-dark" name="end_time" disabled="true">
                                 </div>
                             </div>
                         </div>
@@ -248,10 +246,68 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-
+            $disabled_timeslots = null;
             $('#sidebarCollapse').on('click', function () {
                 $('#sidebar').toggleClass('active');
             });
+
+            $('[name=date]').change(function(){  
+                date = $(this).val()
+                $.ajaxSetup({
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "apitimeslots" %}',
+                    data: { 
+                        'date': date, 
+                    },
+                    success: function(msg){
+                        $('[name=start_time]').prop("disabled",false)
+                        $('[name=start_time]').timepicker({
+                            'timeFormat': 'H:i',
+                            'minTime': '09:00',
+                            'maxTime': '21:00',
+                            'disableTimeRanges' : msg.timeslots,
+                        })
+                        // console.log(msg.timeslots)
+                        $disabled_timeslots = msg.timeslots;
+                    }
+                });
+            })
+
+            $('[name=start_time]').change(function(){
+                $('[name=end_time]').timepicker('remove');
+                var selected_start_time = $(this).val();
+                var a = selected_start_time.split(':');
+                $seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 ; 
+                console.log($seconds);
+                $max_allowed = "21:00";
+                // console.log($selected_start_time)
+                $($disabled_timeslots).each(function(){
+                        $(this).each(function(){
+                            if($max_allowed=="21:00"){
+                        // console.log("!!"+$(this))
+                                // console.log(parseInt($(this)[0]))
+                                if($seconds< parseInt($(this)[0])){
+                                    $max_allowed = parseInt($(this)[0]);
+                                }
+                            }
+                        })
+                })
+                console.log("###"+$max_allowed)
+                $('[name=end_time]').prop("disabled",false)
+                $('[name=end_time]').timepicker({
+                    'timeFormat': 'H:i',
+                    'minTime': $('[name=start_time]').val(),
+                    'maxTime': $max_allowed,
+                    'disableTimeRanges' : $disabled_timeslots,
+                })
+            })
+
+            
         });
     </script>
 

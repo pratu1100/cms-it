@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'faculty',
     'hod',
     'labassistant',
-    'guest'
+    'guest',
 ]
 
 MIDDLEWARE = [
