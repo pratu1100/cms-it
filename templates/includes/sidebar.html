@@ -35,6 +35,11 @@
               Approve ODs
           </a>
         </li>
+        <li>
+          <a href="{% url 'logout' %}">
+            Logout
+          </a>
+        </li>
       </ul>
     {% else %}
       <ul class="list-unstyled components">
@@ -76,6 +81,11 @@
         <li  id="od">
           <a href="{% url 'od' %}">
             OD
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'logout' %}">
+            Logout
           </a>
         </li>
       </ul>
