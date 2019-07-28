@@ -1,8 +1,8 @@
 {% load static %}
 
 <nav id="sidebar">
-    <div class="sidebar-header">
-     MENU
+    <div class="sidebar-header text-center">
+     KJSCE CMS
     </div>
     {% if user.is_authenticated is False %}
     <ul class="list-unstyled components">
@@ -33,6 +33,11 @@
         <li id="approve_ods">
           <a href="{% url 'approve_ods' %}">
               Approve ODs
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'logout' %}">
+            Logout
           </a>
         </li>
       </ul>
@@ -78,6 +83,11 @@
             OD
           </a>
         </li>
+        <li>
+          <a href="{% url 'logout' %}">
+            Logout
+          </a>
+        </li>
       </ul>
 
     {% endif %}
@@ -85,9 +95,10 @@
 
 <script>
   $(() => {
+
+    $("a").addClass("ml-2 mr-2 rounded");
+
     let page_loaded = $("#page_loaded").val();
-    $("#" + page_loaded).addClass("active").css(
-        "background-color", "#e6e6e6 !important"
-      );
+    $("#" + page_loaded).addClass("active shadow");
   });
 </script>

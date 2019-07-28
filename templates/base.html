@@ -50,16 +50,6 @@
 							</div>
 						</div>
 					</div>
-					{% if user.is_authenticated %}
-						<ul class="navbar-nav align-items-lg-center ml-lg-auto">
-							<li class="nav-item d-none d-lg-block ml-lg-4">
-								<a href="{% url 'logout' %}"  class="btn btn-icon btn-outline-danger">
-								<span class="nav-link-inner--text text-white">Logout</span>
-								</a>
-							</li>
-						</ul>
-					{% endif %}
-					
 				</div>
 			</nav>
 			{% block logincontent %}
@@ -74,6 +64,8 @@
 
 	<script type="text/javascript">
         $(document).ready(function () {
+
+			// $('#sidebar').addClass('active');
 
             $('#sidebarCollapse').on('click', function () {
                 $('#sidebar').toggleClass('active');

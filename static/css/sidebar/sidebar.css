@@ -7,10 +7,17 @@ p {
     color: #999;
 }
 
-a,
+a {
+    color: #E6E6E6 !important;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-transform: uppercase !important;
+    font-size: 16px !important;
+}
+
 a:hover,
 a:focus {
-    color: inherit;
+    background-color: #fff !important;
+    color: #212529 !important;
     text-decoration: none;
     transition: all 0.3s;
 }
@@ -60,7 +67,7 @@ a:focus {
 
 #sidebar .sidebar-header {
     padding: 20px;
-    background: #212529;
+    background: #2C2F33;
 }
 
 #sidebar ul.components {
@@ -85,7 +92,7 @@ a:focus {
 
 #sidebar ul li.active>a,
 a[aria-expanded="true"] {
-    color: #000000;
+    color: #000000 !important;
     background: #E6E6E6;
 }
 
@@ -126,7 +133,7 @@ a.download {
 
 a.article,
 a.article:hover {
-    background: #6d7fcc !important;
+    background: #fff !important;
     color: #fff !important;
 }
 
