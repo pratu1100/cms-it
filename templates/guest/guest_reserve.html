@@ -50,71 +50,7 @@
                     <div class="row m-3">
                         <div class="col-sm-12 col-md-12">
                             <div class="container border mb-5">
-                                {% if od %}
-                                <form class=" border-primary" method="POST" action="{% url 'submit_od_loadshift' %}">
-                                    {% csrf_token %}
-                                    <div class="card text-center mt-3">
-                                        <div class="card-header text-dark">
-                                            {{ od.od_title }}
-                                        </div>
-                                        <div class="card-body">
-                                            <h5 class="card-title">Type: {{ od.od_type }}</h5>
-                                            <p class="card-text">
-                                                {{ od.od_details }}
-                                            </p>
-                                            <div class="row text-left mb-2">
-                                                <div class="col-sm-6">
-                                                    <p class="card-text"><b>Supporting Organisation: </b>{{ od.supporting_organisation }}</p>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <p class="card-text"><b>Last Date: </b>{{ od.last_date.date }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="row text-left mb-2">
-                                                <div class="col-sm-6">
-                                                    <p class="card-text"><b>From: </b>{{ od.from_date.date }}</p>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <p class="card-text"><b>To: </b>{{ od.to_date.date }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="row text-left">
-                                                <div class="col-sm-6">
-                                                    <p class="card-text"><b>Fees: </b>{{ od.fees }}</p>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <p class="card-text"><b>Scope: </b>{{ od.scope }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="p-3" style="border-top: 1px solid #eee">
-                                            OD File:
-                                            <a href="{{ od.correspondence.url }}" target="__blank">
-                                                EG
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div class="card-body text-center">
-                                        <h5 class="card-title">Load Shifts</h5>
-                                        <input type="hidden" name="od_id" value="{{ od.id }}">
-                                        {% for lec, adjs in adjust_opts.items %}
-                                        <h6 class="card-title mt-2">{{ lec.lname.sname }}</h6>
-                                        <input type="hidden" name="lecture_id" value="{{ lec.id }}">
-                                        <select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id">
-                                            {% for faculty in adjs %}
-                                                <option value="{{ faculty.id }}">{{ faculty.username }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        {% endfor %}
-                                    </div>
-                                    <div class="card-footer text-center">
-                                        <button type="submit" class="btn btn-info" id="option_submit">Apply</button>
-                                    </div>
-                                </form>
-                                {% elif errors %}
-                                <h4>{{ errors }}</h4>
-                                {% elif success %}
+                                {% if success %}
                                 <h4>Success</h4>
                                 {% else %}
                                 <form action="{% url 'reserve' %}" method="POST" enctype="multipart/form-data">
@@ -166,7 +102,19 @@
                                                         <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
                                                     </div>
                                                     <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
-                                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="date" data-date-start-date="0d">
+                                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="start_date" data-date-start-date="0d">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <small class="d-block font-weight-bold mb-1 ml-2">Upto</small>
+                                            <div class="form-group">
+                                                <div class="input-group input-group-alternative">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
+                                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="end_date" data-date-start-date="0d" disabled>
                                                 </div>
                                             </div>
                                         </div>
@@ -197,29 +145,25 @@
                                         </div>
                                     </div>
 
-                                    <p class="d-block font-weight-bold mb-3 mt-3 ml-2">Extra</p>
+                                    <p class="d-block font-weight-bold mb-3 mt-4 ml-2">Contact Details</p>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <small class="d-block font-weight-bold mb-1 ml-2">Registration Fee</small>
+                                            <small class="d-block font-weight-bold mb-1 ml-2">Contact Person</small>
                                             <div class="form-group">
-                                                <input class="form-control form-control-alternative" placeholder="Registration Fee" type="text" name="fees">
-                                            </div>
-
-                                            <small class="d-block font-weight-bold mb-1 ml-2">Attach email or correspondence</small>
-                                            <div class="form-group">
-                                                <input class="form-control form-control-alternative" type="file" name="correspondence">
+                                                <input class="form-control form-control-alternative" placeholder="eg. John Doe" type="text" name="contact_person" required>
                                             </div>
                                         </div>
+                                        
                                         <div class="col-md-6">
-                                            <small class="d-block font-weight-bold mb-1 ml-2">Purpose/Scope</small>
+                                            <small class="d-block font-weight-bold mb-1 ml-2">Email</small>
                                             <div class="form-group">
-                                                <textarea class="form-control form-control-alternative" rows="6" name="scope"
-                                                placeholder="Purpose or Scope for attending"></textarea>
+                                                <input class="form-control form-control-alternative" placeholder="" type="email" name="email" required>
                                             </div>
                                         </div>
                                     </div>
+                                    
 
-                                    <div class="row mb-3">
+                                    <div class="row mt-3 mb-3">
                                         <div class="col-md-12 d-flex justify-content-center align-items">
                                             <button type="submit" class="btn btn-primary">Submit</button>
                                         </div>
@@ -243,8 +187,14 @@
                 $('#sidebar').toggleClass('active');
             });
 
-            $('[name=date]').change(function(){  
-                date = $(this).val()
+            $('[name=start_date]').change(function(){
+                $('[name=end_date]').val('');
+                $('[name=end_date]').prop("disabled",false);
+            })
+
+            $('[name=end_date]').change(function(){  
+                start_date = $('[name=start_date]').val()
+                end_date = $(this).val()
                 $.ajaxSetup({
                     data: {
                         csrfmiddlewaretoken: '{{ csrf_token }}'
@@ -254,14 +204,15 @@
                     type: 'POST',
                     url: '{% url "apitimeslots" %}',
                     data: { 
-                        'date': date, 
+                        'start_date': start_date,
+                        'end_date' : end_date, 
                     },
                     success: function(msg){
                         $('[name=start_time]').prop("disabled",false)
                         $('[name=start_time]').timepicker({
                             'timeFormat': 'H:i',
                             'minTime': '09:00',
-                            'maxTime': '21:00',
+                            'maxTime': '17:00',
                             'disableTimeRanges' : msg.timeslots,
                         })
                         // console.log(msg.timeslots)
@@ -271,16 +222,17 @@
             })
 
             $('[name=start_time]').change(function(){
+                $('[name=end_time]').val('');
                 $('[name=end_time]').timepicker('remove');
                 var selected_start_time = $(this).val();
                 var a = selected_start_time.split(':');
                 $seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 ; 
                 console.log($seconds);
-                $max_allowed = "21:00";
+                $max_allowed = "17:30";
                 // console.log($selected_start_time)
                 $($disabled_timeslots).each(function(){
                         $(this).each(function(){
-                            if($max_allowed=="21:00"){
+                            if($max_allowed=="17:30"){
                         // console.log("!!"+$(this))
                                 // console.log(parseInt($(this)[0]))
                                 if($seconds< parseInt($(this)[0])){
