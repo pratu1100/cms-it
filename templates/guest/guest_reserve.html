@@ -48,11 +48,12 @@
                     <input id="page_loaded" value="guest_reserve" style="display: none;">
                     
                     <div class="row m-3">
-                        <div class="col-sm-12 col-md-12">
-                            <div class="container border mb-5">
+                        <div class="col-sm-12 col-md-12 text-center">
                                 {% if success %}
-                                <h4>Success</h4>
+                                <div class="badge badge-success badge-lg col-md-6" style="font-size: 1.5rem;">Your request has been submitted.</div>
+                                <div class="badge badge-warning col-md-6" style="font-size: 1rem;">Check your email for correspondence.</div>
                                 {% else %}
+                                <div class="container border mb-5">
                                 <form action="{% url 'reserve' %}" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <p class="d-block font-weight-bold mb-3 mt-4 ml-2">Event Details</p>
@@ -170,8 +171,8 @@
                                     </div>
 
                                 </form>
-                                {% endif %}
                             </div>
+                                {% endif %}
                         </div>
 
                     </div>
