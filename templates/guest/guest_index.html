@@ -12,7 +12,7 @@
 </head>
 <body>
     <div class="wrapper">
-            {% include '../includes/sidebar.html' %}
+        {% include '../includes/sidebar.html' %}
         <!-- Page Content  -->
         <div id="content">
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -41,32 +41,24 @@
                             </div>
                         </div>
                     </div>
-                        <ul class="navbar-nav align-items-lg-center ml-lg-auto">
-                            <li class="nav-item d-none d-lg-block ml-lg-4">
-                                <a href="{% url 'logout' %}"  class="btn btn-icon btn-outline-danger">
-                                <span class="nav-link-inner--text text-white">Logout</span>
-                                </a>
-                            </li>
-                        </ul>
                 </div>
             </nav>
-                <div>
-                    <main>
-                        <input id="page_loaded" value="guest_index" style="display: none;">
+            <div>
+                <main>
+                    <input id="page_loaded" value="guest_index" style="display: none;">
 
-                        <div class="row m-2">
-                                    <div class="col-sm-12 col-md-12">
-                                        <div class="card shadow">
-                                            <h3 class="text-center mt-3">DISCLAIMER</h3>
-                                            <h6 class="text-center m-5">
-                                                You are now accessing the CMS Portal of IT Department as a Guest User. Please provide appropriate identity and relevant information to avoid denial of resources. The department reserves sole rights to view, modify and restrict resources on its own discretion. Communications will be made in the form of email provided during acces. For further assistance contact department.
-                                            </h6>
-                                        </div>
-                                    </div>  
-                                                    
-                        </div>
-                    </main>
-                </div>
+                    <div class="row m-2">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="card shadow">
+                                <h3 class="text-center mt-3">DISCLAIMER</h3>
+                                <h6 class="text-center m-5">
+                                    You are now accessing the CMS Portal of IT Department as a Guest User. Please provide appropriate identity and relevant information to avoid denial of resources. The department reserves sole rights to view, modify and restrict resources on its own discretion. Communications will be made in the form of email provided during acces. For further assistance contact department.
+                                </h6>
+                            </div>
+                        </div>            
+                    </div>
+                </main>
+            </div>
         </div>
     </div>
 
