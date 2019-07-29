@@ -52,11 +52,15 @@ def reserve(request):
 def get_timeslots(request):
 	if not request.user.is_authenticated:
 		if request.method == 'POST':
-			print(request.POST.get('date'))
+			# print(request.POST.get('date'))
 			start_date = datetime.datetime.strptime(request.POST.get('start_date'),'%m/%d/%Y')
 			end_date = datetime.datetime.strptime(request.POST.get('end_date'),'%m/%d/%Y')
 			busy_timeslots = list()
-			for reservation in Reservation.objects.filter(start_date__gte = start_date,end_date__lte = end_date):
+			# print(start_date)
+			# print(end_date)
+			# print(Reservation.objects.filter(start_date__lte = end_date,end_date__gte = start_date))
+			for reservation in Reservation.objects.filter(start_date__lte = end_date,end_date__gte = start_date):
+				
 				timeslot = list() 
 				timeslot.append(reservation.start_time.strftime("%H:%M"))
 				timeslot.append(reservation.end_time.strftime("%H:%M"))

@@ -189,11 +189,19 @@
             });
 
             $('[name=start_date]').change(function(){
+                $('[name=start_time]').timepicker('remove')
+                $('[name=start_time]').val('');
+                $('[name=end_time]').timepicker('remove')   
+                $('[name=end_time]').val(''); 
                 $('[name=end_date]').val('');
                 $('[name=end_date]').prop("disabled",false);
             })
 
             $('[name=end_date]').change(function(){  
+                $('[name=start_time]').timepicker('remove')
+                $('[name=start_time]').val('');
+                $('[name=end_time]').timepicker('remove')
+                $('[name=end_time]').val('');
                 start_date = $('[name=start_date]').val()
                 end_date = $(this).val()
                 $.ajaxSetup({
@@ -228,7 +236,7 @@
                 var selected_start_time = $(this).val();
                 var a = selected_start_time.split(':');
                 $seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 ; 
-                console.log($seconds);
+                // console.log($seconds);
                 $max_allowed = "17:30";
                 // console.log($selected_start_time)
                 $($disabled_timeslots).each(function(){
@@ -242,7 +250,7 @@
                             }
                         })
                 })
-                console.log("###"+$max_allowed)
+                // console.log("###"+$max_allowed)
                 $('[name=end_time]').prop("disabled",false)
                 $('[name=end_time]').timepicker({
                     'timeFormat': 'H:i',
