@@ -304,6 +304,8 @@
 			console.log("Year changed")
 			value = $(this).val()
 			api_urls.length = 0;
+			name_list.length = 0;
+			room_names.length = 0;
 			compute_lecs(value, value2, value3)
 			console.log($(this).val())
 		});
@@ -312,6 +314,8 @@
 			value2 = $(this).val()
 			console.log($(this).val())
 			api_urls.length = 0;
+			name_list.length = 0;
+			room_names.length = 0;
 			compute_lecs(value, value2, value3)
 
 		});
@@ -320,6 +324,8 @@
 			value3 = $(this).val()
 			console.log($(this).val())
 			api_urls.length = 0;
+			name_list.length = 0;
+			room_names.length = 0;
 			compute_lecs(value, value2, value3)
 
 		});
@@ -356,6 +362,7 @@
 						var fac_id = response[0].fields.taken_by;
 						var room_id = response[0].fields.lec_in;
 						var req_opt_name = sub_id + '-' + fac_id;
+						console.log(name_list[index])
 						$($('[name="' + name_list[index] + '"')[0]).val(req_opt_name);
 						if( room_id != null){
 							$('.batch-drp[name="' + room_names[index] + '"').val(room_id);
