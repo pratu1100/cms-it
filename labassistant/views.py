@@ -7,12 +7,11 @@ import json
 from django.core import serializers
 from django.http import JsonResponse, QueryDict
 
-import datetime
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from collections import OrderedDict
 import io
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 
@@ -29,7 +28,7 @@ def get_timetable(request):
 			# For lectures
 			ts = TimeSlot.objects.annotate(
 	    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
-		).filter(diff__lt=datetime.timedelta(hours = 2))
+		).filter(diff__lt=timedelta(hours = 2))
 
 			for t in ts:
 				# print(t)
@@ -68,7 +67,7 @@ def get_timetable(request):
 
 			ts = TimeSlot.objects.annotate(
 	    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
-		).filter(diff=datetime.timedelta(hours = 2))
+		).filter(diff=timedelta(hours = 2))
 
 			for t in ts:
 				# print(t)
@@ -153,11 +152,11 @@ def get_timetable(request):
 
 		time_slots = TimeSlot.objects.annotate(
 	    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
-		).filter(diff__lte=datetime.timedelta(hours = 2))
+		).filter(diff__lte=timedelta(hours = 2))
 
 		pracs_ts = TimeSlot.objects.annotate(
 	    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
-		).filter(diff=datetime.timedelta(hours = 2))
+		).filter(diff=timedelta(hours = 2))
 
 		subjects = Subject.objects.all();
 
