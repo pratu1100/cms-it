@@ -466,6 +466,7 @@
 						var fac_id = response[0].fields.taken_by;
 						var room_id = response[0].fields.lec_in;
 						var req_opt_name = sub_id + '-' + fac_id;
+						console.log(name_list[index])
 						$($('[name="' + name_list[index] + '"')[0]).val(req_opt_name);
 						//console.log(name_list[index]);
 						if( room_id != null){

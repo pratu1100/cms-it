@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect,HttpResponse
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,MakeupLecture,Year, Division, Room,IA, GuestLecture, OD
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,MakeupLecture,Year, Division, Room,IA, GuestLecture, OD, Batch, IaBatchRoomMapping
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 import datetime
@@ -78,7 +78,7 @@ def submit_leave(request):
 			new_leave = Leave.objects.get_or_create(leave_taken_by = user,leave_start_date=start_date.date(),leave_end_date = end_date.date(),leave_start_time=start_date.time(),leave_end_time = end_date.time())
 			# print("####",new_leave)
 			for lec in lecs:
-				adjust_opts[lec] = User.objects.exclude(id__in = [x.taken_by.id for x in Lecture.objects.filter(lec_time__start_time__gte = lec.lec_time.start_time).filter(lec_time__end_time__lte = lec.lec_time.end_time)])
+				adjust_opts[lec] = User.objects.exclude(id__in = [x.taken_by.id for x in Lecture.objects.filter(lec_time__start_time__gte = lec.lec_time.start_time).filter(lec_time__end_time__lte = lec.lec_time.end_time)]).exclude(is_staff = True)
 			# print(adjust_opts)
 			context_data ={
 				"start_date" : start_date_val,
@@ -100,6 +100,33 @@ def submit_leave(request):
 	return render(request,"error.html",html_error_data)
 
 @login_required
+def view_leaves(request):
+	if not request.user.is_superuser and not request.user.is_staff:
+		if(request.method == 'POST'):
+			leave = Leave.objects.get(pk = request.POST.get('leave_id'))
+			if '_cancel' in request.POST:
+				leave.delete()
+		leaves = Leave.objects.filter(leave_taken_by = request.user)
+		leave_loads_pairs = list()
+		for leave in leaves:
+			loads_data = list()
+			loads = LoadShift.objects.filter(leave = leave)
+			for load in loads:
+				loads_data.append(load)
+			leave_loads_pairs.append((leave,loads_data))
+
+		context_data = {
+			'leave_loads_pairs' : leave_loads_pairs
+		}
+
+		return render(request,"faculty/view_leaves.html",context_data)
+	html_error_data = {
+		"error_code" : "401",
+		"error_message" : "UNAUTHORIZED"
+	}
+	return render(request,"error.html",html_error_data)
+
+@login_required
 def submit_load_shift(request):
 	if not request.user.is_superuser and not request.user.is_staff:
 		user = User.objects.get(pk = request.user.id)
@@ -111,8 +138,17 @@ def submit_load_shift(request):
 				# print(leave)
 				# print(request.POST.getlist('lecture_id'))
 				if(request.POST.getlist('lecture_id')):
-					for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
-						l = LoadShift.objects.get_or_create(leave = leave,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
+					for lec_id in request.POST.getlist('lecture_id'):
+						lec = Lecture.objects.get(pk = lec_id)
+						# print(lec)
+						granted_to = list()
+						for x in request.POST.getlist(str(lec.id)):
+							granted_to.append(User.objects.get(pk = x))
+					# print(request.POST.getlist('faculty_id'))
+					# for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
+					# 	granted_to = faculty_id
+						l = LoadShift.objects.get_or_create(leave = leave,for_lecture = lec)
+						l[0].to_faculty.set(granted_to)
 						# Email notificaion
 
 						subject = 'New Load Shift request'
@@ -124,13 +160,15 @@ def submit_load_shift(request):
 
 						email_from = settings.EMAIL_HOST_USER
 						recipient_list = []
-						recipient_list.append(User.objects.get(pk = faculty_id).email)
+						for faculty in granted_to:
+							# print(faculty_id)
+							recipient_list.append(faculty.email)
 						html_content = render_to_string('email/loadshift_notification.html', message_data,request) # render with dynamic value
 						text_content = strip_tags(html_content)
 
 						msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 						msg.attach_alternative(html_content, "text/html")
-						# print(l[0].for_lecture)
+						print(l[0].for_lecture)
 						msg.send()
 						# return render(request,'email/loadShift_notification.html', message_data)
 
@@ -169,13 +207,15 @@ def view_load_shifts(request):
 		if request.method == 'POST':
 			load_shift = LoadShift.objects.get(pk = request.POST.get('load_shift'))
 			if '_reject' in request.POST:
-					load_shift.delete()
+				load_shift.to_faculty.remove(request.user)
 			elif '_approve' in request.POST:
-					load_shift.approved_status = True
-					load_shift.save()
+				load_shift.to_faculty.clear()
+				load_shift.approved_status = True
+				load_shift.to_faculty.set((request.user,))
+				load_shift.save()
 
-		user = User.objects.get(pk = request.user.id)
-		load_shifts = LoadShift.objects.filter(to_faculty = user)
+		# user = User.objects.get(pk = request.user.id)
+		load_shifts = LoadShift.objects.filter(to_faculty = request.user)
 
 		return render(request,"faculty/loadshift.html",{"load_shifts":load_shifts})
 	html_error_data = {
@@ -302,7 +342,7 @@ def get_timeslots(request,syear,sdate):
 
 				filtered_makeup_lecs = makeup_lecs.filter(lec_time__start_time__gte = timeslot.start_time,lec_time__end_time__lte = timeslot.end_time)
 
-				filtered_ia = ias.filter(ia_time__start_time__gte = timeslot.start_time,ia_time__end_time__lte = timeslot.end_time)
+				filtered_ia = ias.filter(ia_start_time__gte = timeslot.start_time,ia_end_time__lte = timeslot.end_time)
 
 				filtered_guest_lecs = guest_lecs.filter(lec_time__start_time__gte = timeslot.start_time,lec_time__end_time__lte = timeslot.end_time)
 
@@ -388,17 +428,23 @@ def post_ia(request):
 			year = Year.objects.get(pk = int(request.POST.get('year')))
 			subject = Subject.objects.get(pk = int(request.POST.get('subject')))
 			date = datetime.datetime.strptime(request.POST.get('ia_date'),'%m/%d/%Y')
-			timeslot = TimeSlot.objects.get(pk = int(request.POST.get('timeslot')))
-			room = Room.objects.get(pk = int(request.POST.get('locations')))
+			# timeslot = TimeSlot.objects.get(pk = int(request.POST.get('timeslot')))
+			# room = Room.objects.get(pk = int(request.POST.get('locations')))
+			start_time = datetime.datetime.strptime(request.POST.get('start_time'),'%H:%M').time()
+			end_time = datetime.datetime.strptime(request.POST.get('end_time'),'%H:%M').time()
+
 
 			try:
-				ia = IA(ia_year = year, ia_subject = subject,ia_date = date,ia_time = timeslot,ia_in = room)
-				ia.full_clean()
-				# print(ia)
-				ia.save()
+				ia = IA.objects.get_or_create(ia_year = year, ia_subject = subject,ia_date = date,ia_start_time = start_time,ia_end_time = end_time)
 
+				batches = Batch.objects.filter(batch_of_year = year)
+				rooms = Room.objects.all()
+				supervisors = User.objects.filter(is_superuser = False)
 				context_data = {
-					"success" : 'true'
+					"ia" : ia[0],
+					"rooms" : rooms,
+					"batches" : batches,
+					"supervisors" : supervisors,
 				}
 
 			except Exception as e:
@@ -410,6 +456,41 @@ def post_ia(request):
 			return render(request,"faculty/ia.html",context_data)
 		else:
 			return HttpResponseRedirect('./')
+	html_error_data = {
+		"error_code" : "401",
+		"error_message" : "UNAUTHORIZED"
+	}
+	return render(request,"error.html",html_error_data)
+
+@login_required
+def post_ia_arrangement(request):
+	if not request.user.is_superuser and not request.user.is_staff:
+		if request.method == 'POST':
+			ia = IA.objects.get(pk = request.POST.get('ia_id'))
+			for batch in Batch.objects.filter(batch_of_year = ia.ia_year):
+				batch_room_id = request.POST.get(str(batch)+"-room")
+				batch_supervisor_id = request.POST.get(str(batch)+"-supervisor")
+				print("###",batch_supervisor_id)
+				if(batch_room_id != "-1" and batch_supervisor_id != "-1"):
+					batch_room = Room.objects.get(pk = batch_room_id)
+					batch_supervisor = User.objects.get(pk = batch_supervisor_id)
+					print("###",batch_supervisor)
+
+					try:
+						mapping = IaBatchRoomMapping(ia= ia,batch = batch,room=batch_room,supervisor= batch_supervisor)
+						mapping.full_clean()
+						mapping.save()
+					except Exception as e:
+						context_data = {
+							"errors" : e
+						}
+			context_data = {
+				"success" : True,
+			}	
+			return render(request,"faculty/ia.html",context_data)
+		else:
+			return HttpResponseRedirect('./')
+
 	html_error_data = {
 		"error_code" : "401",
 		"error_message" : "UNAUTHORIZED"

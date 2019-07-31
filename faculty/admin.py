@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,Year,Division,Room,Batch,MakeupLecture,IA,GuestLecture,OD
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,Year,Division,Room,Batch,MakeupLecture,IA,GuestLecture,OD,LeaveType, IaBatchRoomMapping
 
 # Register your models here.
 
 class LeaveAdmin(admin.ModelAdmin):
-	list_display = ('leave_taken_by','leave_start_date','leave_end_date','approved_status')
+	list_display = ('leave_taken_by','leave_type','leave_start_date','leave_end_date','approved_status')
 	list_display_links = ('leave_taken_by',)
 
 admin.site.register(Leave,LeaveAdmin)
@@ -30,7 +30,7 @@ admin.site.register(Subject)
 
 class LoadShiftAdmin(admin.ModelAdmin):
 # 	fields  = ('leave','to_faculty','for_lecture')
-	list_display = ('leave','od','to_faculty','for_lecture')
+	list_display = ('leave','od','for_lecture','approved_status')
 	list_display_links = ('leave','od')
 
 admin.site.register(LoadShift,LoadShiftAdmin)
@@ -46,10 +46,16 @@ class MakeupAdmin(admin.ModelAdmin):
 admin.site.register(MakeupLecture, MakeupAdmin)
 
 class IaAdmin(admin.ModelAdmin):
-	list_display = ('ia_subject','ia_date','ia_time','ia_year','ia_in')
+	list_display = ('ia_subject','ia_date','ia_year')
 	list_display_links = ('ia_subject',)
 
 admin.site.register(IA,IaAdmin)
+
+class IaBatchRoomMappingAdmin(admin.ModelAdmin):
+	list_display = ('ia','batch','room','supervisor')
+	list_display_links = ('ia',)
+
+admin.site.register(IaBatchRoomMapping,IaBatchRoomMappingAdmin)
 
 class GuestLectureAdmin(admin.ModelAdmin):
 	list_display = ('lec_subject','lec_date','lec_time','lec_year','lec_in')
@@ -62,3 +68,4 @@ class ODAdmin(admin.ModelAdmin):
 	list_display_links = ('od_title',)
 
 admin.site.register(OD,ODAdmin)
+# admin.site.register(LeaveType)

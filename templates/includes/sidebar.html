@@ -1,20 +1,48 @@
 {% load static %}
 
 <nav id="sidebar">
-    <div class="sidebar-header">
-     MENU
+    <div class="sidebar-header text-center">
+     KJSCE CMS
     </div>
+    {% if user.is_authenticated is False %}
+    <ul class="list-unstyled components">
+        <li id="guest_index">
+            <a href="{% url 'guest_index' %}">
+                Disclaimer
+            </a>
+        </li>
+        <li id="guest_reserve">
+            <a href="{% url 'reserve' %}">
+                Reserve
+            </a>
+        </li>
+        <li>
+          <a href="{% url 'logout' %}">
+            Logout
+          </a>
+        </li>
+      </ul>
 
-    {% if user.is_superuser %}
+    {% elif user.is_superuser %}
       <ul class="list-unstyled components">
         <li id="approve_leaves">
             <a href="{% url 'leaves' %}">
                 Approve Leaves
             </a>
         </li>
+        <li id="leave_history">
+            <a href="{% url 'leave_history' %}">
+                Leave History
+            </a>
+        </li>
         <li id="approve_ods">
           <a href="{% url 'approve_ods' %}">
               Approve ODs
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'logout' %}">
+            Logout
           </a>
         </li>
       </ul>
@@ -28,6 +56,11 @@
         <li id="request_leave">
           <a href="{% url 'request_leave' %}">
               Request Leave
+          </a>
+        </li>
+        <li id="view_leaves">
+          <a href="{% url 'view_leaves' %}">
+              View Leaves
           </a>
         </li>
         <li id="loadshifts">
@@ -55,6 +88,11 @@
             OD
           </a>
         </li>
+        <li>
+          <a href="{% url 'logout' %}">
+            Logout
+          </a>
+        </li>
       </ul>
 
     {% endif %}
@@ -62,9 +100,10 @@
 
 <script>
   $(() => {
+
+    $("a").addClass("ml-2 mr-2 rounded");
+
     let page_loaded = $("#page_loaded").val();
-    $("#" + page_loaded).addClass("active").css(
-        "background-color", "#e6e6e6 !important"
-      );
+    $("#" + page_loaded).addClass("active shadow");
   });
 </script>

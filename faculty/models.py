@@ -39,21 +39,28 @@ class TimeSlot(models.Model):
 		time = self.start_time.strftime("%H:%M") + " - " + self.end_time.strftime("%H:%M")
 		return time
 
+class LeaveType(models.Model):
+	leave_type = models.TextField(blank=False,null=False)
+
+	def __str__(self):
+		return self.leave_type
+
 class Leave(models.Model):
+    leave_type = models.ForeignKey(LeaveType, on_delete = models.SET_NULL,blank=False,null = True)
     leave_note = models.TextField(blank=False, null=False)
     leave_taken_by = models.ForeignKey("auth.User",on_delete = models.CASCADE,null=True)
-    approved_status = models.BooleanField(default=False, null=False)
+    approved_status = models.BooleanField(default= None, null=True)
     leave_start_date = models.DateField(auto_now = False,auto_now_add = False,)
     leave_end_date = models.DateField(auto_now = False,auto_now_add = False,)
     # leave_start_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE,null=True)
     leave_start_time = models.TimeField(auto_now=False,auto_now_add=False)
     leave_end_time = models.TimeField(auto_now=False,auto_now_add=False)
 
-
     def __str__(self):
     	# print(self.leave_taken_by.username + "@" + self.leave_start_date.strftime("%d/%m/%Y ")+ self.leave_time.start_time.strftime("%H:%M -"))
     	
     	return self.leave_taken_by.username + "@" + self.leave_start_date.strftime("%d/%m/%Y")+ "--"+self.leave_start_time.strftime("%H:%M")
+
 
 class DaysOfWeek(models.Model):
 	day_name = models.CharField(max_length = 255,blank=False,null=False)
@@ -111,18 +118,32 @@ class MakeupLecture(models.Model):
 	class Meta:
 		unique_together = ('year','division','lec_date','lec_time')
 
+
 class IA(models.Model):
 	ia_year = models.ForeignKey(Year,on_delete = models.CASCADE)
 	ia_date = models.DateField(auto_now = False,auto_now_add = False)
 	ia_subject = models.ForeignKey(Subject,on_delete = models.CASCADE)
-	ia_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE)
-	ia_in = models.ForeignKey(Room,on_delete = models.CASCADE,null = True)
+	ia_start_time = models.TimeField(auto_now=False, auto_now_add=False)
+	ia_end_time = models.TimeField(auto_now=False, auto_now_add=False)
+
+	# ia_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE)
+
+	# ia_in = models.ForeignKey(Room,on_delete = models.CASCADE,null = True)
 
 	def __str__(self):
 		return self.ia_subject.sname
 
 	class Meta:
-		unique_together = ('ia_year','ia_date','ia_time')
+		unique_together = ('ia_year','ia_date','ia_start_time','ia_end_time')
+
+class IaBatchRoomMapping(models.Model):
+	ia = models.ForeignKey(IA,on_delete=models.CASCADE)
+	batch = models.ForeignKey(Batch,on_delete=models.CASCADE)
+	room = models.ForeignKey(Room,on_delete = models.SET_NULL,null=True)
+	supervisor = models.ForeignKey("auth.User",on_delete=models.CASCADE,null=True,blank=False)
+
+	def __str__(self):
+		return str(self.batch)+str(self.room)
 
 class GuestLecture(models.Model):
 	lec_year = models.ForeignKey(Year,on_delete = models.CASCADE)
@@ -149,7 +170,7 @@ class OD(models.Model):
 	scope = models.TextField(max_length=255,null=True,blank=True)
 	correspondence = models.FileField(upload_to = 'od/correspondence/',null=True,blank=True)
 	taken_by = models.ForeignKey("auth.User",on_delete= models.CASCADE)
-	approved_status = models.BooleanField(default=False, null=False)
+	approved_status = models.BooleanField(default= None, null=True)
 
 	def __str__(self):
 		return self.od_type+"--"+self.od_title
@@ -160,15 +181,15 @@ class OD(models.Model):
 
 class LoadShift(models.Model):
 	leave = models.ForeignKey(Leave, on_delete=models.CASCADE,null=True,blank=True)
-	to_faculty = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name="to_faculty")
+	to_faculty = models.ManyToManyField("auth.User")
 	for_lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name="to_lecture")
 	od = models.ForeignKey(OD, on_delete=models.CASCADE,null=True,blank=True)
 	approved_status = models.BooleanField(default = False, null = False)	
 
 	def __str__(self):
 		try:
-			return self.leave.leave_taken_by.username +"--"+self.to_faculty.username
+			return self.leave.leave_taken_by.username
 		except:
-			return self.od.taken_by.username +"--"+self.to_faculty.username
+			return self.od.taken_by.username
 		else:
 			return "Unknown"

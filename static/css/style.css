@@ -38,3 +38,8 @@
   display: inline-block;
 }
 
+input[type=time]::-webkit-inner-spin-button, 
+input[type=time]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
