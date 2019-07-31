@@ -108,12 +108,12 @@
 									{% for faculty in adjs %}
 										<!-- <option value="{{ faculty.id }}">{{ faculty.username }}</option> -->
 										<div class="row m-1 px-auto">
-											<div class="col-md-3">
-												<input type="checkbox" data-group-cls="btn-group-sm btn-group-justified" name="{{ lec.id }}" value="{{ faculty.id }}">
-											</div>
-											<div class="col-md-3">
-												<label class="form-check-label ml-4" for="{{ faculty.id }}">{{ faculty.username }}</label>										
-											</div>
+											<input class="checkbox-btn" name="{{ lec.id }}" type="checkbox" value="{{ faculty.id }}">
+											<label class="checkbox-label" for="{{ faculty.id }}">
+												<span>
+													{{ faculty.username }}
+												</span>
+											</label>
 										</div>
 									{% endfor %}
 									</div>
@@ -129,10 +129,15 @@
 		</div>
 
 	{% endif %}
-
 	<script>
 		$(() => {
-			$(':checkbox').checkboxpicker();
+			$(".checkbox-label").click((e) => {
+				if($(e.currentTarget).siblings('input')[0].checked){
+					$(e.currentTarget).siblings('input')[0].checked=  false
+				} else  {
+					$(e.currentTarget).siblings('input')[0].checked = true
+				}
+			});
 		});
 	</script>
 

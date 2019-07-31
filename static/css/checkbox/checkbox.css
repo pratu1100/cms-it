@@ -1,0 +1,69 @@
+.checkbox-label {
+    align-items: center;
+    background-color: none;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    font-weight: 600;
+    justify-content: space-between;
+    margin: 0 auto 10px;
+    padding: 20px 20px 20px 70px;
+    position: relative;
+    transition: .3s ease all;
+    width: 100%;
+}
+.checkbox-label span:last-child {
+    padding: 0 0 0 0;
+}
+.checkbox-label:hover {
+    background-color: rgba(255,255,255,0.2);   
+}
+.checkbox-label:focus {
+    outline: dotted;
+}
+.checkbox-label:before {
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: 15px !important;
+    border: 1px solid lightgrey !important;
+    border-radius: 50% !important;
+    content:'' !important;
+    height: 30px !important;
+    left: 20px !important;
+    position: absolute !important;
+    top: calc(50% - 15px) !important;
+    transition: .3s ease background-color !important;
+    width: 30px !important;
+}
+.checkbox-label:hover:before {
+    background-image: 
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="23.571429" height="23.571429" viewBox="0.000000 -47.142857 23.571429 23.571429"><path fill="lightgrey" d="M23.571429 -36.964286L23.571429 -33.750000C23.571429 -33.303571 23.415179 -32.924107 23.102679 -32.611607C22.790179 -32.299107 22.410714 -32.142857 21.964286 -32.142857L15.000000 -32.142857L15.000000 -25.178571C15.000000 -24.732143 14.843750 -24.352679 14.531250 -24.040179C14.218750 -23.727679 13.839286 -23.571429 13.392857 -23.571429L10.178571 -23.571429C9.732143 -23.571429 9.352679 -23.727679 9.040179 -24.040179C8.727679 -24.352679 8.571429 -24.732143 8.571429 -25.178571L8.571429 -32.142857L1.607143 -32.142857C1.160714 -32.142857 0.781250 -32.299107 0.468750 -32.611607C0.156250 -32.924107 0.000000 -33.303571 0.000000 -33.750000L0.000000 -36.964286C0.000000 -37.410714 0.156250 -37.790179 0.468750 -38.102679C0.781250 -38.415179 1.160714 -38.571429 1.607143 -38.571429L8.571429 -38.571429L8.571429 -45.535714C8.571429 -45.982143 8.727679 -46.361607 9.040179 -46.674107C9.352679 -46.986607 9.732143 -47.142857 10.178571 -47.142857L13.392857 -47.142857C13.839286 -47.142857 14.218750 -46.986607 14.531250 -46.674107C14.843750 -46.361607 15.000000 -45.982143 15.000000 -45.535714L15.000000 -38.571429L21.964286 -38.571429C22.410714 -38.571429 22.790179 -38.415179 23.102679 -38.102679C23.415179 -37.790179 23.571429 -37.410714 23.571429 -36.964286ZM23.571429 -36.964286"></path></svg>') !important;
+}
+.checkbox-label span {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+.checkbox-label span em {
+    display: block;
+    font-size: 80%;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.2;
+}
+.checkbox-btn {
+    position: absolute;
+    visibility: hidden;
+}
+.checkbox-btn:checked + .checkbox-label {
+    background-color: white;
+    border-color: #5E72E4;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.checkbox-btn:checked + .checkbox-label:before {
+    background-color: #5E72E4 !important;
+    background-image: 
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="25.948661" height="19.888393" viewBox="2.025670 -40.011161 25.948661 19.888393"><path fill="white" d="M27.974330 -36.127232C27.974330 -35.680804 27.818080 -35.301339 27.505580 -34.988839L15.385045 -22.868304L13.108259 -20.591518C12.795759 -20.279018 12.416295 -20.122768 11.969866 -20.122768C11.523438 -20.122768 11.143973 -20.279018 10.831473 -20.591518L8.554688 -22.868304L2.494420 -28.928571C2.181920 -29.241071 2.025670 -29.620536 2.025670 -30.066964C2.025670 -30.513393 2.181920 -30.892857 2.494420 -31.205357L4.771205 -33.482143C5.083705 -33.794643 5.463170 -33.950893 5.909598 -33.950893C6.356027 -33.950893 6.735491 -33.794643 7.047991 -33.482143L11.969866 -28.543527L22.952009 -39.542411C23.264509 -39.854911 23.643973 -40.011161 24.090402 -40.011161C24.536830 -40.011161 24.916295 -39.854911 25.228795 -39.542411L27.505580 -37.265625C27.818080 -36.953125 27.974330 -36.573661 27.974330 -36.127232ZM27.974330 -36.127232"></path></svg>') !important;
+    border-color: #5E72E4 !important;
+}
