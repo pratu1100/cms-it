@@ -19,7 +19,8 @@
 	<link href="{% static 'wizard/css/demo.css' %}" rel="stylesheet" />
 
 	<!-- Fonts and Icons -->
-	<link href="https://netdna.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.css" rel="stylesheet">
+	{% comment %} <link href="https://netdna.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.css" rel="stylesheet"> {% endcomment %}
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link href='https://fonts.googleapis.com/css?family=Muli:400,300' rel='stylesheet' type='text/css'>
 	<link href="{% static 'wizard/css/themify-icons.css' %}" rel="stylesheet">
 	<style type="text/css">
@@ -32,6 +33,11 @@
 			padding: 0px 4px;
 		}
 
+		.navbar {
+			padding: 8px 0px;
+			margin-bottom: 0px;
+			border-radius: 0px;
+		}
 		/*
 		.radio-tile, .radio-tile-label {
 			background-color: #2dce89 !important;
@@ -42,6 +48,38 @@
 </head>
 
 <body>
+
+	<header>
+		<nav class="navbar navbar-inverse">
+			<div class="container-fluid">
+
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+						data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">CMS - KJSCE</a>
+				</div>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						{% comment %} <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+						<li><a href="#">Link</a></li> {% endcomment %}
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="#" id="preview-btn">Preview</a></li>
+						<li><a href="/accounts/logout" id="logout-btn">Logout</a></li>
+					</ul>
+				</div><!-- /.navbar-collapse -->
+			</div><!-- /.container-fluid -->
+		</nav>
+	</header>
+
+
 	<div class="image-container set-full-height" style="background-color: #111111; ">
 
 
@@ -54,7 +92,7 @@
 					<div class="wizard-container">
 
 						<div class="card wizard-card" data-color="orange" id="wizardProfile">
-							<form action="{%url 'updatett'%}" method="POST">
+							<form action="{%url 'updatett'%}" method="POST" id="timetable-form">
 								{% csrf_token %}
 								<!--        You can switch " data-color="orange" "  with one of the next bright colors: "blue", "green", "orange", "red", "azure"          -->
 
@@ -292,18 +330,55 @@
 	var api_urls = [];
 	var name_list = [];
 	var room_names = [];
+
+	var complete_data = {};
 	$(document).ready(function () {
 		var value = $('[name="yearopt"]').val();
 		var value2 = $('[name="divopt"]').val();
 		var value3 = $('[name="dayopt"]').val();
 
-
+		$(document).on('change', 'select', function(e){
+			var select_box = $(this);
+			var main_parent_div = select_box.closest('[name^="div-row-"]');
+			if(main_parent_div[0]) {
+				var parent_name = $(main_parent_div[0]).attr("name");
+				var select_type = parent_name.split('-')[2];
+				var row_no = parent_name.split('-')[3];
+				if(select_type == "major"){
+					$('[name="div-row-minor-' + row_no + '"]').find('select').attr("disabled", true);
+					var flag = true;
+					$.each($('[name="div-row-major-' + row_no + '"]').find('select'), function(index, ele){
+						if($(ele).val() != "0" && $(ele).val() != "None"){
+							flag = false;
+						}
+					});
+					if(flag) {
+						$('[name="div-row-minor-' + row_no + '"]').find('select').attr("disabled", false);
+					}
+				} else if(select_type == "minor") {
+					$('[name="div-row-major-' + row_no + '"]').find('select').attr("disabled", true);
+					var flag = true;
+					$.each($('[name="div-row-minor-' + row_no + '"]').find('select'), function(index, ele){
+						if($(ele).val() != "0" && $(ele).val() != "None"){
+							flag = false;
+						}
+					});
+					if(flag) {
+						$('[name="div-row-major-' + row_no + '"]').find('select').attr("disabled", false);
+					}
+				}
+			}
+			complete_data[value3] = $('#timetable-form').serialize();
+		});
 
 		compute_lecs(value, value2, value3);
 		$('[name="yearopt"]').change(function () {
 			console.log("Year changed")
 			value = $(this).val()
 			api_urls.length = 0;
+			name_list.length = 0;
+			room_names.length = 0;
+			//complete_data = {};
 			compute_lecs(value, value2, value3)
 			console.log($(this).val())
 		});
@@ -312,6 +387,9 @@
 			value2 = $(this).val()
 			console.log($(this).val())
 			api_urls.length = 0;
+			name_list.length = 0;
+			room_names.length = 0;
+			//complete_data = {};
 			compute_lecs(value, value2, value3)
 
 		});
@@ -320,6 +398,10 @@
 			value3 = $(this).val()
 			console.log($(this).val())
 			api_urls.length = 0;
+			name_list.length = 0;
+			room_names.length = 0;
+			//complete_data[value3] = $('#timetable-form').serialize();
+			//console.log(complete_data[value3]);
 			compute_lecs(value, value2, value3)
 
 		});
@@ -330,11 +412,39 @@
 			},
 		});
 
-		updatett_ajax();
+		updatett_ajax(true, value3);
 
 		$('[name="termopt"], [name="yearopt"], [name="divopt"], [name="dayopt"]').change(function(e){
 			reset_fields();
-			updatett_ajax();
+			if( $(this).attr("name") == "dayopt" ){
+				var day_name = $(this).val();
+				updatett_ajax(true, day_name);
+			}else {
+				complete_data = {};
+				var day_name = value3;
+				updatett_ajax(true, day_name);
+			}
+
+		});
+
+		$('#preview-btn').click(function(e){
+			$.ajax({
+				url: '/assistant/getpreviewlink/',
+				type: "POST",
+				data: {
+					form: complete_data
+				},
+				success: function(response) {
+					//console.log(response);
+					var url = "{% static 'upload/temp_tt.pdf' %}"
+					var w = window.open(url, '_blank');
+					//w.write(response);
+   					w.focus();
+				},
+				error: function (xhr, errorText, error) {
+					console.log(xhr);
+				}
+			});
 		});
 	});
 
@@ -343,7 +453,7 @@
 		$('.batch-drp').val("None");
 	}
 
-	function updatett_ajax() {
+	function updatett_ajax(day_opt, day_name) {
 		$.each(api_urls, function (index, value) {
 			$.ajax({
 				type: "POST",
@@ -357,6 +467,7 @@
 						var room_id = response[0].fields.lec_in;
 						var req_opt_name = sub_id + '-' + fac_id;
 						$($('[name="' + name_list[index] + '"')[0]).val(req_opt_name);
+						//console.log(name_list[index]);
 						if( room_id != null){
 							$('.batch-drp[name="' + room_names[index] + '"').val(room_id);
 						}
@@ -364,6 +475,16 @@
 				},
 				error: function (xhr, errorText, error) {
 					// console.log(xhr);
+				}
+			}).done(function(){
+				$.each($('select'), function(index, ele){
+					$(ele).trigger("change");
+				});
+
+				if(day_opt && day_name !== undefined) {
+					complete_data[day_name] = $('#timetable-form').serialize();
+					//console.log(complete_data);
+					//console.log($('[name="dayopt"]').val());
 				}
 			});
 		});
@@ -374,15 +495,16 @@
 		$('.lec_batch_opts').empty();
 		// console.log(value);
 		// console.log(value2);
+		var count = 1;
 		{% for t in timeslots %}
 			{% if t in pracsts %}
-				html = `<div class="col-md-6 text-center">
+				html = `<div class="col-md-6 text-center" name="div-row-major-${count}">
 							<div class="col-md-12">
 								<label class="custom-select">
 									{{ t }}
 								</label>
 							</div>`;
-
+				count++;
 				{% for batch in batches %}
 					if ("{{ batch.batch_of_div }}" == value2 && "{{ batch.batch_of_year }}" == value) {
 						html += `<div class='col-md-3 batch-drp'>
@@ -440,7 +562,7 @@
 
 			{% else %}
 
-				html = `<div class="col-md-3 text-center">
+				html = `<div class="col-md-3 text-center" name="div-row-minor-${count}">
 							<label class="custom-select">
 								{{ t }}
 							</label>
