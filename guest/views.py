@@ -75,3 +75,13 @@ def get_timeslots(request):
 		'message' : 'UNAUTHORIZED'
 	}
 	return JsonResponse(json_data, status=500)
+
+def events(request):
+	if not request.user.is_authenticated:
+		return render(request,"guest/view_events.html",{})
+
+	json_data = {
+		'status' : 'false',
+		'message' : 'UNAUTHORIZED'
+	}
+	return JsonResponse(json_data, status=500)
