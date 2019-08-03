@@ -12,6 +12,7 @@ class Reservation(models.Model):
 	end_date = models.DateField(auto_now = False,auto_now_add = False)
 	start_time = models.TimeField(auto_now = False,auto_now_add = False)
 	end_time = models.TimeField(auto_now = False,auto_now_add = False)
+	approved_status = models.BooleanField(null = True,blank = True,default = None)
 
 	def __str__(self):
 		return self.contact_person
