@@ -21,134 +21,84 @@ def get_timetable(request):
 	if request.user.is_staff:
 		errors = None
 		if(request.method == 'POST'):
-			t_year = Year.objects.filter(year = request.POST.get('yearopt'))[0]
-			t_div = Division.objects.filter(division = request.POST.get('divopt'))[0]
-			t_day = DaysOfWeek.objects.filter(day_name = request.POST.get('dayopt'))[0]
-			# print(request.POST)
-			# For lectures
-			ts = TimeSlot.objects.annotate(
-	    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
-		).filter(diff__lt=timedelta(hours = 2))
+			day_names = list(DaysOfWeek.objects.values_list('day_name', flat=True))[1:-1]
+			form_data = OrderedDict()
 
-			for t in ts:
-				# print(t)
-				tavail = request.POST.getlist(str(t))
-				# print(tavail[0])
-				# print(tavail[1])
-				if(tavail[0]!='0' and tavail[1]!=None):
-					# print(t)
-					# print("###")
-					# print(tavail)
-					# print(tavail.split("-")[0])
-					# print(tavail.split("-")[1])
+			for name in day_names:
+				stat_check = request.POST.get('form[' + name + ']', False)
+				if stat_check:
+					form_data[name] = QueryDict(request.POST.get('form[' + name + ']', False).encode('ASCII'))
+				else:
+					form_data[name] = QueryDict()
 
-					u = User.objects.get(pk= int(tavail[0].split("-")[1]))
-					s = Subject.objects.get(pk = tavail[0].split("-")[0])
-					r = Room.objects.get(pk = tavail[1])
-					# print(u)
-					# print(s)
-					# print(r)
+			exclude_list = ['csrfmiddlewaretoken', 'termopt', 'yearopt', 'dayopt', 'divopt']
+			year = ""
+			div = ""
+			term = ""
 
-					try:
-						l = Lecture.objects.get(lec_day = t_day,lec_time = t,lec_div = t_div)
-						# print(l)
-						if not (l.taken_by == u):
-							l.taken_by = u
-						if not (l.lname == s):
-							l.lname = s
-						if not (l.lec_in == r):
-							l.lec_in = r
-						l.save()
-					except:
-						# print("Creating new lecture..")
-						l = Lecture(lname = s, lec_day = t_day, lec_time = t, lec_div = t_div, taken_by = u, lec_in = r)
-						l.full_clean()
-						l.save()
+			for key, value in form_data.items():
 
-			ts = TimeSlot.objects.annotate(
-	    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
-		).filter(diff=timedelta(hours = 2))
+				day_name = key
+				qdict = value
+				if len(qdict) > 0:
+					for data_key, data_value in dict(qdict).items():
 
-			for t in ts:
-				# print(t)
-				for batch in Batch.objects.filter(batch_of_year = t_year,batch_of_div = t_div):
-					tavail = request.POST.getlist(str(t)+"-"+str(batch.batch))
+						if data_key not in exclude_list:
+							key_list = list(map(lambda x: x.strip(), data_key.split('-')))
 
-					if(tavail[0]!='0' and tavail[1]!=None):
+							lecture, room_id = data_value
+							if lecture != '0' and room_id != 'None': # these are the values to be plotted on pdf
+								sub_id, fac_id = lecture.split("-")
+								s = Subject.objects.get(pk=int(sub_id))
+								u = User.objects.get(pk=int(fac_id))
+								r = Room.objects.get(pk=int(room_id))
+								t_day = DaysOfWeek.objects.filter(day_name = day_name)[0]
+								t_div = Division.objects.filter(division = div)[0]
+								if len(key_list) == 2: # it's a lec
+									start_time, end_time = key_list
+									t = TimeSlot.objects.filter(start_time = start_time, end_time = end_time)[0]
+									#save lec here
+									try:
+										l = Lecture.objects.get(lec_day = t_day,lec_time = t,lec_div = t_div)
+										if not (l.taken_by == u):
+											l.taken_by = u
+										if not (l.lname == s):
+											l.lname = s
+										if not (l.lec_in == r):
+											l.lec_in = r
+										l.save()
+									except:
+										l = Lecture(lname = s, lec_day = t_day, lec_time = t, lec_div = t_div, taken_by = u, lec_in = r)
+										l.full_clean()
+										l.save()
 
-						# print(tavail)
-
-
-						u = User.objects.get(pk= int(tavail[0].split("-")[1]))
-						s = Subject.objects.get(pk = tavail[0].split("-")[0])
-						r = Room.objects.get(pk = tavail[1])
-
-						try:
-							l = Lecture.objects.get(lec_day = t_day,lec_time = t,lec_div = t_div,lec_batch = batch)
-							# print(l)
-							if not (l.taken_by == u):
-								l.taken_by = u
-							if not (l.lname == s):
-								l.lname = s
-							if not (l.lec_in == r):
-								l.lec_in = r
-
-							l.save()
-						except:
-							# print("Creating new lecture..")
-							l = Lecture(lname = s, lec_day = t_day, lec_time = t, lec_div = t_div, taken_by = u, lec_in = r,lec_batch = batch)
-							l.full_clean()
-							l.save()
-
-
-
-
-
-					# l = Lecture(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div)
-					# if(Lecture.objects.filter(lec_day = t_day, lec_time__start_time = t.lec_time.start_time, lec_div = t_div, lec_batch__in = self.lec_batch).exclude(pk = self.id).exists() or self.__class__.objects.filter(lec_day = self.lec_day, lec_time__end_time = self.lec_time.end_time, lec_div = self.lec_div, lec_in = self.lec_in).exclude(pk = self.id).exists():))
-
-					# batches = Batch.objects.filter(batch_of_year = t_year, batch_of_div = t_div)
-					# rooms_for_lecture = list()
-					# for batch in batches:
-					# 	try:
-					# 		# print(request.POST.get(str(t)+"-"+str(batch.batch)))
-					# 		r = Room.objects.get(pk = int(request.POST.get(str(t)+"-"+str(batch.batch))))
-					# 		# rooms_for_lecture.append(Room.objects.get(pk = int(request.POST.get(str(t)+"-"+str(batch.batch)))))
-					# 		# print(r)
-					# 		try:
-					# 			lec = Lecture(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div, lec_in = r, lec_batch = batch)
-					# 			lec.full_clean()
-					# 			lec.save()
-					# 		except:
-					# 			# print("Already exist at same time")
-					# 			errors = 'Conflicting timeslot ' + str(t)
-					# 	except:
-					# 		print("No ts")
-
-
-						# try:
-						# 	lec = Lecture.objects.get(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div,lec_in = r)
-						# 	print(lec)
-						# except:
-						# 	lec = Lecture(lname = s, taken_by = u, lec_day = t_day, lec_time = t, lec_div = t_div,lec_in = r)
-						# 	print("Not exist")
-						# 	lec.full_clean()
-						# 	try:
-						# 		lec.save()
-						# 		print("Success")
-						# 	except Exception as e:
-						# 		print("Already exist at same time")
-						# 		errors = 'Conflicting timeslot ' + str(t)
-						# finally:
-						# 	lec.lec_batch.add(batch)
-						# 	try:
-						# 		lec.save()
-						# 		print("Success")
-						# 	except Exception as e:
-						# 		print("Already exist at same time")
-						# 		errors = 'Conflicting timeslot ' + str(t)
-
-
+								elif len(key_list) == 3: # it's a lab
+									start_time, end_time, batch_nm = key_list
+									#save lab here
+									t = TimeSlot.objects.filter(start_time = start_time, end_time = end_time)[0]
+									batch = Batch.objects.filter(batch = batch_nm)[0]
+									try:
+										l = Lecture.objects.get(lec_day = t_day,lec_time = t,lec_div = t_div,lec_batch = batch)
+										if not (l.taken_by == u):
+											l.taken_by = u
+										if not (l.lname == s):
+											l.lname = s
+										if not (l.lec_in == r):
+											l.lec_in = r
+										l.save()
+									except:
+										l = Lecture(lname = s, lec_day = t_day, lec_time = t, lec_div = t_div, taken_by = u, lec_in = r,lec_batch = batch)
+										l.full_clean()
+										l.save()
+						else:
+							if data_key == "yearopt":
+								year = data_value[0]
+							elif data_key == "termopt":
+								term = data_value[0]
+							elif data_key == "divopt":
+								div = data_value[0]
+				else:
+					pass
 
 		time_slots = TimeSlot.objects.annotate(
 	    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
