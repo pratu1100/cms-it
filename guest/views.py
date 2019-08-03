@@ -3,6 +3,8 @@ from faculty.models import Room
 from django.http import JsonResponse
 import datetime
 from . models import Reservation
+from datetime import timedelta
+
 
 # Create your views here.
 def index(request):
@@ -76,8 +78,30 @@ def get_timeslots(request):
 	}
 	return JsonResponse(json_data, status=500)
 
+def daterange(start_date, end_date):
+    for n in range(int ((end_date - start_date).days)):
+        yield start_date + timedelta(n)
+
 def events(request):
 	if not request.user.is_authenticated:
+		if request.method == 'POST':
+			events = list()
+			for reservation in Reservation.objects.all():
+
+				for date in daterange(reservation.start_date,reservation.end_date):
+					event_details = {
+						'eventName' : reservation.purpose + " (" + reservation.start_time.strftime('%I:%M %p') +" to "+ reservation.end_time.strftime('%I:%M %p') + ")",
+						'calendar' : 'Other',
+						'color' : 'green',
+						'date' : date.strftime('%d/%m/%Y')
+					}
+					events.append(event_details)
+				# { eventName: 'IOT Seminar', calendar: 'Other', color: 'green', date: '15/08/2019'}
+			json_data = {
+				'status' : 'success',
+				'events' : events 
+			}
+			return JsonResponse(json_data)
 		return render(request,"guest/view_events.html",{})
 
 	json_data = {
