@@ -1,0 +1,17 @@
+dist: xenial
+language: python
+python:
+  - "3.7"
+
+install:
+  - pip install -r requirements.txt
+
+script:
+  - python manage.py test
+
+# deploy:
+#   provider: heroku
+#   api_key:
+#     secure: "897a7483-d4ef-4319-a554-89275548a87c"
+#   app: cms-somaiya
+#   on: master

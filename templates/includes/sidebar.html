@@ -30,6 +30,11 @@
 
     {% elif user.is_superuser %}
       <ul class="list-unstyled components">
+        <li id="hod_room_reservations">
+            <a href="{% url 'hod_room_reservations' %}">
+                Room Reservations
+            </a>
+        </li>
         <li id="approve_leaves">
             <a href="{% url 'leaves' %}">
                 Approve Leaves
