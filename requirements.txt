@@ -11,3 +11,7 @@ pytz==2019.1
 reportlab==3.5.23
 sqlparse==0.3.0
 whitenoise==4.1.2
+openpyxl==2.6.2
+et-xmlfile==1.0.1
+jdcal==1.4.1
+cloudconvert==1.0.0

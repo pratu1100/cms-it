@@ -95,7 +95,7 @@ WSGI_APPLICATION = 'cms.wsgi.application'
 #             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #         }
 #     }
-# else:    
+# else:
 #     DATABASES = {
 #         'default': {
 #             'ENGINE': 'django.db.backends.mysql',
@@ -162,3 +162,5 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'cms.kjsce@gmail.com'
 EMAIL_HOST_PASSWORD = 'Password@123'
+
+CLOUDCONVERT_API_KEY = "mHkFo5tuMmQlRMQ30WJyhht6jTMDPtq2T2wdtAshYbk9T2SHSqGR0n5ayCIRG97T"

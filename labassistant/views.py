@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 import json
 from django.core import serializers
 from django.http import JsonResponse, QueryDict
+from django.conf import settings
 
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from collections import OrderedDict
@@ -15,6 +16,10 @@ from datetime import datetime, timedelta
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles import Alignment
+from openpyxl.styles.borders import Border, Side
+import cloudconvert
 
 @login_required
 def get_timetable(request):
@@ -181,20 +186,22 @@ def get_preview_link(request):
 				else:
 					form_data[name] = QueryDict()
 
-			filepath = "static/upload/temp_tt.pdf"
-			og_filepath = "static/upload/tt.pdf"
+			# filepath = "static/upload/temp_tt.pdf"
+			# og_filepath = "static/upload/tt.pdf"
+			filepath = "static/upload/temp_timetable.xlsx"
+			og_filepath = "static/upload/timetable.xlsx"
 			if os.path.exists(filepath) and os.path.isfile(filepath):
 				os.remove(filepath)
 
-			packet = io.BytesIO()
-			# create a new PDF with Reportlab
-			can = canvas.Canvas(packet, pagesize=letter)
-			can.setFont("Helvetica", 8.3)
+			thin_border = Border(left = Side(style='thin'),
+								 right = Side(style='thin'),
+								 top = Side(style='thin'),
+								 bottom = Side(style='thin'))
 
-			existing_pdf = PdfFileReader(open(og_filepath, "rb"))
-			dimensions = existing_pdf.getPage(0).mediaBox
-			x_cord = 0
-			y_cord = int(dimensions[3])
+			book = load_workbook(og_filepath)
+			sheet = book.active
+			column_letter = 'B'
+			row_number = 13
 
 			exclude_list = ['csrfmiddlewaretoken', 'termopt', 'yearopt', 'dayopt', 'divopt']
 			subject_list = Subject.objects.values_list('id', 'sname')
@@ -205,14 +212,17 @@ def get_preview_link(request):
 			term = ""
 			ac_year = ""
 
-			temp_count = 0;
+			temp_count = 0
 			for key, value in form_data.items():
 				# increment x cord for diff days
 				if temp_count == 0:
-					x_cord += 115
+					column_letter = 'B'
 				else:
-					x_cord += 135
+					column_letter = chr(ord(column_letter) + 4)
+
+				row_number = 13
 				temp_count += 1
+				lab_count = 0
 				day_name = key
 				qdict = value
 				# print("=" * 30)
@@ -230,38 +240,72 @@ def get_preview_link(request):
 								sub_name = [sub[1] for sub in subject_list if sub[0] == int(sub_id)][0]
 								fac_name = [fac[1] for fac in users_list if fac[0] == int(fac_id)][0]
 								room_no = [room[1] for room in room_list if room[0] == int(room_id)][0]
+
 								if len(key_list) == 2: # it's a lec
 									start_time, end_time = key_list
+									cell_range = f"{column_letter}{row_number}:{chr(ord(column_letter)+3)}{row_number}"
+									sheet.merge_cells(cell_range)
+
+									cell = sheet[f"{column_letter}{row_number}"]
+
+									cell.value = sub_name + " " + room_no + " " + fac_name
+									cell.alignment = Alignment(horizontal='center', vertical='center')
+									cell.border = thin_border
+
+									cell = sheet[f"{chr(ord(column_letter)+1)}{row_number}"]
+									cell.border = thin_border
+									cell = sheet[f"{chr(ord(column_letter)+2)}{row_number}"]
+									cell.border = thin_border
+									cell = sheet[f"{chr(ord(column_letter)+3)}{row_number}"]
+									cell.border = thin_border
 									#start
 									if start_time == "10:30" and end_time == "11:30":
-										y_cord = 390
+										row_number += 1
 									elif start_time == "11:30" and end_time == "12:30":
-										y_cord = 360
+										row_number += 2
 									#mid
 									elif start_time == "13:15" and end_time == "14:15":
-										y_cord = 300
+										row_number += 1
 									elif start_time == "14:15" and end_time == "15:15":
-										y_cord = 270
+										row_number += 1
 									#end
 									elif start_time == "15:15" and end_time == "16:15":
-										y_cord = 240
+										row_number += 1
 									elif start_time == "16:15" and end_time == "17:15":
-										y_cord = 210
-									can.drawString(x_cord,y_cord, sub_name + " " + room_no + " " + fac_name)
+										row_number += 2
+
 								elif len(key_list) == 3: # it's a lab
 									start_time, end_time, batch = key_list
+
+									cell_range = f"{chr(ord(column_letter) + lab_count)}{row_number}:{chr(ord(column_letter) + lab_count)}{row_number+1}"
+									sheet.merge_cells(cell_range)
+
+									cell = sheet[f"{chr(ord(column_letter) + lab_count)}{row_number}"]
+									cell.value = sub_name + " " + room_no + " " + fac_name + " " + batch
+									cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
+
+									cell.border = thin_border
+
+									cell = sheet[f"{chr(ord(column_letter) + lab_count)}{row_number+1}"]
+									cell.border = thin_border
+
+									lab_count += 1
 									#start
 									if start_time == "10:30" and end_time == "12:30":
-										batch_cord_map = [('1',400), ('2',385), ('3',370), ('4',355)]
+										if lab_count % 4 == 0:
+											row_number += 3
 									#mid
 									elif start_time == "13:15" and end_time == "15:15":
-										batch_cord_map = [('1',305), ('2',293), ('3',278), ('4',263)]
+										if lab_count % 4 == 0:
+											row_number += 2
 									#end
 									elif start_time == "15:15" and end_time == "17:15":
-										batch_cord_map = [('1',245), ('2',233), ('3',218), ('4',204)]
+										if lab_count % 4 == 0:
+											row_number += 2
+
+									if lab_count == 4:
+										lab_count = 0
 									div = batch[0]
-									y_cord = batch_cord_map[int(batch[1])-1][1]
-									can.drawString(x_cord,y_cord, sub_name + " " + room_no + " " + fac_name + " " + batch)
 						else:
 							if data_key == "yearopt":
 								year = data_value[0]
@@ -273,39 +317,49 @@ def get_preview_link(request):
 					# print(day_name)
 					# print("+" * 30)
 
-			can.setFont("Helvetica", 8)
-			can.drawString(28,590, datetime.today().strftime(r"%d/%m/%Y"))
+			#date on top
+			cell = sheet["A1"]
+			cell.value = datetime.today().strftime(r"%d/%m/%Y")
+			cell.alignment = Alignment(horizontal='center', vertical='center')
 
-			can.setFont("Helvetica-Bold", 10.58)
-			can.drawString(73,474, year.upper() + " B.Tech IT " + div.upper())
-			can.drawString(743,474, term.upper())
+			#class
+			cell = sheet["B9"]
+			cell.value = f"{year.upper()} B.Tech IT {div.upper()}"
+			cell.alignment = Alignment(horizontal='left', vertical='center')
+
+			#semester
+			cell = sheet["U9"]
+			cell.value = term.upper()
+			cell.alignment = Alignment(horizontal='left', vertical='center')
+
 			curr_year = int(datetime.now().year)
 			if term.upper() == "ODD":
 				ac_year = str(curr_year) + '_' + str(curr_year+1)
 			elif term.upper() == "EVEN":
 				ac_year = str(curr_year-1) + '_' + str(curr_year)
-			can.drawString(618,474, ac_year)
 
-			can.save()
+			#academic year
+			cell = sheet["P9"]
+			cell.value = ac_year
+			cell.alignment = Alignment(horizontal='left', vertical='center')
 
-			#move to the beginning of the StringIO buffer
-			packet.seek(0)
-			new_pdf = PdfFileReader(packet)
-			# read your existing PDF
-			existing_pdf = PdfFileReader(open(og_filepath, "rb"))
-			output = PdfFileWriter()
-			# add the "watermark" (which is the new pdf) on the existing page
-			page = existing_pdf.getPage(0)
-			page.mergePage(new_pdf.getPage(0))
-			output.addPage(page)
-			# finally, write data to a real file
-			outputStream = open(filepath, "wb")
-			output.write(outputStream)
-			outputStream.close()
+			book.save(filepath)
+			api = cloudconvert.Api(settings.CLOUDCONVERT_API_KEY)
+
+			process = api.convert({
+				"inputformat": "xlsx",
+				"outputformat": "pdf",
+				"input": "upload",
+				"file": open(filepath, 'rb')
+			})
+			process.wait()
+			filepath = "static/upload/temp_timetable.pdf"
+			process.download(filepath)
 
 			# print("=" * 30)
 			# print(form_data)
 			# print("=" * 30)
+
 			return HttpResponse(filepath)
 
 	html_error_data = {
