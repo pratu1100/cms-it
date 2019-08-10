@@ -37,8 +37,7 @@
 					<a href="{{ leave.supporting_file.url }}" target="__blank">
 								<p class="card-text text-center h6"><b class="font-weight-bold">Supporting File : </b><span class="text-info">
 								{% with leave.supporting_file.name|split:"/" as fname %}
-									{{ fname|last }}</span></p>
-								{% endwith %}
+									{{ fname|last }}{% endwith %}</span></p>
 							</a>
 					{% endif %}
 				</div>
