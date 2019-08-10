@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect,HttpResponse
-from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,MakeupLecture,Year, Division, Room,IA, GuestLecture, OD, Batch, IaBatchRoomMapping
+from .models import Leave,Lecture,DaysOfWeek,TimeSlot,Subject,LoadShift,MakeupLecture,Year, Division, Room,IA, GuestLecture, OD, Batch, IaBatchRoomMapping, LeaveType
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 import datetime
@@ -40,18 +40,29 @@ def index(request):
 @login_required
 def create_leave(request):
 	if not request.user.is_superuser and not request.user.is_staff:
-		return render(request,"faculty/leave_request.html",{})
+		context_data = {
+			"leave_types" : LeaveType.objects.all(),
+		}
+		return render(request,"faculty/leave_request.html",context_data)
 	html_error_data = {
 		"error_code" : "401",
 		"error_message" : "UNAUTHORIZED"
 	}
 	return render(request,"error.html",html_error_data)
 
+
+def daterange(start_date, end_date):
+	for n in range(int ((end_date - start_date).days)):
+		yield start_date + datetime.timedelta(n)
+
 @login_required
 def submit_leave(request):
 	if not request.user.is_superuser and not request.user.is_staff:
 		if request.method == 'POST':
 			user = User.objects.get(pk = request.user.id)
+			leave_type = LeaveType.objects.get(pk = request.POST.get('leave_type'));
+			# print(request.FILES)
+			# print(leave_type)
 			start_date_val = request.POST.get('leave_start_date')
 			end_date_val = request.POST.get('leave_end_date')
 			duration = request.POST.get('duration')
@@ -75,19 +86,41 @@ def submit_leave(request):
 			end_date = datetime.datetime.strptime(end_date_time, '%m/%d/%YT%H:%M')
 			lecs = Lecture.objects.filter(lec_day__id__in = range(start_date.weekday(),end_date.weekday()+1)).filter(taken_by = user).filter(lec_time__start_time__gte = datetime.datetime.time(start_date)).filter(lec_time__end_time__lte = datetime.datetime.time(end_date))
 			adjust_opts = dict()
-			new_leave = Leave.objects.get_or_create(leave_taken_by = user,leave_start_date=start_date.date(),leave_end_date = end_date.date(),leave_start_time=start_date.time(),leave_end_time = end_date.time())
+			faculty_on_leave = [x.leave_taken_by.id for x in Leave.objects.filter(leave_start_date__lte = end_date,leave_end_date__gte = start_date).exclude(approved_status = True).exclude(approved_status = None)]
+			faculty_on_od = [x.taken_by.id for x in OD.objects.filter(from_date__lte = end_date,to_date__gte = start_date).exclude(approved_status = True).exclude(approved_status = None)]
+			new_leave = Leave.objects.get_or_create(leave_taken_by = user,leave_start_date=start_date.date(),leave_end_date = end_date.date(),leave_start_time=start_date.time(),leave_end_time = end_date.time(),leave_type = leave_type)
 			# print("####",new_leave)
-			for lec in lecs:
-				adjust_opts[lec] = User.objects.exclude(id__in = [x.taken_by.id for x in Lecture.objects.filter(lec_time__start_time__gte = lec.lec_time.start_time).filter(lec_time__end_time__lte = lec.lec_time.end_time)]).exclude(is_staff = True)
-			# print(adjust_opts)
-			context_data ={
-				"start_date" : start_date_val,
-				"end_date" : end_date_val,
-				"start_time" : start_time_val,
-				"end_time" : end_time_val,
-				"lecs" : lecs,
+			# if medical leave
+			if(new_leave[0].leave_type.id == 3):
+				# print(new_leave[0].leave_type)
+				# print(request.POST.get('supporting_file'))
+				try:
+					# print(new_leave[0])
+					# uploaded_supporting_filename = request.POST.get('supporting_file')
+				# pinrt(request.FILES['supporting_file'])
+					uploaded_supporting_filename = request.FILES[u'supporting_file'].name
+					uploaded_supporting_file = request.FILES['supporting_file']
+					new_leave[0].supporting_file.save(uploaded_supporting_filename,uploaded_supporting_file)
+					new_leave[0].save()
+				except Exception as e:
+					print(e)
+					pass
+
+			for date in daterange(start_date,end_date+datetime.timedelta(days=1)):
+				# print(date,(date.weekday()+1)%7)\
+				# days_in_duration.append((date.weekday()+1)%7)
+				lecs = Lecture.objects.filter(lec_day__id = (date.weekday()+1)%7).filter(taken_by = user)
+			# print(days_in_duration)
+			# print(lecs)
+				for lec in lecs:
+					# print(Lecture.objects.filter(lec_time__start_time__gte = lec.lec_time.start_time,lec_time__end_time__lte = lec.lec_time.end_time))
+					faculty_list_for_adjusting_lec = User.objects.exclude(id__in = faculty_on_od).exclude(id__in = faculty_on_leave).exclude(id__in = [x.taken_by.id for x in Lecture.objects.filter(lec_day = lec.lec_day,lec_time__start_time__gte = lec.lec_time.start_time,lec_time__end_time__lte = lec.lec_time.end_time)]).exclude(is_staff = True)
+					# date_of_adjusting_lec = date
+					adjust_opts[(lec,date)] = faculty_list_for_adjusting_lec 
+
+			context_data = {
 				"adjust_opts" : adjust_opts,
-				"leave_id" : new_leave[0].id
+				"leave" : new_leave[0]
 			}
 
 			return render(request,"faculty/leave_request.html",context_data)
@@ -130,60 +163,59 @@ def view_leaves(request):
 def submit_load_shift(request):
 	if not request.user.is_superuser and not request.user.is_staff:
 		user = User.objects.get(pk = request.user.id)
-		load_shifts = LoadShift.objects.filter(to_faculty = user)
 		if request.method == 'POST':
-			# print(request.POST)
+			print(request.POST)
 			if(request.POST.get('leave_id')):
 				leave = Leave.objects.get(pk = request.POST.get('leave_id'))
-				# print(leave)
-				# print(request.POST.getlist('lecture_id'))
-				if(request.POST.getlist('lecture_id')):
-					for lec_id in request.POST.getlist('lecture_id'):
-						lec = Lecture.objects.get(pk = lec_id)
-						# print(lec)
-						granted_to = list()
-						for x in request.POST.getlist(str(lec.id)):
-							granted_to.append(User.objects.get(pk = x))
-					# print(request.POST.getlist('faculty_id'))
-					# for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
-					# 	granted_to = faculty_id
-						l = LoadShift.objects.get_or_create(leave = leave,for_lecture = lec)
-						l[0].to_faculty.set(granted_to)
-						# Email notificaion
+				print(leave)
+				if('_apply' in request.POST):
+					print(request.POST.getlist('lecture_id'))
+					if(request.POST.getlist('lecture_id')):
+						for lec_id in request.POST.getlist('lecture_id'):
+							lec = Lecture.objects.get(pk = lec_id)
+							print(lec)
+							granted_to = list()
+							for x in request.POST.getlist(str(lec.id)):
+								granted_to.append(User.objects.get(pk = x))
+							# print(request.POST.getlist('faculty_id'))
+						# for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
+						# 	granted_to = faculty_id
+							l = LoadShift.objects.get_or_create(leave = leave,for_lecture = lec)
+							l[0].to_faculty.set(granted_to)
+							# Email notificaion
 
-						subject = 'New Load Shift request'
-						message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
+							subject = 'New Load Shift request'
+							message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
 
-						message_data = {
-							'loadshift' : l[0],
+							message_data = {
+								'loadshift' : l[0],
+							}
+
+							email_from = settings.EMAIL_HOST_USER
+							recipient_list = []
+							for faculty in granted_to:
+								print(faculty.id)
+								recipient_list.append(faculty.email)
+							html_content = render_to_string('email/loadshift_notification.html', message_data,request) # render with dynamic value
+							text_content = strip_tags(html_content)
+
+							msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+							msg.attach_alternative(html_content, "text/html")
+							# print(l[0].for_lecture)
+							msg.send()
+							# return render(request,'email/loadShift_notification.html', message_data)
+						context_data = {
+							"success" : True,
 						}
 
-						email_from = settings.EMAIL_HOST_USER
-						recipient_list = []
-						for faculty in granted_to:
-							# print(faculty_id)
-							recipient_list.append(faculty.email)
-						html_content = render_to_string('email/loadshift_notification.html', message_data,request) # render with dynamic value
-						text_content = strip_tags(html_content)
+					return render(request,"faculty/leave_request.html",context_data)
+				
+				elif('_cancel' in request.POST):
+					
+					leave.delete()
 
-						msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
-						msg.attach_alternative(html_content, "text/html")
-						print(l[0].for_lecture)
-						msg.send()
-						# return render(request,'email/loadShift_notification.html', message_data)
-
-		# send_mail(subject, message, email_from, recipient_list,fail_silently = False)
-
-			else:
-				html_error_data = {
-					"error_code" : "404",
-					"error_message" : "Loadshifts not found. Try again."
-				}
-				return render(request,"error.html",html_error_data)
-			# print(user.username)
-			# print(for_lec)
-			# print(to_faculty)
-		return render(request,"faculty/loadshift.html",{"load_shifts":load_shifts})
+					return render(request,"faculty/leave_request.html",{})
+								
 	html_error_data = {
 		"error_code" : "401",
 		"error_message" : "UNAUTHORIZED"
@@ -576,8 +608,6 @@ def submit_od(request):
 			last_date = datetime.datetime.strptime(request.POST.get('last_date'),'%m/%d/%Y')
 			fees = request.POST.get('fees')
 			# print(request.FILES)
-			correspondence_filename = request.FILES[u'correspondence'].name
-			correspondence_file = request.FILES['correspondence']
 			taken_by = request.user
 			# with default_storage.open('od/correspondence/'+correspondence_filename,'wb+') as destination:
 			# 	for chunk in correspondence_file.chunks():
@@ -591,20 +621,38 @@ def submit_od(request):
 
 			scope = request.POST.get('scope')
 
-			new_od = OD(od_type = od_type, od_title = title, od_details = og_details, supporting_organisation = supporting_og, from_date = from_date, to_date = to_date, last_date = last_date, fees = fees,scope = scope, taken_by = taken_by)
-			new_od.correspondence.save(correspondence_filename,correspondence_file)
-			new_od.save()
-
-			lecs = Lecture.objects.filter(lec_day__id__in = range(from_date.weekday(),to_date.weekday()+1)).filter(taken_by = taken_by)
-			# print(lecs)
+			new_od = OD.objects.get_or_create(od_type = od_type, od_title = title, od_details = og_details, supporting_organisation = supporting_og, from_date = from_date, to_date = to_date, last_date = last_date, fees = fees,scope = scope, taken_by = taken_by)
+			try:
+				correspondence_filename = request.FILES[u'correspondence'].name
+				correspondence_file = request.FILES['correspondence']
+				new_od[0].correspondence.save(correspondence_filename,correspondence_file)
+				new_od[0].save()
+			except Exception as e:
+				# print(e)
+				pass
+			# days_in_duration = list()
 			adjust_opts = dict()
-			for lec in lecs:
-				adjust_opts[lec] = User.objects.exclude(id__in = [x.taken_by.id for x in Lecture.objects.filter(lec_time__start_time__gte = lec.lec_time.start_time).filter(lec_time__end_time__lte = lec.lec_time.end_time)])
+			faculty_on_leave = [x.leave_taken_by.id for x in Leave.objects.filter(leave_start_date__lte = to_date,leave_end_date__gte = from_date).exclude(approved_status = True).exclude(approved_status = None)]
+			faculty_on_od = [x.taken_by.id for x in OD.objects.filter(from_date__lte = to_date,to_date__gte = from_date).exclude(approved_status = True).exclude(approved_status = None)]
+			# print("$$",faculty_on_leave)
+			# print("##",faculty_on_od)
+			for date in daterange(from_date,to_date+datetime.timedelta(days=1)):
+				# print(date,(date.weekday()+1)%7)
+				# days_in_duration.append((date.weekday()+1)%7)
+				lecs = Lecture.objects.filter(lec_day__id = (date.weekday()+1)%7).filter(taken_by = taken_by)
+			# print(days_in_duration)
+			# print(lecs)
+				for lec in lecs:
+					# print(Lecture.objects.filter(lec_time__start_time__gte = lec.lec_time.start_time,lec_time__end_time__lte = lec.lec_time.end_time))
+					faculty_list_for_adjusting_lec = User.objects.exclude(id__in = faculty_on_od).exclude(id__in = faculty_on_leave).exclude(id__in = [x.taken_by.id for x in Lecture.objects.filter(lec_day = lec.lec_day,lec_time__start_time__gte = lec.lec_time.start_time,lec_time__end_time__lte = lec.lec_time.end_time)]).exclude(is_staff = True)
+					# date_of_adjusting_lec = date
+					adjust_opts[(lec,date)] = faculty_list_for_adjusting_lec 
+
 			# print(adjust_opts)
 
 			context_data = {
 				"adjust_opts" : adjust_opts,
-				"od" : new_od
+				"od" : new_od[0]
 			}
 
 			# print(request.POST)
@@ -624,39 +672,53 @@ def submit_od_loadshift(request):
 			if(request.POST.get('od_id')):
 				od = OD.objects.get(pk = request.POST.get('od_id'))
 				# print(request.POST.getlist('lecture_id'))
-				if(request.POST.getlist('lecture_id')):
-					for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
-						l = LoadShift.objects.get_or_create(od = od,to_faculty = User.objects.get(pk = faculty_id),for_lecture = Lecture.objects.get(pk = lec_id))
+				if('_apply' in request.POST):
+					if(request.POST.getlist('lecture_id')):
+						for lec_id in request.POST.getlist('lecture_id'):
+							# print("$$$",lec_id)
+							lec = Lecture.objects.get(pk = int(lec_id))
+							# print(lec)
+							granted_to = list()
+							for x in request.POST.getlist(str(lec.id)):
+								granted_to.append(User.objects.get(pk = x))
+						# print(request.POST.getlist('faculty_id'))
+						# for faculty_id,lec_id in zip(request.POST.getlist('faculty_id'), request.POST.getlist('lecture_id')):
+						# 	granted_to = faculty_id
+							l = LoadShift.objects.get_or_create(od = od,for_lecture = lec)
+							l[0].to_faculty.set(granted_to)
+							# Email notificaion
 
-						# Email notificaion
+							subject = 'New Load Shift request'
+							message = 'OD : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(od.taken_by.username)
 
-						subject = 'New Load Shift request'
-						message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
+							message_data = {
+								'loadshift' : l[0],
+							}
 
-						message_data = {
-							'loadshift' : l[0],
+							email_from = settings.EMAIL_HOST_USER
+							recipient_list = []
+							for faculty in granted_to:
+								# print(faculty_id)
+								recipient_list.append(faculty.email)
+							html_content = render_to_string('email/loadshift_notification.html', message_data,request) # render with dynamic value
+							text_content = strip_tags(html_content)
+
+							msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+							msg.attach_alternative(html_content, "text/html")
+							# print(l[0].for_lecture)
+							msg.send()
+
+						context_data = {
+							"success" : 'true',
 						}
-
-						email_from = settings.EMAIL_HOST_USER
-						recipient_list = []
-						recipient_list.append(User.objects.get(pk = faculty_id).email)
-						html_content = render_to_string('email/loadshift_notification.html', message_data,request) # render with dynamic value
-						text_content = strip_tags(html_content)
-
-						msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
-						msg.attach_alternative(html_content, "text/html")
-						# print(l[0].for_lecture)
-						msg.send()
-
-					context_data = {
-						"success" : 'true',
-					}
+				elif('_cancel' in request.POST):
+					od.delete()
 			else:
 				context_data = {
 					"errors" : "Contact Admin"
 	 			}
 				# print("No load shifts")
-			return render(request,"faculty/od.html",context_data)
+		return render(request,"faculty/od.html",context_data)
 	html_error_data = {
 		"error_code" : "401",
 		"error_message" : "UNAUTHORIZED"

@@ -169,7 +169,7 @@ def get_ods(request):
 			elif '_approve' in request.POST:
 				od.approved_status = True
 				od.save()
-		ods = OD.objects.filter(approved_status = False)
+		ods = OD.objects.filter(approved_status = None)
 		od_loads_pairs = list()
 		for od in ods:
 			loads_data = list()

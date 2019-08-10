@@ -46,20 +46,22 @@ class LeaveType(models.Model):
 		return self.leave_type
 
 class Leave(models.Model):
-    leave_type = models.ForeignKey(LeaveType, on_delete = models.SET_NULL,blank=False,null = True)
-    leave_note = models.TextField(blank=False, null=False)
-    leave_taken_by = models.ForeignKey("auth.User",on_delete = models.CASCADE,null=True)
-    approved_status = models.BooleanField(default= None, null=True)
-    leave_start_date = models.DateField(auto_now = False,auto_now_add = False,)
-    leave_end_date = models.DateField(auto_now = False,auto_now_add = False,)
-    # leave_start_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE,null=True)
-    leave_start_time = models.TimeField(auto_now=False,auto_now_add=False)
-    leave_end_time = models.TimeField(auto_now=False,auto_now_add=False)
+	leave_type = models.ForeignKey(LeaveType, on_delete = models.SET_NULL,blank=False,null = True)
+	leave_note = models.TextField(blank=False, null=False)
+	leave_taken_by = models.ForeignKey("auth.User",on_delete = models.CASCADE,null=True)
+	approved_status = models.BooleanField(default= None, null=True)
+	leave_start_date = models.DateField(auto_now = False,auto_now_add = False,)
+	leave_end_date = models.DateField(auto_now = False,auto_now_add = False,)
+	# leave_start_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE,null=True)
+	leave_start_time = models.TimeField(auto_now=False,auto_now_add=False)
+	leave_end_time = models.TimeField(auto_now=False,auto_now_add=False)
+	supporting_file = models.FileField(upload_to='leaves/medical/',null=True,blank=True)
 
-    def __str__(self):
-    	# print(self.leave_taken_by.username + "@" + self.leave_start_date.strftime("%d/%m/%Y ")+ self.leave_time.start_time.strftime("%H:%M -"))
-    	
-    	return self.leave_taken_by.username + "@" + self.leave_start_date.strftime("%d/%m/%Y")+ "--"+self.leave_start_time.strftime("%H:%M")
+
+	def __str__(self):
+		# print(self.leave_taken_by.username + "@" + self.leave_start_date.strftime("%d/%m/%Y ")+ self.leave_time.start_time.strftime("%H:%M -"))
+		
+		return self.leave_taken_by.username + "@" + self.leave_start_date.strftime("%d/%m/%Y")+ "--"+self.leave_start_time.strftime("%H:%M")
 
 
 class DaysOfWeek(models.Model):

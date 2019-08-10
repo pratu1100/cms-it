@@ -1,5 +1,6 @@
 {% extends '../base.html' %}
 {% load static %}
+{% load faculty_filters %}
 
 {% block nav-content %}
 
@@ -13,10 +14,81 @@
 	<main>
 		<input id="page_loaded" value="request_leave" style="display: none;">
 
-		<div class="row mt-3 ml-2">
+		<div class="row m-3">
 			<div class="col-sm-12 col-md-12">
-				<div class="container border mb-5">
-					<form method="POST" action="{% url 'submit_leave' %}">
+					{% if leave %}
+		<div class="d-flex justify-content-center mb-3">
+			<div class="card col-md-6 border shadow" style="padding: 0;">
+
+				<div class="card-header">
+					<h4 class="card-title text-center font-weight-bold">Leave Details</h4>
+						<p class="h6 text-center"><b>{{ leave.leave_type }}</b></p>
+					<div class="row">
+						<div class="col-md m-3 p-3">
+							<p class="card-text h6"><b class="font-weight-bold">From: </b>{{ leave.leave_start_date }}</p>
+							<p class="card-text h6"><b class="font-weight-bold">Start Time: </b>{{ leave.leave_start_time|time:'H:i' }}</p>
+						</div>
+						<div class="col-md m-3 p-3">
+							<p class="card-text h6"><b class="font-weight-bold">To: </b>{{ leave.leave_end_date }}</p>
+							<p class="card-text h6"><b class="font-weight-bold">End Time: </b>{{ leave.leave_end_time|time:'H:i' }}</p>
+						</div>
+					</div>
+					{% if leave.supporting_file %}
+					<a href="{{ leave.supporting_file.url }}" target="__blank">
+								<p class="card-text text-center h6"><b class="font-weight-bold">Supporting File : </b><span class="text-info">
+								{% with leave.supporting_file.name|split:"/" as fname %}
+									{{ fname|last }}</span></p>
+								{% endwith %}
+							</a>
+					{% endif %}
+				</div>
+				<form method="POST" action="{% url 'loadshifts' %}" enctype="multipart/form-data">
+					{% csrf_token %}
+					<div class="card-body text-center">
+						<input type="hidden" name="leave_id" value="{{ leave.id }}">
+						{% if adjust_opts %}
+							<h5 class="card-title">Load Shifts</h5>
+							{% for lec, adjs in adjust_opts.items %}
+								<div class="card border mt-3">
+									<div class="card-header font-weight-bold">
+										{{ lec.0.lname.sname }}  on {{ lec.1|date }} at {{ lec.0.lec_time }}
+									</div>
+									<!-- <h6 class="card-title mt-2">{{ lec.lname.sname }}</h6> -->
+								<input type="hidden" name="lecture_id" value="{{ lec.0.id }}">
+								<!-- <select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id"> -->
+									{% if adjs %}
+									{% for faculty in adjs %}
+										<!-- <option value="{{ faculty.id }}">{{ faculty.username }}</option> -->
+										<div class="row m-0 mt-0 mb-0 px-auto">
+											<input class="checkbox-btn" name="{{ lec.0.id }}" type="checkbox" value="{{ faculty.id }}">
+											<label class="checkbox-label" for="{{ faculty.id }}">
+												<span>
+													{{ faculty.username }}
+												</span>
+											</label>
+										</div>
+									{% endfor %}
+									{% else %}
+									<p class="text-danger h6 font-weight-bold m-1">Unavailable, will be compensated later.</p>
+									{% endif %}
+									</div>
+								<!-- </select> -->
+							{% endfor %}
+							{% endif %}
+							</div>
+							<div class="card-footer text-center">
+						<button type="submit" name="_cancel" class="btn btn-danger" id="option_submit">Cancel</button>
+						<button type="submit" name="_apply" class="btn btn-info" id="option_submit">Apply</button>
+					</div>
+								</div>
+
+					{% elif success %}
+					<div class="d-flex justify-content-center">
+							<div class="badge badge-success badge-lg col-md-6" style="font-size: 1.5rem;">Your leave has been submitted.</div>
+					</div>
+					{% else %}
+				<div class="container border">
+					<form method="POST" action="{% url 'submit_leave' %}" enctype="multipart/form-data">
 						{% csrf_token %}
 						<div class="text-center">
 							<p class="d-block font-weight-bold mb-3 mt-4 ml-2">Request Leave</p>
@@ -60,9 +132,28 @@
 									</select>
 								</div>
 							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<small class="d-block font-weight-bold mb-1 ml-2">Leave Type</small>
+									<select class="form-control form-control-alternative" name="leave_type" required>
+										<option value="-1" disabled selected>Please Select</option>
+										{% for leave_type in leave_types %}
+										<option value="{{ leave_type.id }}">{{ leave_type }}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<small class="d-block font-weight-bold mb-1 ml-2">Attach certifcate or letter</small>
+								<div class="form-group">
+									<input class="form-control form-control-alternative" type="file" name="supporting_file" disabled>
+								</div>
+							</div>
 						</div>
 
-						<div class="row mb-3">
+						<div class="row m-3">
 							<div class="col-md-12 d-flex justify-content-center align-items">
 								<button type="submit" class="btn btn-primary">Submit</button>
 							</div>
@@ -70,65 +161,9 @@
 
 					</form>
 				</div>
-			</div>
-		</div>
-	</main>
-
-	{% if leave_id %}
-		<div class="d-flex justify-content-center mb-3">
-			<div class="card col-md-6" style="padding: 0;">
-
-				<div class="card-header">
-					<h4 class="card-title text-center">Leave Details</h4>
-					<div class="row">
-						<div class="col-md m-3 p-3">
-							<p class="card-text"><b class="font-weight-bold">Start Date: </b>{{ start_date }}</p>
-							<p class="card-text"><b class="font-weight-bold">Start Time: </b>{{ start_time }}</p>
-						</div>
-						<div class="col-md m-3 p-3">
-							<p class="card-text"><b class="font-weight-bold">End Date: </b>{{ end_date }}</p>
-							<p class="card-text"><b class="font-weight-bold">End Time: </b>{{ end_time }}</p>
-						</div>
-					</div>
-				</div>
-				<form method="POST" action="{% url 'loadshifts' %}">
-					{% csrf_token %}
-					<div class="card-body text-center">
-						{% if adjust_opts %}
-							<h5 class="card-title">Load Shifts</h5>
-							{% for lec, adjs in adjust_opts.items %}
-								<div class="card mt-3">
-									<div class="card-header font-weight-bold">
-										{{ lec.lname.sname }}
-									</div>
-									<!-- <h6 class="card-title mt-2">{{ lec.lname.sname }}</h6> -->
-								<input type="hidden" name="leave_id" value="{{ leave_id }}">
-								<input type="hidden" name="lecture_id" value="{{ lec.id }}">
-								<!-- <select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id"> -->
-									{% for faculty in adjs %}
-										<!-- <option value="{{ faculty.id }}">{{ faculty.username }}</option> -->
-										<div class="row m-1 px-auto">
-											<input class="checkbox-btn" name="{{ lec.id }}" type="checkbox" value="{{ faculty.id }}">
-											<label class="checkbox-label" for="{{ faculty.id }}">
-												<span>
-													{{ faculty.username }}
-												</span>
-											</label>
-										</div>
-									{% endfor %}
-									</div>
-								<!-- </select> -->
-							{% endfor %}
 						{% endif %}
-					</div>
-					<div class="card-footer text-center">
-						<button type="submit" class="btn btn-info" id="option_submit">Apply</button>
-					</div>
-				</form>
-			</div>
-		</div>
 
-	{% endif %}
+	</main>
 	<script>
 		$(() => {
 			$(".checkbox-label").click((e) => {
@@ -138,6 +173,12 @@
 					$(e.currentTarget).siblings('input')[0].checked = true
 				}
 			});
+		});
+		$('[name=leave_type]').change(function(){
+			$('[name=supporting_file]').prop("disabled",true);
+			if ($(this).val() == '3') {
+				$('[name=supporting_file]').prop("disabled",false);
+			}
 		});
 	</script>
 

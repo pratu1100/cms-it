@@ -12,79 +12,96 @@
 <main class="mx-auto">
 	<input id="page_loaded" value="od" style="display: none;">
 	
-	<div class="row mt-3 ml-2">
+	<div class="row m-3">
 
 		<div class="col-sm-12 col-md-12">
-			<div class="container border mb-5">
 				{% if od %}
-				<form class=" border-primary" method="POST" action="{% url 'submit_od_loadshift' %}">
-					{% csrf_token %}
-					<div class="card text-center mt-3">
+				<div class="d-flex justify-content-center mb-3">
+					<div class="card border shadow text-center">
 						<div class="card-header text-dark">
-							{{ od.od_title }}
+							OD Details
 						</div>
 						<div class="card-body">
-							<h5 class="card-title">Type: {{ od.od_type }}</h5>
-							<p class="card-text">
-								{{ od.od_details }}
-							</p>
-							<div class="row text-left mb-2">
+							<p class="h5">{{ od.od_title }}</p>
+							<p class="h5"><small>{{ od.od_type }}</small></p>
+							<p class="h5">{{ od.od_details }}</p>					
+							<div class="row text-center m-2">
 								<div class="col-sm-6">
-									<p class="card-text"><b>Supporting Organisation: </b>{{ od.supporting_organisation }}</p>
+									<p class="h6"><b>Supporting Organisation: </b>{{ od.supporting_organisation }}</p>
 								</div>
 								<div class="col-sm-6">
-									<p class="card-text"><b>Last Date: </b>{{ od.last_date.date }}</p>
-								</div>
-							</div>
-							<div class="row text-left mb-2">
-								<div class="col-sm-6">
-									<p class="card-text"><b>From: </b>{{ od.from_date.date }}</p>
-								</div>
-								<div class="col-sm-6">
-									<p class="card-text"><b>To: </b>{{ od.to_date.date }}</p>
+									<p class="h6"><b>Last Date: </b>{{ od.last_date|date }}</p>
 								</div>
 							</div>
-							<div class="row text-left">
+							<div class="row text-center m-2">
 								<div class="col-sm-6">
-									<p class="card-text"><b>Fees: </b>{{ od.fees }}</p>
+									<p class="h6"><b>From: </b>{{ od.from_date|date }}</p>
 								</div>
 								<div class="col-sm-6">
-									<p class="card-text"><b>Scope: </b>{{ od.scope }}</p>
+									<p class="h6"><b>To: </b>{{ od.to_date|date }}</p>
 								</div>
 							</div>
+									<p class="h6"><b>Fees: </b>{{ od.fees }}</p>
+									<p class="h6"><b>Scope: </b>{{ od.scope }}</p>
 						</div>
-						<div class="p-3" style="border-top: 1px solid #eee">
-							OD File:
+						{% if od.correspondence %}
+						<div class="card-footer h6">
+							<b>OD File: </b>
 							<a href="{{ od.correspondence.url }}" target="__blank">
 								{% with od.correspondence.name|split:"/" as fname %}
 									{{ fname|last }}</br>
 								{% endwith %}
 							</a>
 						</div>
-					</div>
-
+						{% endif %}
+					<form method="POST" action="{% url 'submit_od_loadshift' %}">
+							{% csrf_token %}
+								<input type="hidden" name="od_id" value="{{ od.id }}">
+						{% if adjust_opts %}
 					<div class="card-body text-center">
-						<h5 class="card-title">Load Shifts</h5>
-						<input type="hidden" name="od_id" value="{{ od.id }}">
-						{% for lec, adjs in adjust_opts.items %}
-						<h6 class="card-title mt-2">{{ lec.lname.sname }}</h6>
-						<input type="hidden" name="lecture_id" value="{{ lec.id }}">
-						<select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id">
-							{% for faculty in adjs %}
-								<option value="{{ faculty.id }}">{{ faculty.username }}</option>
+							<h5 class="card-title">Load Shifts</h5>
+							{% for lec, adjs in adjust_opts.items %}
+								<div class="card border mt-3">
+									<div class="card-header font-weight-bold">
+										{{ lec.0.lname.sname }}  on {{ lec.1|date }} at {{ lec.0.lec_time }}
+									</div>
+									<!-- <h6 class="card-title mt-2">{{ lec.lname.sname }}</h6> -->
+								<input type="hidden" name="lecture_id" value="{{ lec.0.id }}">
+								<!-- <select class="btn btn-dark dropdown-toggle" id="teachers_option" name="faculty_id"> -->
+									{% if adjs %}
+									{% for faculty in adjs %}
+										<!-- <option value="{{ faculty.id }}">{{ faculty.username }}</option> -->
+										<div class="row m-0 mt-0 mb-0 px-auto">
+											<input class="checkbox-btn" name="{{ lec.id }}" type="checkbox" value="{{ faculty.id }}">
+											<label class="checkbox-label" for="{{ faculty.id }}">
+												<span>
+													{{ faculty.username }}
+												</span>
+											</label>
+										</div>
+									{% endfor %}
+									{% else %}
+									<p class="text-danger h6 font-weight-bold m-1">Unavailable, will be compensated later.</p>
+									{% endif %}
+									</div>
+								<!-- </select> -->
 							{% endfor %}
-						</select>
-						{% endfor %}
+						{% endif %}
 					</div>
-					<div class="card-footer text-center">
-						<button type="submit" class="btn btn-info" id="option_submit">Apply</button>
+							<div class="card-footer text-center">
+						<button type="submit" name="_cancel" class="btn btn-danger" id="option_submit">Cancel</button>
+						<button type="submit" name="_apply" class="btn btn-info" id="option_submit">Apply</button>
 					</div>
-				</form>
+						</form>
+								</div>	
 				{% elif errors %}
 				<h4>{{ errors }}</h4>
 				{% elif success %}
-				<h4>Success</h4>
+				<div class="d-flex justify-content-center">
+						<div class="badge badge-success badge-lg col-md-6" style="font-size: 1.5rem;">Your OD has been submitted.</div>
+				</div>
 				{% else %}
+				<div class="container border">
 				<form action="{% url 'submit_od' %}" method="POST" enctype="multipart/form-data">
 					{% csrf_token %}
 					<p class="d-block font-weight-bold mb-3 mt-4 ml-2">OD details</p>
@@ -204,4 +221,15 @@
 
 	</div>
 </main>
+<script>
+	$(() => {
+			$(".checkbox-label").click((e) => {
+				if($(e.currentTarget).siblings('input')[0].checked){
+					$(e.currentTarget).siblings('input')[0].checked=  false
+				} else  {
+					$(e.currentTarget).siblings('input')[0].checked = true
+				}
+			});
+		});
+</script>
 {% endblock %}
