@@ -1,8 +1,8 @@
 {% load static %}
 
 <nav id="sidebar">
-    <div class="sidebar-header text-center">
-     KJSCE CMS
+    <div class="sidebar-header text-center" style="font-family: 'Work Sans'; font-size: 20px;">
+      KJSCE CMS
     </div>
     {% if user.is_authenticated is False %}
     <ul class="list-unstyled components">
@@ -32,27 +32,27 @@
       <ul class="list-unstyled components">
         <li id="hod_room_reservations">
             <a href="{% url 'hod_room_reservations' %}">
-                Room Reservations
+              <i class="far fa-edit mr-2"></i> Room Reservations
             </a>
         </li>
         <li id="approve_leaves">
             <a href="{% url 'leaves' %}">
-                Approve Leaves
+              <i class="far fa-check-circle mr-2"></i> Approve Leaves
             </a>
         </li>
         <li id="leave_history">
             <a href="{% url 'leave_history' %}">
-                Leave History
+              <i class="fas fa-clipboard-list mr-2"></i> Leave History
             </a>
         </li>
         <li id="approve_ods">
           <a href="{% url 'approve_ods' %}">
-              Approve ODs
+            <i class="far fa-check-circle mr-2"></i> Approve ODs
           </a>
         </li>
         <li>
           <a href="{% url 'logout' %}">
-            Logout
+            <i class="fas fa-sign-out-alt mr-2"></i> Logout
           </a>
         </li>
       </ul>
@@ -60,47 +60,47 @@
       <ul class="list-unstyled components">
         <li id="faculty_home">
           <a href="{% url 'faculty_index' %}">
-              Home
+            <i class="fas fa-home mr-3"></i> Home
           </a>
         </li>
         <li id="request_leave">
           <a href="{% url 'request_leave' %}">
-              Request Leave
+            <i class="far fa-edit mr-2"></i> Request Leave
           </a>
         </li>
         <li id="view_leaves">
           <a href="{% url 'view_leaves' %}">
-              View Leaves
+            <i class="far fa-sticky-note mr-2"></i> View Leaves
           </a>
         </li>
         <li id="loadshifts">
           <a href="{% url 'loadshifts' %}" >
-              Load Shifts
+            <i class="far fa-calendar mr-2"></i> Load Shifts
           </a>
         </li>
         <li id="ia">
           <a href="{% url 'IA' %}" >
-              IA
+            <i class="far fa-edit mr-2"></i> IA
           </a>
         </li>
         <li id="makeup">
           <a href="{% url 'makeup' %}" >
-            Makeup Lecture
+            <i class="far fa-edit mr-2"></i> Makeup Lecture
           </a>
         </li>
         <li id="guestlecture">
           <a href="{% url 'guestlecture' %}" >
-            Guest Lecture
+            <i class="far fa-edit mr-2"></i> Guest Lecture
           </a>
         </li>
         <li  id="od">
           <a href="{% url 'od' %}">
-            OD
+            <i class="far fa-edit mr-2"></i> OD
           </a>
         </li>
         <li>
           <a href="{% url 'logout' %}">
-            Logout
+            <i class="fas fa-sign-out-alt mr-2"></i> Logout
           </a>
         </li>
       </ul>
@@ -111,7 +111,7 @@
 <script>
   $(() => {
 
-    $("a").addClass("ml-2 mr-2 rounded");
+    $("a").addClass("mr-1 rounded").css('font-family', 'Work Sans');
 
     let page_loaded = $("#page_loaded").val();
     $("#" + page_loaded).addClass("active shadow");

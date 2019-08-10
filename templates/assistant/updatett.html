@@ -432,6 +432,10 @@
 		});
 
 		$('#preview-btn').click(function(e){
+			$.busyLoadFull("show",{
+				spinnerClass: "loader-item",
+				spinner: "cube"
+			});
 			$.ajax({
 				url: '/assistant/getpreviewlink/',
 				type: "POST",
@@ -440,13 +444,18 @@
 				},
 				success: function(response) {
 					//console.log(response);
-					var url = "{% static 'upload/temp_tt.pdf' %}"
+					$.busyLoadFull("hide");
+					//if(response != "") {
+					//	alert("check the file");
+					//}
+					var url = "{% static 'upload/temp_timetable.pdf' %}"
 					var w = window.open(url, '_blank');
 					//w.write(response);
    					w.focus();
 				},
 				error: function (xhr, errorText, error) {
 					console.log(xhr);
+					$.busyLoadFull("hide");
 				}
 			});
 		});
