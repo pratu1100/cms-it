@@ -9,7 +9,7 @@
     <div class="row ml-2">
         {% if events %}
         <div class="col-sm-12 col-md-6">
-            <div class="d-flex justify-content-center pt-5 align-items-center align-self-center">
+            <div class="d-flex justify-content-center align-items-center align-self-center">
                 <div class="row col-md-12 justify-content-center">
                     {% for event in events %}
                         <div class="card mr-2 mb-2 shadow" style="width: 18rem;" id="{{ event.id }}" onclick="displayModal(this.id);">
@@ -433,6 +433,10 @@
 
     </script>
 <script>
+
+  $(function() {
+    $("body").css('overflow-y', 'auto');
+  })
 
     function displayModal(id) {
         $("#modal" + id).modal('show');
