@@ -12,21 +12,21 @@
     <input id="page_loaded" value="ia" style="display: none;">
     <div class="row m-3">
         <div class="col-sm-12 col-md-12">
-            <div class="container border">
+            <div class="container">
                 {% if ia %}
                 <div class="d-flex justify-content-center mb-3">
-            <div class="card col-md-6" style="padding: 0;">
+            <div class="card col-md-10 shadow border-rounded" style="padding: 0;">
 
                 <div class="card-header">
-                    <h4 class="card-title text-center">IA Details</h4>
+                    <h4 class="card-title text-center text-dark">IA Details</h4>
                     <div class="row">
                         <div class="col-md m-3 p-3">
-                            <p class="card-text"><b class="font-weight-bold">Year: </b>{{ ia.ia_year }}</p>
-                            <p class="card-text"><b class="font-weight-bold">Subject: </b>{{ ia.ia_subject }}</p>
+                            <p class="card-text text-dark"><b class="font-weight-bold ">Year: </b>{{ ia.ia_year }}</p>
+                            <p class="card-text text-dark"><b class="font-weight-bold ">Subject: </b>{{ ia.ia_subject }}</p>
                         </div>
                         <div class="col-md m-3 p-3">
-                            <p class="card-text"><b class="font-weight-bold">Date: </b>{{ ia.ia_date }}</p>
-                            <p class="card-text"><b class="font-weight-bold">Time: </b>{{ ia.ia_start_time }} to {{ ia.ia_end_time }}</p>
+                            <p class="card-text text-dark"><b class="font-weight-bold ">Date: </b>{{ ia.ia_date }}</p>
+                            <p class="card-text text-dark"><b class="font-weight-bold ">Time: </b>{{ ia.ia_start_time }} to {{ ia.ia_end_time }}</p>
                         </div>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                             <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <small class="d-block font-weight-bold mb-1 ml-2">{{ batch.batch }}</small>
+                                <small class="d-block font-weight-bold mb-1 ml-2 text-dark">{{ batch.batch }}</small>
                                 <select class="form-control form-control-alternative" name="{{ batch }}-room" required>
                                     <option class="text-dark" value="-1" selected disabled>Please Select</option>
                                     {% for room in rooms %}
@@ -51,7 +51,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <small class="d-block font-weight-bold mb-1 ml-2">Supervisor</small>
+                                <small class="d-block font-weight-bold mb-1 ml-2 text-dark">Supervisor</small>
                                 <select class="form-control form-control-alternative" name="{{ batch }}-supervisor" required>
                                     <option class="text-dark" value="-1" selected disabled>Please Select</option>
                                     {% for supervisor in supervisors %}
