@@ -30,19 +30,9 @@
 
     {% elif user.is_superuser %}
       <ul class="list-unstyled components">
-        <li id="hod_room_reservations">
-            <a href="{% url 'hod_room_reservations' %}">
-              <i class="far fa-edit mr-2"></i> Room Reservations
-            </a>
-        </li>
         <li id="approve_leaves">
             <a href="{% url 'leaves' %}">
               <i class="far fa-check-circle mr-2"></i> Approve Leaves
-            </a>
-        </li>
-        <li id="leave_history">
-            <a href="{% url 'leave_history' %}">
-              <i class="fas fa-clipboard-list mr-2"></i> Leave History
             </a>
         </li>
         <li id="approve_ods">
@@ -50,6 +40,16 @@
             <i class="far fa-check-circle mr-2"></i> Approve ODs
           </a>
         </li>
+        <li id="hod_room_reservations">
+          <a href="{% url 'hod_room_reservations' %}">
+            <i class="fas fa-door-open mr-2"></i> Room Reservations
+          </a>
+      </li>
+        <li id="leave_history">
+          <a href="{% url 'leave_history' %}">
+            <i class="fas fa-clipboard-list mr-2"></i> Leave History
+          </a>
+      </li>
         <li>
           <a href="{% url 'logout' %}">
             <i class="fas fa-sign-out-alt mr-2"></i> Logout
@@ -60,7 +60,7 @@
       <ul class="list-unstyled components">
         <li id="faculty_home">
           <a href="{% url 'faculty_index' %}">
-            <i class="fas fa-home mr-3"></i> Home
+            <i class="fas fa-home mr-2"></i> Home
           </a>
         </li>
         <li id="request_leave">
@@ -80,22 +80,22 @@
         </li>
         <li id="ia">
           <a href="{% url 'IA' %}" >
-            <i class="far fa-edit mr-2"></i> IA
+            <i class="fas fa-user-edit mr-2"></i> IA
           </a>
         </li>
         <li id="makeup">
           <a href="{% url 'makeup' %}" >
-            <i class="far fa-edit mr-2"></i> Makeup Lecture
+            <i class="fas fa-chalkboard-teacher mr-2"></i> Makeup Lecture
           </a>
         </li>
         <li id="guestlecture">
           <a href="{% url 'guestlecture' %}" >
-            <i class="far fa-edit mr-2"></i> Guest Lecture
+            <i class="fas fa-user-graduate mr-2"></i>  Expert Lecture
           </a>
         </li>
         <li  id="od">
           <a href="{% url 'od' %}">
-            <i class="far fa-edit mr-2"></i> OD
+            <i class="fas fa-trophy mr-2"></i> OD
           </a>
         </li>
         <li>

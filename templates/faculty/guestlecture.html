@@ -3,7 +3,7 @@
 
 {% block nav-content %}
 <li class="nav-item" role="presentation">
-    <a class="nav-link pr-3" href="{% url 'guestlecture' %}" style="color: white;">Guest Lecture</a>
+    <a class="nav-link pr-3" href="{% url 'guestlecture' %}" style="color: white;">Expert Lecture</a>
 </li>
 {% endblock %}
 
@@ -14,10 +14,10 @@
     <div class="row m-3">
 
         <div class="col-sm-12 col-md-12">
-            <div class="container border">
+            <div class="container shadow rounded">
                 {% if success %}
-                    <div class="alert alert-success" role="alert">
-                        Guest Lecture is scheduled successfully!
+                    <div class="d-flex justify-content-center">
+                        <div class="badge badge-success badge-lg col-md-6" style="font-size: 1.5rem;"> Expert Lecture is scheduled successfully!</div>
                     </div>
                 {% elif errors %}
                     <div class="alert alert-danger" role="alert">
@@ -27,13 +27,13 @@
                 <form method="POST" action="{% url 'guestlecture_schedule' %}">
                     {% csrf_token %}
                     <div class="col-md-12 d-flex justify-content-center align-items">
-                        <p class="d-block font-weight-bold mb-3 mt-4 ml-2">Create Guest lecture</p>
+                        <p class="d-block font-weight-bold mb-3 mt-4 ml-2  pt-3 text-dark pb-4 h5 text-uppercase text-underline ">Schedule Expert lecture</p>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <small class="d-block font-weight-bold mb-1 ml-2">Year</small>
+                            <div class="form-group pl-3">
+                                <small class="d-block font-weight-bold mb-1 ml-2 text-dark h6 text-uppercase">Year</small>
                                 <select class="form-control form-control-alternative" name="year" required>
                                     <option class="text-dark" value="-1" selected disabled>Please Select</option>
                                     {% for year in years %}
@@ -43,8 +43,8 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <small class="d-block font-weight-bold mb-1 ml-2">Subject</small>
+                            <div class="form-group pr-3">
+                                <small class="d-block font-weight-bold mb-1 ml-2 text-dark h6 text-uppercase">Subject</small>
                                 <select class="form-control form-control-alternative" name="subject" required>
                                     <option class="text-dark" value="-1" selected disabled>Please Select</option>
                                 </select>
@@ -52,10 +52,10 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row mt-4">
                         <div class="col-md-6">
-                            <small class="d-block font-weight-bold mb-1 ml-2">Date</small>
-                            <div class="form-group">
+                            <small class="d-block font-weight-bold mb-1 ml-2 pl-3 text-dark h6 text-uppercase">Date</small>
+                            <div class="form-group pl-3">
                                 <div class="input-group input-group-alternative">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
@@ -66,8 +66,8 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <small class="d-block font-weight-bold mb-1 ml-2">Slot</small>
+                            <div class="form-group pr-3">
+                                <small class="d-block font-weight-bold mb-1 ml-2  text-dark h6 text-uppercase">Slot</small>
                                 <select class="form-control form-control-alternative" name="timeslot" required>
                                     <option class="text-dark" value="-1" selected disabled>Please Select</option>
                                 </select>
@@ -75,18 +75,18 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <small class="d-block font-weight-bold mb-1 ml-2">Room</small>
-                                <select class="form-control form-control-alternative" name="locations" required>
+                    <div class="row mt-4 text-center">
+                        <div class="col-md-6 mx-auto">
+                            <div class="form-group ">
+                                <small class="d-block font-weight-bold mb-1 ml-2 text-dark h6 text-uppercase">Room</small>
+                                <select class="form-control form-control-alternative pt-3" name="locations" required>
                                     <option class="text-dark" value="-1" selected disabled>Please Select</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <div class="row mb-4 mt-4 pb-4">
                         <div class="col-md-12 d-flex justify-content-center align-items">
                             <button type="submit" class="btn btn-primary">Schedule</button>
                         </div>
