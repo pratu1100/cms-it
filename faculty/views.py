@@ -13,6 +13,7 @@ from django.conf import settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from itertools import chain
 
 # # Update leave as approved by HOD
 # def update_leave(request, leave_id):
@@ -370,15 +371,17 @@ def get_timeslots(request,syear,sdate):
 			free_ts = list()
 			for timeslot in timeslots:
 
-				filtered_lecs = lecs.filter(lec_time__start_time__gte = timeslot.start_time, lec_time__end_time__lte = timeslot.end_time)
+				filtered_lecs = list(chain(lecs.filter(lec_time__start_time = timeslot.start_time),lecs.filter(lec_time__end_time = timeslot.end_time)))
 
-				filtered_makeup_lecs = makeup_lecs.filter(lec_time__start_time__gte = timeslot.start_time,lec_time__end_time__lte = timeslot.end_time)
+				# lec_time__end_time__gte = timeslot.end_time)
+				# print(timeslot,filtered_lecs)
+				filtered_makeup_lecs = list(chain(makeup_lecs.filter(lec_time__start_time = timeslot.start_time),makeup_lecs.filter(lec_time__end_time = timeslot.end_time)))
 
 				filtered_ia = ias.filter(ia_start_time__gte = timeslot.start_time,ia_end_time__lte = timeslot.end_time)
 
-				filtered_guest_lecs = guest_lecs.filter(lec_time__start_time__gte = timeslot.start_time,lec_time__end_time__lte = timeslot.end_time)
+				filtered_guest_lecs = guest_lecs.filter(lec_time__start_time__lte = timeslot.end_time,lec_time__end_time__gte = timeslot.start_time)
 
-				if(not filtered_lecs.exists() and not filtered_makeup_lecs.exists() and not filtered_ia.exists() and not filtered_guest_lecs.exists()):
+				if(not filtered_lecs and not filtered_makeup_lecs and not filtered_ia.exists() and not filtered_guest_lecs.exists()):
 					free_ts.append(timeslot)
 			# print(lecs)
 			# print(makeup_lecs)
@@ -411,7 +414,7 @@ def get_available_rooms(request,sdate,slot):
 			timeslot = TimeSlot.objects.get(pk = int(slot))
 			lecs = Lecture.objects.filter(lec_time__start_time__gte = timeslot.start_time, lec_time__end_time__lte = timeslot.end_time,lec_day = day)
 			makeup_lecs = MakeupLecture.objects.filter(lec_time__start_time__gte = timeslot.start_time, lec_time__end_time__lte = timeslot.end_time,lec_date = date)
-			ias = IA.objects.filter(ia_date = date, ia_time__start_time__gte = timeslot.start_time,ia_time__end_time__lte = timeslot.end_time)
+			ias = IA.objects.filter(ia_date = date, ia_start_time__lte = timeslot.end_time,ia_end_time__gte = timeslot.start_time)
 			guest_lecs = GuestLecture.objects.filter(lec_date = date, lec_time__start_time__gte = timeslot.start_time,lec_time__end_time__lte = timeslot.end_time)
 			occupied_rooms = list()
 			for lec in lecs:
