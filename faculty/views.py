@@ -236,8 +236,9 @@ def email_accept_loadshift(request):
 
 @login_required
 def view_load_shifts(request):
+	# print("HAHAHA")
 	if not request.user.is_superuser and not request.user.is_staff:
-		if request.method == 'POST':
+		if(request.method == 'POST'):
 			load_shift = LoadShift.objects.get(pk = request.POST.get('load_shift'))
 			if '_reject' in request.POST:
 				load_shift.to_faculty.remove(request.user)
@@ -249,7 +250,6 @@ def view_load_shifts(request):
 
 		# user = User.objects.get(pk = request.user.id)
 		load_shifts = LoadShift.objects.filter(to_faculty = request.user)
-
 		return render(request,"faculty/loadshift.html",{"load_shifts":load_shifts})
 	html_error_data = {
 		"error_code" : "401",
