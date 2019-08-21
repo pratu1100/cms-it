@@ -14,7 +14,10 @@
 	
 	<!-- To hide address bar on mobile view -->
 	<script>
-		window.scrollTo(0,1);
+		var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+		if (isMobile) {
+		 	document.body.requestFullscreen(); 
+		}
 	</script>
 
 </head>
