@@ -31,7 +31,7 @@
                                             {% csrf_token %}
                                     <input type="hidden" name="od_id" value="{{ od.id }}">
                                         <div class="card-header bg-white">
-                                            <h4 class="card-title text-center font-weight-bold"><u>{{ od.od_type }}</u></h4>
+                                            <h4 class="card-title text-center font-weight-bold">{{ od.od_type }}</h4>
                                             <h4 class="card-title text-center font-weight-bold">{{ od.od_title }}</h4>
                                             <h6 class="card-title text-center font-weight-normal"><b>Applied by:</b> {{ od.taken_by }}</h6>
                                             <div class="row">
