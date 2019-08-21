@@ -18,7 +18,7 @@
 			<div class="col-sm-12 col-md-12">
 					{% if leave %}
 		<div class="d-flex justify-content-center mb-3">
-			<div class="card col-md-10 border shadow" style="padding: 0;">
+			<div class="card col-md-6 border shadow" style="padding: 0;">
 
 				<div class="card-header">
 					<h4 class="card-title text-center font-weight-bold">Leave Details</h4>
@@ -83,20 +83,20 @@
 
 					{% elif success %}
 					<div class="d-flex justify-content-center">
-						<div class="badge badge-success badge-lg col-md-6" style="font-size: 1.5rem;">Your leave has been submitted.</div>
+							<div class="badge badge-success badge-lg col-md-6" style="font-size: 1.5rem;">Your leave has been submitted.</div>
 					</div>
 					{% else %}
-				<div class="container shadow rounded">
+				<div class="container border">
 					<form method="POST" action="{% url 'submit_leave' %}" enctype="multipart/form-data">
 						{% csrf_token %}
 						<div class="text-center">
-							<p class="d-block font-weight-bold mb-3 mt-4 ml-2 pt-3 text-dark pb-4 h5 text-uppercase text-underline">Request Leave</p>
+							<p class="d-block font-weight-bold mb-3 mt-4 ml-2  text-dark">Request Leave</p>
 						</div>
 
 						<div class="row">
 							<div class="col-md-6">
-								<small class="d-block font-weight-bold mb-1 ml-2 pl-3 text-dark h6 text-uppercase">Start Date</small>
-								<div class="form-group pl-3">
+								<small class="d-block font-weight-bold mb-1 ml-2">Start Date</small>
+								<div class="form-group">
 									<div class="input-group input-group-alternative">
 										<div class="input-group-prepend">
 											<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
@@ -107,8 +107,8 @@
 								</div>
 							</div>
 							<div class="col-md-6">
-								<small class="d-block font-weight-bold mb-1 ml-2 pl-3 text-dark h6 text-uppercase">End Date</small>
-								<div class="form-group pr-3">
+								<small class="d-block font-weight-bold mb-1 ml-2">End Date</small>
+								<div class="form-group">
 									<div class="input-group input-group-alternative">
 										<div class="input-group-prepend">
 											<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
@@ -119,11 +119,11 @@
 								</div>
 							</div>
 						</div>
-						<div class="row mt-4">
+						<div class="row">
 							<div class="col-md-6">
-								<div class="form-group pl-3">
-									<small class="d-block font-weight-bold mb-1 ml-2 text-dark h6 text-uppercase">Duration</small>
-									<select class="form-control form-control-alternative pl-3" name="duration" required>
+								<div class="form-group">
+									<small class="d-block font-weight-bold mb-1 ml-2">Duration</small>
+									<select class="form-control form-control-alternative" name="duration" required>
 										<option value="-1" disabled selected>Duration</option>
 										<option value="full">Full Day</option>
 										<option value="first_half">First half</option>
@@ -132,9 +132,9 @@
 								</div>
 							</div>
 							<div class="col-md-6">
-								<div class="form-group pr-3">
-									<small class="d-block font-weight-bold mb-1 ml-2 text-dark h6 text-uppercase">Leave Type</small>
-									<select class="form-control form-control-alternative pl-3" name="leave_type" required>
+								<div class="form-group">
+									<small class="d-block font-weight-bold mb-1 ml-2">Leave Type</small>
+									<select class="form-control form-control-alternative" name="leave_type" required>
 										<option value="-1" disabled selected>Please Select</option>
 										{% for leave_type in leave_types %}
 										<option value="{{ leave_type.id }}">{{ leave_type }}</option>
@@ -143,16 +143,16 @@
 								</div>
 							</div>
 						</div>
-						<div class="row mt-4 text-center">
-							<div class="col-md-6 mx-auto">
-								<small class="d-block font-weight-bold mb-1 ml-2 text-dark h6 text-uppercase">Attach certifcate or letter</small>
-								<div class="form-group pt-1 pl-5 pr-5 text-center">
-									<input class="form-control form-control-alternative text-center" type="file" name="supporting_file" disabled>
+						<div class="row">
+							<div class="col-md-6">
+								<small class="d-block font-weight-bold mb-1 ml-2">Attach certifcate or letter</small>
+								<div class="form-group">
+									<input class="form-control form-control-alternative" type="file" name="supporting_file" disabled>
 								</div>
 							</div>
 						</div>
 
-						<div class="row mt-4 mb-4 pb-4">
+						<div class="row m-3">
 							<div class="col-md-12 d-flex justify-content-center align-items">
 								<button type="submit" class="btn btn-primary">Submit</button>
 							</div>
