@@ -191,13 +191,17 @@
 				url: url_string,
 				success: function (text) {
 					rooms_json = $.parseJSON(text);
-					// console.log(rooms_json);
+					console.log(rooms_json.length);
 					var html = "<option value=-1 disabled selected>Select Room</option>";
 					for (i = 0; i < rooms_json.length; i++) {
 						html += "<option value=" + rooms_json[i].pk + ">" + rooms_json[
 							i].fields.room + "</option>"
 					}
 					$('[name = locations]').append(html);
+				},
+				error: function(err) {
+					console.log(err);
+					$('[name = locations]').append("<option value=-1 disabled selected>No Rooms Available</option>");
 				}
 			})
 		})
