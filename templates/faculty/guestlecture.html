@@ -14,16 +14,17 @@
     <div class="row m-3">
 
         <div class="col-sm-12 col-md-12">
-            <div class="container border rounded">
+           
                 {% if success %}
-                    <div class="alert alert-success" role="alert">
-                        Guest Lecture is scheduled successfully!
+                    <div class="d-flex justify-content-center">
+                            <div class="badge badge-success badge-lg col-md-10" style="font-size: 1.5rem;">Expert lecture has been scheduled successfully.</div>
                     </div>
                 {% elif errors %}
                     <div class="alert alert-danger" role="alert">
                         <h4>{{ errors }}</h4>
                     </div>
                 {% else %}
+                 <div class="container border rounded">
                 <form method="POST" action="{% url 'guestlecture_schedule' %}">
                     {% csrf_token %}
                     <div class="col-md-12 d-flex justify-content-center align-items">
@@ -93,9 +94,9 @@
                     </div>
 
                 </form>
-
+                </div>
                 {% endif %}
-            </div>
+            
         </div>
 
     </div>
