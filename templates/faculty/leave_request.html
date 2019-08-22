@@ -102,7 +102,7 @@
 											<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
 										</div>
 										<input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
-										data-date-format="mm/dd/yyyy" autocomplete="off" name="leave_start_date" data-date-start-date="0d" required>
+										data-date-format="mm/dd/yyyy" autocomplete="off" name="leave_start_date" id="start_date" data-date-start-date="0d" required>
 									</div>
 								</div>
 							</div>
@@ -114,7 +114,7 @@
 											<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
 										</div>
 										<input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
-										data-date-format="mm/dd/yyyy" autocomplete="off" name="leave_end_date" data-date-start-date="0d" required>
+										data-date-format="mm/dd/yyyy" autocomplete="off" name="leave_end_date" id="end_date" data-date-start-date="0d" required>
 									</div>
 								</div>
 							</div>
@@ -172,13 +172,15 @@
 					$(e.currentTarget).siblings('input')[0].checked = true
 				}
 			});
+
+			$('[name=leave_type]').change(function(){
+				$('[name=supporting_file]').prop("disabled",true);
+				if ($(this).val() == '3') {
+					$('[name=supporting_file]').prop("disabled",false);
+				}
+			});
 		});
-		$('[name=leave_type]').change(function(){
-			$('[name=supporting_file]').prop("disabled",true);
-			if ($(this).val() == '3') {
-				$('[name=supporting_file]').prop("disabled",false);
-			}
-		});
+
 	</script>
 
 {% endblock %}
