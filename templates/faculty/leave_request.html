@@ -179,6 +179,12 @@
 					$('[name=supporting_file]').prop("disabled",false);
 				}
 			});
+
+			// End Date always after start date
+			$('#start_date').on('changeDate', function() {
+				let start_date = $('#start_date').datepicker('getUTCDate');
+				$('#end_date').datepicker('setStartDate', start_date);
+			});
 		});
 
 	</script>

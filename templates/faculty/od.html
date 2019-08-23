@@ -135,9 +135,9 @@
 							</div>
 						</div>
 						<div class="col-md-6">
-							<small class="d-block font-weight-bold mb-1 ml-2">Supporting Ogranisation</small>
+							<small class="d-block font-weight-bold mb-1 ml-2">Supporting Organisation</small>
 							<div class="form-group">
-								<input class="form-control form-control-alternative" placeholder="Supporting Ogranisation" type="text" name="Supporting-og" required>
+								<input class="form-control form-control-alternative" type="text" name="Supporting-og" style="text-transform: uppercase;">
 							</div>
 						</div>
 					</div>
@@ -153,7 +153,7 @@
 										<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
 									</div>
 									<input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
-									data-date-format="mm/dd/yyyy" autocomplete="off" name="from_date" data-date-start-date="0d" required>
+									data-date-format="mm/dd/yyyy" autocomplete="off" name="from_date" data-date-start-date="0d" id="from_date" required>
 								</div>
 							</div>
 						</div>
@@ -165,7 +165,7 @@
 										<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
 									</div>
 									<input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
-									data-date-format="mm/dd/yyyy" autocomplete="off" name="to_date" data-date-start-date="0d" required>
+									data-date-format="mm/dd/yyyy" autocomplete="off" name="to_date" data-date-start-date="0d" id="to_date"  required>
 								</div>
 							</div>
 						</div>
@@ -180,7 +180,7 @@
 										<span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
 									</div>
 									<input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
-									data-date-format="mm/dd/yyyy" autocomplete="off" name="last_date" data-date-start-date="0d" required>
+									data-date-format="mm/dd/yyyy" autocomplete="off" name="last_date" data-date-start-date="0d" id="last_date">
 								</div>
 							</div>
 						</div>
@@ -196,14 +196,14 @@
 
 							<small class="d-block font-weight-bold mb-1 ml-2">Attach email or correspondence</small>
 							<div class="form-group">
-								<input class="form-control form-control-alternative" type="file" name="correspondence" required>
+								<input class="form-control form-control-alternative" type="file" name="correspondence">
 							</div>
 						</div>
 						<div class="col-md-6">
 							<small class="d-block font-weight-bold mb-1 ml-2">Purpose/Scope</small>
 							<div class="form-group">
 								<textarea class="form-control form-control-alternative" rows="6" name="scope"
-								placeholder="Purpose or Scope for attending" required></textarea>
+								placeholder="Purpose or Scope for attending" ></textarea>
 							</div>
 						</div>
 					</div>
@@ -229,6 +229,13 @@
 				} else  {
 					$(e.currentTarget).siblings('input')[0].checked = true
 				}
+			});
+
+			// To Date always after from date
+			$('#from_date').on('changeDate', function() {
+				let from_date = $('#from_date').datepicker('getUTCDate');
+				$('#to_date').datepicker('setStartDate', from_date);
+				$('#last_date').datepicker('setEndDate', from_date);
 			});
 		});
 </script>

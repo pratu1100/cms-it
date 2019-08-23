@@ -103,7 +103,8 @@
                                                         <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
                                                     </div>
                                                     <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
-                                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="start_date" data-date-start-date="0d">
+                                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="start_date" data-date-start-date="0d"
+                                                    id="start_date">
                                                 </div>
                                             </div>
                                         </div>
@@ -115,7 +116,7 @@
                                                         <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
                                                     </div>
                                                     <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
-                                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="end_date" data-date-start-date="0d" disabled>
+                                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="end_date" data-date-start-date="0d" id="end_date" disabled>
                                                 </div>
                                             </div>
                                         </div>
@@ -260,7 +261,11 @@
                 })
             })
 
-            
+            // End Date always after start date
+            $('#start_date').on('changeDate', function() {
+                let start_date = $('#start_date').datepicker('getUTCDate');
+                $('#end_date').datepicker('setStartDate', start_date);
+            });
         });
     </script>
 
