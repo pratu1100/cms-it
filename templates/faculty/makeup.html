@@ -24,7 +24,7 @@
                     </div>
 				{% else %}
 				<div class="container border rounded">
-				<form method="POST" action="{% url 'reserve' %}">
+				<form method="POST" action="{% url 'reserve_makeup' %}">
 					{% csrf_token %}
 					<div class="col-md-12 d-flex justify-content-center align-items">
 						<p class="d-block font-weight-bold mb-3 mt-4 ml-2 text-dark">Create Makeup Lecture</p>
@@ -68,7 +68,7 @@
                             </div>
                         </div>
 						<div class="col-md-6">
-                            <small class="d-block font-weight-bold mb-1 ml-2">Day</small>
+                            <small class="d-block font-weight-bold mb-1 ml-2">Date</small>
                             <div class="form-group">
                                 <div class="input-group input-group-alternative">
                                     <div class="input-group-prepend">
@@ -126,7 +126,7 @@
 		year = $('[name = year]');
 
 		year.change(function () {
-			console.log("{{ request.user }}")
+			// console.log("{{ request.user }}")
 			$('[name=subject]').empty();
 			var html = "";
 			{% for subject in subjects %}
@@ -142,44 +142,41 @@
 		})
 
 		day.change(function () {
-			$('[name = "timeslot"]').empty();
+			year = $('[name=year]').val()
+            d = new Date($(this).val())
+            // Timezone offset error correction
+            d.setDate(d.getDate() + 1);
+            date = d.toISOString().split('T')[0];
+            url_string = "{% url 'get_timeslots' 'year' 'sample' %}".replace('sample', date).replace('year', year);
+            // console.log(url_string)
+            $.ajax({
+                url: url_string,
+                success: function (text) {
+                    // $('#resp').empty();
+                    // $('#resp').append(text);
+                    $('[name = timeslot]').empty();
+                    // ts_json = text.split('$$')[0]
+                    // rooms_json = text.split('$$')[1]
+                    ts_result = $.parseJSON(text);
+                    console.log(ts_result);
+                    var html = "<option value=-1 disabled selected>Select Timeslot</option>";
+                    for (i = 0; i < ts_result.length; i++) {
+                        slot_start = ts_result[i].fields.start_time.split(':')[0] +
+                            ":" + ts_result[i].fields
+                            .start_time.split(':')[1];
+                        slot_end = ts_result[i].fields.end_time.split(':')[0] + ":" +
+                            ts_result[i].fields.end_time
+                            .split(':')[1];
+                        html += "<option value=" + ts_result[i].pk + ">" + slot_start +
+                            " - " + slot_end +
+                            "</option>"
+                    }
+                    $('[name = timeslot]').append(html);
+                }
+            });
 
-			newd = new Date($('[name = makeup_date]').val());
-			let weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][
-				newd.getDay()
-			];
-			console.log(weekday)
-			var options = "";
-			{% for day, slots in free_slots.items %}
-				if ("{{ day.day_name }}" == weekday) {
-					{% for slot in slots %}
-						console.log("{{ slot }}")
-						options += "<option class='text-dark' value='{{ slot.id }}'>{{ slot }}</option>"
-					{% endfor %}
-				}
-			{% endfor %}
+		});
 
-			$('[name = "timeslot"]').append(options);
-			$('[name = "timeslot"]').show();
-
-		})
-
-
-		// var html = "";
-		// {% for slot in free_slots %}
-		// 	html+="<option value='{{ slot }}'>{{ slot }}</option>";
-		// {% endfor %}
-		// day.append(html)
-		// day.change(function(){
-		// 	console.log($('[name = makeup_date]').val())
-		// 	newd = new Date($('[name = makeup_date]').val());
-		// 	console.log(newd)
-		// 	console.log($(this).val())
-		// 	$('[name = "timeslot"]').empty();
-
-
-
-		// })
 		$('[name = timeslot]').change(function () {
 			$('[name = locations]').empty();
 			d = new Date($('[name = makeup_date]').val());

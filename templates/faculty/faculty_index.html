@@ -13,7 +13,7 @@
 	<main>
 		<input id="page_loaded" value="faculty_home" style="display: none;">
 
-		<div class="row mt-3 ml-2">
+		<div class="row mt-3 ml-2 mr-2">
 					<div class="col-sm-12 col-md-4">
 					{% for ia in ias %}
 						<div class="card shadow mb-3">
@@ -48,7 +48,9 @@
 								{{ lec.lec_subject }}
 							</div>
 						</div>
-					{% endfor %}	
+					{% endfor %}
+					</div>	
+					<div class="col-sm-12 col-md-4">
 					{% for lec in makeup_lecs %}
 						<div class="card shadow mb-3">
 							<div class="card-header bg-secondary">

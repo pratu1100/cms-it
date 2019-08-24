@@ -271,21 +271,7 @@ def get_makeup(request):
 		).filter(diff__lte= datetime.timedelta(hours = 1))
 
 
-		free = dict()
-
-		for day in days:
-			# print(day.id)
-			# m_lecs = MakeupLecture.objects.filter(lec_date__week_day = day.id)
-			free_ts = list()
-			for timeslot in timeslots:
-				if(not(Lecture.objects.filter(lec_day = day,lec_time = timeslot).exists()) and not (MakeupLecture.objects.filter(lec_date__week_day = (day.id + 1),lec_time = timeslot).exists())):
-					free_ts.append(timeslot)
-
-			free[day] = free_ts
-		# print(free)
-
 		context_data = {
-			"free_slots" : free,
 			"years" : years,
 			"subjects" : subjects,
 			"divisions" : divions
@@ -328,6 +314,7 @@ def post_makeup(request):
 
 			return render(request,"faculty/makeup.html",context_data)
 		else:
+			print("JHOLL af")
 			return HttpResponseRedirect('./')
 
 	html_error_data = {
