@@ -26,12 +26,16 @@
 							<p class="h5"><small>{{ od.od_type }}</small></p>
 							<p class="h5">{{ od.od_details }}</p>					
 							<div class="row text-center m-2">
+								{% if od.supporting_organisation %}
 								<div class="col-sm-6">
-									<p class="h6"><b>Supporting Organisation: </b>{{ od.supporting_organisation }}</p>
+									<p class="h6"><b>Supporting Organisation: </b><span class="text-uppercase">{{ od.supporting_organisation }}</span></p>
 								</div>
+								{% endif %}
+								{% if od.last_date %}
 								<div class="col-sm-6">
 									<p class="h6"><b>Last Date: </b>{{ od.last_date|date }}</p>
 								</div>
+								{% endif %}
 							</div>
 							<div class="row text-center m-2">
 								<div class="col-sm-6">
@@ -41,15 +45,20 @@
 									<p class="h6"><b>To: </b>{{ od.to_date|date }}</p>
 								</div>
 							</div>
+								{% if od.fees %}
 									<p class="h6"><b>Fees: </b>{{ od.fees }}</p>
+								{% endif %}
+								{% if od.scope %}
 									<p class="h6"><b>Scope: </b>{{ od.scope }}</p>
+								{% endif %}
+								
 						</div>
 						{% if od.correspondence %}
 						<div class="card-footer h6">
-							<b>OD File: </b>
-							<a href="{{ od.correspondence.url }}" target="__blank" style="color: blue !important;">
+							<a href="{{ od.correspondence.url }}" class="btn btn-lg btn-secondary text-dark" target="__blank">
+								<span class="input-group-addon"><i class="fa fa-file fa-fw"></i></span>
 								{% with od.correspondence.name|split:"/" as fname %}
-									{{ fname|last }}</br>
+									{{ fname|last }}
 								{% endwith %}
 							</a>
 						</div>
@@ -191,7 +200,7 @@
 						<div class="col-md-6">
 							<small class="d-block font-weight-bold mb-1 ml-2">Registration Fee</small>
 							<div class="form-group">
-								<input class="form-control form-control-alternative" placeholder="Registration Fee" type="text" name="fees" required>
+								<input class="form-control form-control-alternative" placeholder="Registration Fee" type="text" name="fees">
 							</div>
 
 							<small class="d-block font-weight-bold mb-1 ml-2">Attach email or correspondence</small>
