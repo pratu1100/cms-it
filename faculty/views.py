@@ -391,6 +391,63 @@ def get_timeslots(request,syear,sdate):
 	return render(request,"error.html",html_error_data)
 
 @login_required
+def makeup_timeslots_api(request,syear,sdiv,sdate):
+	# print(syear)
+	# print(sdate)
+	if not request.user.is_superuser and not request.user.is_staff:
+		if(syear!='-1'):
+			year = Year.objects.get(pk = int(syear))
+			date = datetime.datetime.strptime(sdate,'%Y-%m-%d')
+			day = DaysOfWeek.objects.get(day_name = date.strftime('%A'))
+			div = Division.objects.get(pk = sdiv)
+			lecs = Lecture.objects.filter(lec_day = day,lname__year = year,lec_div = div)
+			# print(lecs)
+			makeup_lecs = MakeupLecture.objects.filter(lec_date = date,year = year,division = div)
+			# print(makeup_lecs)
+			ias = IA.objects.filter(ia_date = date, ia_year =year)
+			guest_lecs = GuestLecture.objects.filter(lec_date = date,lec_year = year)
+			timeslots = TimeSlot.objects.annotate(
+	    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
+		).filter(diff__lte= datetime.timedelta(hours = 2))
+			# print(timeslots)
+			# occupied_rooms = list()
+			free_ts = list()
+			for timeslot in timeslots:
+
+				filtered_lecs = list(chain(lecs.filter(lec_time__start_time = timeslot.start_time),lecs.filter(lec_time__end_time = timeslot.end_time)))
+
+				# lec_time__end_time__gte = timeslot.end_time)
+				# print(timeslot,filtered_lecs)
+				filtered_makeup_lecs = list(chain(makeup_lecs.filter(lec_time__start_time = timeslot.start_time),makeup_lecs.filter(lec_time__end_time = timeslot.end_time)))
+
+				filtered_ia = ias.filter(ia_start_time__gte = timeslot.start_time,ia_end_time__lte = timeslot.end_time)
+
+				filtered_guest_lecs = guest_lecs.filter(lec_time__start_time__lte = timeslot.end_time,lec_time__end_time__gte = timeslot.start_time)
+
+				if(not filtered_lecs and not filtered_makeup_lecs and not filtered_ia.exists() and not filtered_guest_lecs.exists()):
+					free_ts.append(timeslot)
+			# print(lecs)
+			# print(makeup_lecs)
+			ts_json = serializers.serialize("json",free_ts)
+
+			# rooms_json = serializers.serialize("json",occupied_rooms)
+
+			# data_json = {
+			# 	"timeslots" : ts_json,
+			# 	"rooms" : rooms_json
+			# }
+			# print(ts_json)
+			return HttpResponse(ts_json)
+		else:
+			return HttpResponse("Select Year")
+	html_error_data = {
+		"error_code" : "401",
+		"error_message" : "UNAUTHORIZED"
+	}
+	return render(request,"error.html",html_error_data)
+
+
+@login_required
 def get_available_rooms(request,sdate,slot):
 	# print(sdate)
 	# print(slot)

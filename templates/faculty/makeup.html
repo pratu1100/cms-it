@@ -144,10 +144,11 @@
 		day.change(function () {
 			year = $('[name=year]').val()
             d = new Date($(this).val())
+            div = $('[name=division]').val()
             // Timezone offset error correction
             d.setDate(d.getDate() + 1);
             date = d.toISOString().split('T')[0];
-            url_string = "{% url 'get_timeslots' 'year' 'sample' %}".replace('sample', date).replace('year', year);
+            url_string = "{% url 'makeup_timeslots_api' 'year' 'div' 'sample' %}".replace('sample', date).replace('year', year).replace('div',div);
             // console.log(url_string)
             $.ajax({
                 url: url_string,
