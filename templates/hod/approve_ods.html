@@ -12,8 +12,15 @@
                         <div class="card mr-2 mb-2 shadow" style="width: 18rem;" id="{{ od.id }}" onclick="displayModal(this.id);">
                             <div class="card-body text-center">
                               <h5 class="card-title">{{ od.od_type }} - {{ od.od_title }}</h5>
-                              <h6 class="card-subtitle mb-2 text-muted">{{ od.taken_by }}</h6>
+                              <h6 class="card-subtitle mb-2 text-muted">{{ od.taken_by }}</h6>  
                             </div>
+                            {% if od.approved_status %}
+                                <div class="badge badge-success badge-lg" style="font-size : 90%;">Approved</div>
+                              {% elif od.approved_status is False %}
+                                    <div class="badge badge-danger badge-lg" style="font-size : 90%;">Rejected</div>
+                              {% else %}
+                                <div class="badge badge-info badge-lg" style="font-size : 90%;">Pending</div>
+                            {% endif %}
                         </div>
                         
                         <!-- Modal -->
