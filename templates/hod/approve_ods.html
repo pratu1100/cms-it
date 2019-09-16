@@ -53,8 +53,11 @@
                                         <p class="card-text text-center font-weight-normal h6"><b>Last : </b> {{ od.last_date }}</p>
                                         <p class="card-text text-center font-weight-normal h6"><b>Fees : </b> {{ od.fees }}</p>
                                         <p class="card-text text-center font-weight-normal h6"><b>Scope : </b> {{ od.scope }}</p>
+                                        {% if od.correspondence %}
                                         <p class="card-text text-center font-weight-normal h6" ><a href="{{ od.correspondence.url }}" target="__blank" style="color: #3351ff !important;">{{ od.correspondence.name }}</a></p>
+                                        {% endif %}
                                             </div>
+                                        
                                         </div>
                                         {% if loads %}
                                         <div class="card-body bg-white">

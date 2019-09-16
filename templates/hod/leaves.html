@@ -1,4 +1,6 @@
 {% extends '../base.html' %} 
+{% load faculty_filters %}
+
 {% block content %}
 <main class="mx-auto"> 
 	<input id="page_loaded" value="approve_leaves" style="display: none;">
@@ -49,6 +51,17 @@
                                             <p class="card-text font-weight-normal h6"><b>End Date : </b>{{ leave.leave_end_date }}</p>
                                             <p class="card-text font-weight-normal h6"><b>End Time : </b>{{ leave.leave_end_time }}</p>
                                         </div>
+                                        {% if leave.supporting_file %}
+                                        <div class="col-md m-2 p-3 text-center">
+                                            <p class="card-text font-weight-normal h6"><b>Supporting File : </b><a href="{{ leave.supporting_file.url }}" target="__blank">
+                                                <span class="text-info">
+                                                    {% with leave.supporting_file.name|split:"/" as fname %}
+                                                        {{ fname|last }}
+                                                    {% endwith %}
+                                                </span>
+                                            </a></p>
+                                        </div>
+                                        {% endif %}
                                 </div>
                                         </div>
                                         {% if loads %}
