@@ -1,0 +1,94 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block content %}
+	<main>
+		<input id="page_loaded" value="faculty_home" style="display: none;">
+
+		<div class="row mt-3 ml-2 mr-2">
+					<div class="container border rounded">
+                <form>
+                    {% csrf_token %}
+                    <div class="col-md-12 d-flex justify-content-center align-items">
+                        <p class="d-block font-weight-bold mb-3 mt-4 ml-2 text-dark">Get Free Rooms</p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="d-block font-weight-bold mb-1 ml-2">Date</small>
+                            <div class="form-group">
+                                <div class="input-group input-group-alternative">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
+                                    data-date-format="mm/dd/yyyy" autocomplete="off" name="date" data-date-start-date="0d" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <small class="d-block font-weight-bold mb-1 ml-2">TimeSLot</small>
+                                <select class="form-control form-control-alternative" name="timeslot" required>
+                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                    {% for timeslot in timeslots %}
+                                    	<option class="text-dark" value="{{ timeslot.id }}">{{ timeslot }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </form>
+                    <div class="row d-flex justify-content-center" name="free_rooms">
+                    	
+                	</div>
+                </div>	
+			                        
+		</div>
+	</main>
+	<script>
+		$(document).ready(function(){
+			$('[name=date],[name=timeslot]').change(function(){
+                date = new Date($('[name=date]').val())
+                // console.log(date.toISOString().split('T')[0])
+                timeslot_id = $('[name=timeslot]').val()
+                // console.log(timeslot)
+                if(date && timeslot_id){
+                	url_string = "{% url 'api_free_rooms' %}"
+                	$.ajaxSetup({
+						data: {
+							csrfmiddlewaretoken: '{{ csrf_token }}'
+						},
+					});
+
+                	$.ajax({
+                		type : 'POST',
+                		url :url_string,
+                		data : {
+                			'date' : date.toLocaleDateString(),
+                			'timeslot_id' : timeslot_id
+                		},
+                		success: function(response) {
+                			// console.log(response);
+                			json_response = $.parseJSON(response)
+                			$('[name = free_rooms]').empty()
+                			for(i=0;i<json_response.length;i++){
+                				// console.log(json_response[i].fields.room)
+                				room_badge = "<div class='col-md-2 badge badge-success badge-lg' style='font-size : 15px;margin:5px;'>" + json_response[i].fields.room +"</div>"
+                				$('[name = free_rooms]').append(room_badge)
+                			} 
+
+                		},
+                		error : function(){
+                			console.log("Cannot reach API. Contact admin.")
+                		}
+
+                	});
+                }
+			})
+		});
+	</script>
+	
+{% endblock %}

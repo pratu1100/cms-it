@@ -456,7 +456,7 @@ def get_available_rooms(request,sdate,slot):
 			date = datetime.datetime.strptime(sdate,'%Y-%m-%d')
 			day = DaysOfWeek.objects.get(day_name = date.strftime('%A'))
 			timeslot = TimeSlot.objects.get(pk = int(slot))
-			lecs = Lecture.objects.filter(lec_time__start_time__gte = timeslot.start_time, lec_time__end_time__lte = timeslot.end_time,lec_day = day)
+			lecs = Lecture.objects.filter(lec_time__start_time = timeslot.start_time,lec_day = day) | Lecture.objects.filter(lec_time__end_time = timeslot.end_time,lec_day = day)
 			makeup_lecs = MakeupLecture.objects.filter(lec_time__start_time__gte = timeslot.start_time, lec_time__end_time__lte = timeslot.end_time,lec_date = date)
 			ias = IA.objects.filter(ia_date = date, ia_start_time__lte = timeslot.end_time,ia_end_time__gte = timeslot.start_time)
 			guest_lecs = GuestLecture.objects.filter(lec_date = date, lec_time__start_time__gte = timeslot.start_time,lec_time__end_time__lte = timeslot.end_time)
@@ -794,3 +794,55 @@ def send_email(request):
 	}
 	return render(request,"error.html",html_error_data)
 
+
+@login_required
+def api_home(request):
+	if not request.user.is_superuser and not request.user.is_staff:
+		return render(request,"faculty/api_home.html")
+
+	html_error_data = {
+		"error_code" : "401",
+		"error_message" : "UNAUTHORIZED"
+	}
+	return render(request,"error.html",html_error_data)
+
+@login_required
+def api_free_rooms(request):
+	if not request.user.is_superuser and not request.user.is_staff:
+		if request.method == 'POST':
+			# print("AJAX CALLED")
+			# print(request.POST.get('date'))
+			date = datetime.datetime.strptime(request.POST.get('date'),'%m/%d/%Y')
+			timeslot = TimeSlot.objects.get(pk = request.POST.get('timeslot_id'))
+			day = DaysOfWeek.objects.get(day_name = date.strftime('%A'))
+			lecs = Lecture.objects.filter(lec_time__start_time = timeslot.start_time,lec_day = day) | Lecture.objects.filter(lec_time__end_time = timeslot.end_time,lec_day = day)
+			makeup_lecs = MakeupLecture.objects.filter(lec_time__start_time__gte = timeslot.start_time, lec_time__end_time__lte = timeslot.end_time,lec_date = date)
+			ias = IA.objects.filter(ia_date = date, ia_start_time__lte = timeslot.end_time,ia_end_time__gte = timeslot.start_time)
+			guest_lecs = GuestLecture.objects.filter(lec_date = date, lec_time__start_time__gte = timeslot.start_time,lec_time__end_time__lte = timeslot.end_time)
+			occupied_rooms = list()
+			for lec in lecs:
+				occupied_rooms.append(lec.lec_in)
+			for lec in makeup_lecs:
+				occupied_rooms.append(lec.lec_in)
+			for ia in ias:
+				occupied_rooms.append(ia.ia_in)
+			for lec in guest_lecs:
+				occupied_rooms.append(lec.lec_in)
+
+			rooms = Room.objects.exclude(room__in = occupied_rooms)
+			rooms_json = serializers.serialize("json",rooms)
+			return HttpResponse(rooms_json)
+		
+		timeslots = TimeSlot.objects.annotate(
+	    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
+		).filter(diff__lte= datetime.timedelta(hours = 2))
+
+		context_data = {
+			"timeslots" : timeslots,
+		}
+		return render(request,"faculty/api_free_rooms.html",context_data)
+	html_error_data = {
+		"error_code " : "401",
+		"error_message" : "UNAUTHORIZED"
+ 
+	}

@@ -1,0 +1,28 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block content %}
+	<main>
+		<input id="page_loaded" value="faculty_home" style="display: none;">
+
+		<div class="row mt-3 ml-2 mr-2">
+					<div class="col-sm-12 col-md-4">
+					
+						<div class="card shadow mb-3">
+							<div class="card-header bg-secondary">
+								<div class="float-left"><strong>Get free rooms</strong></div>
+								<div class="float-right"><strong>API</strong></div>
+							</div>
+							<div class="card-body">
+								<h5 class="float-left">
+									<a href="{% url 'api_free_rooms' %}">Request</a>
+								</h5>	
+							</div>
+						</div>	
+					</div>	
+			                        
+		</div>
+	</main>
+
+	
+{% endblock %}
