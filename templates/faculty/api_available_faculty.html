@@ -1,0 +1,157 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block nav-content %}
+<li class="nav-item" role="presentation">
+    <a class="nav-link pr-3" href="{% url 'api_home' %}" style="color: white;">API</a>
+</li>
+{% endblock %}
+
+{% block content %}
+	<main>
+		<input id="page_loaded" value="faculty_api_home" style="display: none;">
+
+		<div class="row mt-3 ml-2 mr-2">
+					<div class="container border rounded">
+                        <div class="col-md-12 d-flex justify-content-center align-items">
+                            <p class="d-block font-weight-bold mb-3 mt-4 ml-2 text-dark">Get Available Faculty</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button name="today" class="btn btn-block btn-secondary active">Today</button>
+                            </div>
+                            <div class="col-md-4">
+                                <button name="tomorrow" class="btn btn-block btn-secondary">Tomorrow</button>
+                            </div>
+                            <div class="col-md-4">
+                               
+                                <div class="form-group">
+                                    <div class="input-group input-group-alternative">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control datepicker text-dark" data-provide="datepicker"
+                                        data-date-format="mm/dd/yyyy" autocomplete="off" name="custom_date" data-date-start-date="0d">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                        <div class="row d-flex justify-content-center" name="faculty_available">
+                        	{% for faculty in available_faculty %}
+                                <div class="col-md-2 badge badge-success badge-lg" style="font-size : 15px;margin:5px;">
+                                    {{ faculty }}
+                                </div>
+                            {% endfor %}
+                    	</div>
+                </div>	
+			                        
+		</div>
+	</main>
+	<script>
+		$(document).ready(function(){
+
+            $.ajaxSetup({
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                    });
+
+            url_string = "{% url 'api_available' %}"
+
+            $('[name = today]').click(function(){
+                $('[name = tomorrow ]').removeClass('active')
+                $('[name = today ]').addClass('active')
+                $('[name = custom_date]').val('')
+                
+                $.ajax({
+                    type : 'POST',
+                    url : url_string,
+                    data : {
+                        'date' : date = new Date().toLocaleDateString()
+                    },
+                    success : function(response){
+                        json_response = $.parseJSON(response)
+                        $('[name = faculty_available]').empty()
+                        // console.log(json_response)
+                        for(i=0;i<json_response.length;i++){
+                            faculty_badge = "<div class='col-md-2 badge badge-success badge-lg' style='font-size : 15px;margin:5px;'>" + json_response[i].fields.username + "</div>"
+                            $('[name = faculty_available]').append(faculty_badge)
+                        }
+                    },
+                    error : function() {
+                        console.log("Cannot reach API. Contact admin.")
+                    } 
+
+                })
+
+            })            
+
+            $('[name = tomorrow]').click(function(){
+
+                date = new Date()
+                date.setDate(date.getDate()+1)
+                $('[name=today]').removeClass('active')
+                $('[name = tomorrow]').addClass('active')
+                $('[name = custom_date]').val('')
+
+
+                $.ajax({
+                    type : 'POST',
+                    url : url_string,
+                    data : {
+                        'date' : date.toLocaleDateString()
+                    },
+                    success : function(response){
+                        json_response = $.parseJSON(response)
+                        $('[name = faculty_available]').empty()
+                        // console.log(json_response)
+                        for(i=0;i<json_response.length;i++){
+                            faculty_badge = "<div class='col-md-2 badge badge-success badge-lg' style='font-size : 15px;margin:5px;'>" + json_response[i].fields.username + "</div>"
+                            $('[name = faculty_available]').append(faculty_badge)
+                        }
+
+                    },
+                    error : function() {
+                        console.log("Cannot reach API. Contact admin.")
+                    } 
+
+                })
+
+            })
+
+			$('[name = custom_date ]').change(function(){
+                date = new Date($('[name = custom_date]').val())
+                $('[name = tomorrow ]').removeClass('active')
+                $('[name = today ]').removeClass('active')
+                
+
+            	$.ajax({
+            		type : 'POST',
+            		url :url_string,
+            		data : {
+            			'date' : date.toLocaleDateString(),
+            		},
+            		success : function(response){
+                        json_response = $.parseJSON(response)
+                        $('[name = faculty_available]').empty()
+                        // console.log(json_response)
+                        for(i=0;i<json_response.length;i++){
+                            faculty_badge = "<div class='col-md-2 badge badge-success badge-lg' style='font-size : 15px;margin:5px;'>" + json_response[i].fields.username + "</div>"
+                            $('[name = faculty_available]').append(faculty_badge)
+                        }
+
+                    },
+            		error : function(){
+            			console.log("Cannot reach API. Contact admin.")
+            		}
+
+            	});
+			})
+
+		});
+
+	</script>
+	
+{% endblock %}

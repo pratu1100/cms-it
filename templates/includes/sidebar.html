@@ -5,6 +5,7 @@
       KJSCE CMS
     </div>
     {% if user.is_authenticated is False %}
+    
     <ul class="list-unstyled components">
         <li id="guest_index">
             <a href="{% url 'guest_index' %}">
@@ -103,6 +104,12 @@
             <i class="fas fa-sign-out-alt mr-2"></i> Logout
           </a>
         </li>
+        <li id="faculty_api_home" class="d-none">
+          <a href="{% url 'api_home' %}">
+            <i class="fas fa-exchange-alt mr-2"></i> API
+          </a>
+        </li>
+
       </ul>
 
     {% endif %}
@@ -111,9 +118,15 @@
 <script>
   $(() => {
 
+  
+
     $("a").addClass("mr-1 rounded").css('font-family', 'Work Sans');
 
     let page_loaded = $("#page_loaded").val();
+    if(page_loaded == 'faculty_api_home'){
+      $('#' + page_loaded).removeClass('d-none')
+    }
+    
     $("#" + page_loaded).addClass("active shadow");
   });
 </script>

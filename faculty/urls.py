@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import create_leave,submit_leave,submit_load_shift,get_makeup,post_makeup,get_ia,post_ia,get_timeslots,get_available_rooms,guestlecture,guestlecture_schedule,od,submit_od,submit_od_loadshift, send_email, view_load_shifts,index, email_accept_loadshift,view_leaves,post_ia_arrangement,makeup_timeslots_api,api_home,api_free_rooms
+from .views import create_leave,submit_leave,submit_load_shift,get_makeup,post_makeup,get_ia,post_ia,get_timeslots,get_available_rooms,guestlecture,guestlecture_schedule,od,submit_od,submit_od_loadshift, send_email, view_load_shifts,index, email_accept_loadshift,view_leaves,post_ia_arrangement,makeup_timeslots_api,api_home,api_free_rooms,api_available
 
 urlpatterns = [
     # path('approve/<int:leave_id>/', update_leave)
@@ -26,7 +26,8 @@ urlpatterns = [
     path('od/submit/loadshift',submit_od_loadshift,name ="submit_od_loadshift"),
     path('mail/send',send_email,name = "send_email"),
     path('api/',api_home,name="api_home"),
-    path('api/get_free_rooms',api_free_rooms,name="api_free_rooms")
+    path('api/get_free_rooms',api_free_rooms,name="api_free_rooms"),
+    path('api/available/',api_available,name="api_available")
 ]
 
 

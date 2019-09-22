@@ -638,7 +638,7 @@
 				{% for room in rooms %}
 					html += "<option value='{{ room.id }}'>{{ room }}</option>";
 				{% endfor %}
-
+				
 			{% endif %}
 			$('.lec_batch_opts').append(html);
 		{% endfor %}

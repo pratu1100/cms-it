@@ -846,3 +846,30 @@ def api_free_rooms(request):
 		"error_message" : "UNAUTHORIZED"
  
 	}
+
+@login_required
+def api_available(request):
+	if request.method == 'POST':
+		date = datetime.datetime.strptime(request.POST.get('date'),'%m/%d/%Y')
+		
+		faculty_on_leave = [x.leave_taken_by.id for x in Leave.objects.filter(leave_start_date__lte = date,leave_end_date__gte = date,approved_status = True)]
+		faculty_on_od = [x.taken_by.id for x in OD.objects.filter(from_date__lte = date,to_date__gte = date,approved_status = True)]
+		
+		available_faculty = User.objects.exclude(pk__in = (faculty_on_leave+faculty_on_od))
+
+
+
+		available_faculty_json = serializers.serialize("json",available_faculty)
+
+		return HttpResponse(available_faculty_json)
+
+	faculty_on_leave = [x.leave_taken_by.id for x in Leave.objects.filter(leave_start_date__lte = datetime.datetime.now(),leave_end_date__gte = datetime.datetime.now()).exclude(approved_status = False)]
+	faculty_on_od = [x.taken_by.id for x in OD.objects.filter(from_date__lte = datetime.datetime.now(),to_date__gte = datetime.datetime.now()).exclude(approved_status = False)]
+	
+	available_faculty = User.objects.exclude(pk__in = (faculty_on_leave+faculty_on_od))
+
+	context_data = {
+		"available_faculty" : available_faculty,
+	}
+	# print()
+	return render(request,"faculty/api_available_faculty.html",context_data)

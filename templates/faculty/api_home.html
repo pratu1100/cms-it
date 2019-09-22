@@ -1,26 +1,51 @@
 {% extends '../base.html' %}
 {% load static %}
+{% block nav-content %}
+<li class="nav-item" role="presentation">
+    <a class="nav-link pr-3" href="{% url 'api_home' %}" style="color: white;">API</a>
+</li>
+{% endblock %}
 
 {% block content %}
 	<main>
-		<input id="page_loaded" value="faculty_home" style="display: none;">
+		<input id="page_loaded" value="faculty_api_home" style="display: none;">
 
 		<div class="row mt-3 ml-2 mr-2">
-					<div class="col-sm-12 col-md-4">
-					
-						<div class="card shadow mb-3">
-							<div class="card-header bg-secondary">
-								<div class="float-left"><strong>Get free rooms</strong></div>
-								<div class="float-right"><strong>API</strong></div>
-							</div>
-							<div class="card-body">
-								<h5 class="float-left">
-									<a href="{% url 'api_free_rooms' %}">Request</a>
-								</h5>	
-							</div>
-						</div>	
-					</div>	
-			                        
+			<div class="col-sm-12 col-md-4">
+			
+				<div class="card shadow mb-3">
+					<div class="card-header bg-secondary">
+						<div class="float-left"><strong>Get free rooms</strong></div>
+						<div class="float-right"><strong>API</strong></div>
+					</div>
+					<div class="card-body">
+						<a href="{% url 'api_free_rooms' %}">
+						<h5 class="text-center">
+							Request
+						</h5>
+						</a>	
+					</div>
+				</div>	
+			</div>	
+			<div class="col-sm-12 col-md-4">
+			
+				<div class="card shadow mb-3">
+					<div class="card-header bg-secondary">
+						<div class="float-left"><strong>Available staff and faculty</strong></div>
+						<div class="float-right"><strong>API</strong></div>
+					</div>
+					<div class="card-body">
+						<a href="{% url 'api_available' %}">
+						<h5 class="text-center">
+							Request
+						</h5>
+						</a>	
+					</div>
+				</div>	
+			</div>	
+	                        
+		</div>
+	                        
 		</div>
 	</main>
 
