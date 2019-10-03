@@ -5,6 +5,12 @@ from . import views
 from django.conf.urls.static import static
 from django.conf import settings 
 
+# from django.contrib import admin
+
+admin.site.site_header = 'CMS administration'                    # default: "Django Administration"
+# admin.site.index_title = 'Features area'                 # default: "Site administration"
+admin.site.site_title = 'CMS' # default: "Django site admin"
+
 urlpatterns = [
 	path('jet/',include('jet.urls')),
 	path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),

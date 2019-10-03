@@ -23,8 +23,8 @@ admin.site.register(Batch,BatchAdmin)
 
 
 admin.site.register(Lecture,LectureAdmin)
-admin.site.register(DaysOfWeek)
-admin.site.register(TimeSlot)
+# admin.site.register(DaysOfWeek)
+# admin.site.register(TimeSlot)
 
 admin.site.register(Subject)
 
@@ -68,4 +68,4 @@ class ODAdmin(admin.ModelAdmin):
 	list_display_links = ('od_title',)
 
 admin.site.register(OD,ODAdmin)
-# admin.site.register(LeaveType)
+# admin.site.register(LeaveType)	

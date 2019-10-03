@@ -92,8 +92,9 @@ def events(request):
 					event_details = {
 						'eventName' : reservation.purpose + " (" + reservation.start_time.strftime('%I:%M %p') +" to "+ reservation.end_time.strftime('%I:%M %p') + ")",
 						'calendar' : 'Other',
-						'color' : 'green',
-						'date' : date.strftime('%d/%m/%Y')
+						'color' : 'green' if reservation.approved_status else 'orange',
+						'date' : date.strftime('%d/%m/%Y'),
+						'calendar' : 'Accepted' if reservation.approved_status else 'Pending',
 					}
 					events.append(event_details)
 				# { eventName: 'IOT Seminar', calendar: 'Other', color: 'green', date: '15/08/2019'}
