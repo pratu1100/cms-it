@@ -43,3 +43,11 @@ input[type=time]::-webkit-outer-spin-button {
   -webkit-appearance: none; 
   margin: 0; 
 }
+
+#content{
+  background: linear-gradient(rgba(255,255,255,.95), rgba(255,255,255,.95)),url(somaiyavv.png) no-repeat center;
+  background-size: 300px;
+  /*opacity: 0.5;*/
+  /*z-index: -1;*/
+  /*-webkit-filter: grayscale(100%);*/
+}
