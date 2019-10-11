@@ -104,7 +104,12 @@
             <i class="fas fa-sign-out-alt mr-2"></i> Logout
           </a>
         </li>
-        <li id="faculty_api_home" class="d-none">
+        <li>
+          <a href="{% url 'change_password' %}">
+            <i class="fas fa-sign-out-alt mr-2"></i> Change Password
+          </a>
+        </li>
+        <li id="faculty_api_home">
           <a href="{% url 'api_home' %}">
             <i class="fas fa-exchange-alt mr-2"></i> API
           </a>

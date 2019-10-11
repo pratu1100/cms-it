@@ -778,6 +778,7 @@ def send_email(request):
 		subject = 'Test Mail'
 		message = 'This is a test mail from admin'
 		email_from = settings.EMAIL_HOST_USER
+		# print(email_from)
 		recipient_list = ['harshal.pm@somaiya.edu',]
 		html_content = render_to_string('email/loadShift_notification.html', {'varname':'value'}) # render with dynamic value
 		text_content = strip_tags(html_content)
@@ -786,8 +787,8 @@ def send_email(request):
 		msg.attach_alternative(html_content, "text/html")
 
 		msg.send()
-		# return render(request,'email/loadshift.html',{})
-		return HttpResponse("Success")
+		return render(request,'email/loadShift_notification.html',{})
+		# return HttpResponse("Success")
 	html_error_data = {
 		"error_code" : "401",
 		"error_message" : "UNAUTHORIZED"
@@ -797,14 +798,14 @@ def send_email(request):
 
 @login_required
 def api_home(request):
-	if not request.user.is_superuser and not request.user.is_staff:
-		return render(request,"faculty/api_home.html")
+	
+	return render(request,"faculty/api_home.html")
 
-	html_error_data = {
-		"error_code" : "401",
-		"error_message" : "UNAUTHORIZED"
-	}
-	return render(request,"error.html",html_error_data)
+	# html_error_data = {
+	# 	"error_code" : "401",
+	# 	"error_message" : "UNAUTHORIZED"
+	# }
+	# return render(request,"error.html",html_error_data)
 
 @login_required
 def api_free_rooms(request):

@@ -4,7 +4,7 @@ from django.urls import path, include
 from . import views 
 from django.conf.urls.static import static
 from django.conf import settings 
-
+# from django.contrib.auth.views import login
 # from django.contrib import admin
 
 admin.site.site_header = 'CMS administration'                    # default: "Django Administration"
@@ -20,5 +20,6 @@ urlpatterns = [
     path('faculty/', include('faculty.urls')),
     path('hod/', include('hod.urls')),
     path('assistant/',include('labassistant.urls')),
-    path('guest/',include('guest.urls'))
+    path('guest/',include('guest.urls')),
+    path('password/change',views.change_password,name="change_password")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
