@@ -46,7 +46,7 @@ def get_leaves(request):
 				
 				msg.send()
 				
-				leave.approved_status = False;
+				leave.approved_status = False
 				leave.save()
 				
 			elif '_approve' in request.POST:
