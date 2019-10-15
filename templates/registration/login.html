@@ -3,62 +3,61 @@
 {% load static %}
 
 {% block logincontent %}
-  <main>
-    <section class="section section-shaped section-lg" style="padding-top: 1rem;">
-      <div class="container pt-lg-md">
-        <div class="row justify-content-center">
-          <div class="col-lg-5">
-            <div class="card bg-secondary shadow">
-              <div class="card-header bg-secondary pb-5 text-center" style="border: none;">
-                <!-- <p class="h3 mb-4 mt-3 text-dark font-weight-bold">Login as a Faculty</p> -->
-                <!-- Change in this div only -->
-                <div class="key-image mt-3">
-                	<img src="{% static 'images/key-icon.png' %}" alt="">
-                </div>
-              </div>
-              <div class="card-body px-lg-5 py-lg-2">
-                <form role="form" method="POST" action="{% url 'login' %}">
-                  {% if form.non_field_errors %}
-                    <div class='mb-3 form-errors text-center'>
-                    {% for error in form.non_field_errors %}
-                      <p class="text-danger text-uppercase font-weight-bold">{{ error }}</p>
-                    {% endfor %}
-                    </div>
-                  {% endif %}
-                  {% csrf_token %}
-
-                  <div class="form-group mb-3">
-                    <div class="input-group input-group-alternative">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
-                      </div><input class="form-control text-dark font-weight-bold pl-3" type="text" placeholder="Username" name="username" />
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <div class="input-group input-group-alternative">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
-                      </div><input class="form-control text-dark font-weight-bold pl-3" placeholder="Password" type="password" name="password" />
-                    </div>
-                  </div>
-                  <div class="text-center">
-                    <button type="submit" name="btn_login" class="btn btn-block my-4 text-white" style="background-color: #2f89fc;">Login</button>
-                  </div>
-                </form>
-                <div class="text-center">
-                    <a href="{% url 'guest_index' %}" class="btn btn-block bg-danger my-4 text-white">Login as Guest</a>
-                  </div>
-                </form>
-                <div class="text-center mb-3">
-                 <small class="forgot_password"><a href="{% url 'password_reset' %}">Forgot Password?</a></small>
-                </div>
-              </div>
-            </div>
+<link rel="stylesheet" href="{% static 'css/login/login.css' %}">
+<div class="signupform">
+    <div class="container">
+      <!-- main content -->
+      <div class="agile_info">
+        <div class="w3l_form">
+          <div class="left_grid_info">
+            <h1>Manage Your CMS-Somaiya Account</h1>
+            <p>It is a tool to simplify the day-to-day activities of faculty members, assistant and HOD</p>
+            <img src="{% static 'images/logo.jpg' %}" alt="" />
           </div>
-          
         </div>
-
+        <div class="w3_info">
+          <h2>Welcome to CMS Somaiya</h2>
+          <p>Enter your details to login.</p>
+          <form method="POST" action="{% url 'login' %}">
+              {% csrf_token %}
+              <div class="form-group mb-3">
+                  <div class="input-group input-group-alternative">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                    </div><input class="form-control text-dark font-weight-bold pl-3" type="text" placeholder="Username" name="username" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="input-group input-group-alternative">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                    </div><input class="form-control text-dark font-weight-bold pl-3" placeholder="Password" type="password" name="password" />
+                  </div>
+                </div>
+            				
+              <button class="btn btn-success btn-block" name="btn_login" type="submit">Login</button>
+              <div class="text-center">
+                  <a href="{% url 'guest_index' %}" class="btn btn-primary btn-block my-4 text-white">Login as Guest</a>
+                </div>
+              
+                <div class="text-center mb-3">
+                    <small class="forgot_password"><a href="{% url 'password_reset' %}" class="text-underline text-dark">Forgot Password?</a></small>
+                   </div>
+                
+              {% if form.non_field_errors %}
+              <div class='mb-3 form-errors text-center'>
+              {% for error in form.non_field_errors %}
+                <p class="text-danger text-uppercase font-weight-bold">{{ error }}</p>
+              {% endfor %}
+              </div>
+            {% endif %}
+          </form>
+        </div>
       </div>
-    </section>
-  </main>
+      <!-- //main content -->
+    </div>
+    <!-- footer -->
+    
+    <!-- footer -->
+  </div>  
 {% endblock %}
