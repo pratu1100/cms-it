@@ -53,6 +53,7 @@
 
 </head>
 <body>
+	{% if user.is_authenticated %}
 	<div class="wrapper">
 		{% if user.is_authenticated %}
 			{% include './includes/sidebar.html' %}
@@ -94,8 +95,7 @@
 					</div>
 				</div>
 			</nav>
-			{% block logincontent %}
-			{% endblock %}
+			
 
 			{% if user.is_authenticated %}
 				{% block content %}
@@ -103,6 +103,10 @@
 			{% endif %}
 		</div>
 	</div>
+	{% else %}
+		{% block logincontent %}
+		{% endblock %}
+	{% endif %}
 
 	<script type="text/javascript">
         $(document).ready(function () {

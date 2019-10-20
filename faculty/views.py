@@ -623,6 +623,16 @@ def post_ia_arrangement(request):
 						mapping = IaBatchRoomMapping(ia= ia,batch = batch,room=batch_room,supervisor= batch_supervisor)
 						mapping.full_clean()
 						mapping.save()
+
+						subject = "New IA has been scheduled for TY"
+						recipients = ['ty_it_a@yopmail.com', 'ty_it_b@yopmail.com']
+
+						message_data = {
+							# 'ia': 
+						}
+
+						send_emails(request, recipients, subject, message_data, 'email/ia_notification.html')
+
 					except Exception as e:
 						context_data = {
 							"errors" : e
@@ -938,3 +948,11 @@ def api_available(request):
 	}
 	# print()
 	return render(request,"faculty/api_available_faculty.html",context_data)
+
+def send_emails(request, recipients, subject, message_data, template_name):
+	email_from = settings.EMAIL_HOST_USER
+	html_content = render_to_string(template_name, message_data, request)
+	text_content = strip_tags(html_content)
+	msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+	msg.attach_alternative(html_content, "text/html")
+	msg.send()
