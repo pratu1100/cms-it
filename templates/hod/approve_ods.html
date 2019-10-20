@@ -43,6 +43,8 @@
                                             <p class="h5 text-center">{{ od.od_title }}</p>
                                             <p class="h5 text-center"><small>{{ od.od_type }}</small></p>
                                             <p class="h5 text-center">{{ od.od_details }}</p>
+                                            <p class="h6 text-center"><b>Applied by : </b>{{ od.taken_by }}</p>
+                                            <hr>
                                             <div class="row text-center">
                                                 {% if od.supporting_organisation %}
                                                 <div class="col-sm-6">
@@ -69,6 +71,7 @@
                                             {% if od.scope %}
                                                 <p class="h6 text-center"><b>Scope: </b>{{ od.scope }}</p>
                                             {% endif %} 
+                                            <hr>
                                             {% if od.correspondence %}
                                             <div class="text-center">
                                                 <a href="{{ od.correspondence.url }}" class="btn btn-lg btn-secondary text-dark" target="__blank">
