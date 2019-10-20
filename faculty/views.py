@@ -119,7 +119,7 @@ def submit_leave(request):
 					# date_of_adjusting_lec = date
 					adjust_opts[(lec,date)] = faculty_list_for_adjusting_lec 
 
-			subject = 'New Load Shift request'
+			subject = 'Leave Request'
 			# message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
 			message_data = {
 				'leave' : new_leave[0],
@@ -135,7 +135,7 @@ def submit_leave(request):
 			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 			msg.attach_alternative(html_content, "text/html")
 							# print(l[0].for_lecture)
-			# msg.send()
+			msg.send()
 			# return render(request,'email/faculty/leave_scheduled.html', message_data)
 
 			#---------------------------------TO HOD-------------------------------------
@@ -387,18 +387,6 @@ def post_makeup(request):
 	}
 	return render(request,"error.html",html_error_data)
 
-
-# def get_subjects(request,yid):
-	# print("request")
-# 	try:
-# 		year = Year.objects.get(pk = yid)
-# 		subjects = Subject.objects.filter(year = year)
-		# print(subjects)
-# 	except:
-
-
-# 	return HttpResponse("<h1>Test</h1>")
-
 @login_required
 def get_timeslots(request,syear,sdate):
 	# print(syear)
@@ -509,7 +497,6 @@ def makeup_timeslots_api(request,syear,sdiv,sdate):
 		"error_message" : "UNAUTHORIZED"
 	}
 	return render(request,"error.html",html_error_data)
-
 
 @login_required
 def get_available_rooms(request,sdate,slot):
@@ -668,7 +655,6 @@ def guestlecture(request):
 	}
 	return render(request,"error.html",html_error_data)
 
-
 @login_required
 def guestlecture_schedule(request):
 	if not request.user.is_superuser and not request.user.is_staff:
@@ -730,15 +716,6 @@ def submit_od(request):
 			fees = request.POST.get('fees')
 			# print(request.FILES)
 			taken_by = request.user
-			# with default_storage.open('od/correspondence/'+correspondence_filename,'wb+') as destination:
-			# 	for chunk in correspondence_file.chunks():
-			# 		destination.write(chunk)
-
-			# print(settings.MEDIA_ROOT)
-
-			# # file = open(correspondence_file)
-			# path = os.path.join(settings.MEDIA_ROOT,'od','correspondence',correspondence_filename)
-			# file = open(path,'wb+')
 
 			scope = request.POST.get('scope')
 
@@ -770,6 +747,38 @@ def submit_od(request):
 					adjust_opts[(lec,date)] = faculty_list_for_adjusting_lec 
 
 			# print(adjust_opts)
+			subject = 'OD Request'
+			# message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
+			message_data = {
+				'od' : new_od[0],
+			}
+			# ---------------------------------TO FACULTY -------------------------------
+			email_from = settings.EMAIL_HOST_USER
+			recipient_list = []
+			recipient_list.append(new_od[0].taken_by.email)
+			html_content = render_to_string('email/faculty/leave_scheduled.html', message_data,request) # render with dynamic value
+			text_content = strip_tags(html_content)
+
+			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+			msg.attach_alternative(html_content, "text/html")
+							# print(l[0].for_lecture)
+			msg.send()
+			# return render(request,'email/faculty/od_scheduled.html', message_data)
+
+			#---------------------------------TO HOD-------------------------------------
+			authority = User.objects.filter(is_superuser = True)[0]
+			message_data = {
+				'od' : new_od[0],
+				'authority' : authority,
+			}
+			recipient_list = []
+			recipient_list.append(authority.email)
+			html_content = render_to_string('email/hod/leave_request.html', message_data,request) # render with dynamic value
+			text_content = strip_tags(html_content)
+			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+			msg.attach_alternative(html_content, "text/html")
+			msg.send()
+			# return render(request,'email/hod/od_request.html', message_data)
 
 			context_data = {
 				"adjust_opts" : adjust_opts,
