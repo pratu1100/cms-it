@@ -116,12 +116,9 @@ def leave_history(request):
 				leave.save()
 			elif '_approve' in request.POST:
 				leave.approved_status = True
-				leave.save() 
+				leave.save() 		
 
-			subject = 'Leave Notification'
-					
-		
-
+			#-------------------TO REQUESTING FACULTY------------------- 
 			email_from = settings.EMAIL_HOST_USER
 			recipient_list = []
 			recipient_list.append(leave.leave_taken_by.email)
@@ -158,11 +155,28 @@ def get_ods(request):
 	if request.user.is_superuser:
 		if request.method == 'POST':
 			od = OD.objects.get(pk = request.POST.get('od_id'))
+			subject = 'OD Notification'			
+			message_data = {
+				'od' : od,
+			}
 			if '_reject' in request.POST:
 				od.delete()	
 			elif '_approve' in request.POST:
 				od.approved_status = True
 				od.save()
+
+			#-------------------TO REQUESTING FACULTY------------------- 
+			email_from = settings.EMAIL_HOST_USER
+			recipient_list = []
+			recipient_list.append(od.taken_by.email)
+			html_content = render_to_string('email/faculty/approve_od.html', message_data) # render with dynamic value
+			text_content = strip_tags(html_content)
+
+			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+			msg.attach_alternative(html_content, "text/html")
+			
+			msg.send()
+			# return render(request,'email/faculty/approve_od.html', message_data)
 		ods = OD.objects.filter(approved_status = None)
 		od_loads_pairs = list()
 		for od in ods:
