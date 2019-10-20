@@ -1,5 +1,7 @@
 {% extends '../base.html' %} 
 {% block content %}
+{% load faculty_filters %}
+
 <main>
 	<input id="page_loaded" value="approve_ods" style="display: none;">
 
@@ -28,7 +30,7 @@
                             <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 700px !important;">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalCenterTitle">{{ od.od_title }}</h5>
+                                <h5 class="modal-title" id="exampleModalCenterTitle">OD Details</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -38,25 +40,45 @@
                                             {% csrf_token %}
                                     <input type="hidden" name="od_id" value="{{ od.id }}">
                                         <div class="card-header bg-white">
-                                            <h4 class="card-title text-center font-weight-bold">{{ od.od_type }}</h4>
-                                            <h4 class="card-title text-center font-weight-bold">{{ od.od_title }}</h4>
-                                            <h6 class="card-title text-center font-weight-normal"><b>Applied by:</b> {{ od.taken_by }}</h6>
-                                            <div class="row">
-                                                <div class="col-md m-2 p-3 text-center">
-                                                    <p class="card-text font-weight-normal h6"><b>From Date : </b>{{ od.from_date }}</p>
-                                                    <p class="card-text font-weight-normal h6"><b>To Date : </b>{{ od.to_date }}</p>
-                                                </div>  
+                                            <p class="h5 text-center">{{ od.od_title }}</p>
+                                            <p class="h5 text-center"><small>{{ od.od_type }}</small></p>
+                                            <p class="h5 text-center">{{ od.od_details }}</p>
+                                            <div class="row text-center">
+                                                {% if od.supporting_organisation %}
+                                                <div class="col-sm-6">
+                                                    <p class="h6"><b>Supporting Organisation: </b><span class="text-uppercase">{{ od.supporting_organisation }}</span></p>
+                                                </div>
+                                                {% endif %}
+                                                {% if od.last_date %}
+                                                <div class="col-sm-6">
+                                                    <p class="h6"><b>Last Date: </b>{{ od.last_date|date }}</p>
+                                                </div>
+                                                {% endif %}
                                             </div>
-                                            <div>
-                                        <p class="card-text text-center font-weight-normal h6"><b>Organisation : </b>{{ od.od_details }}</p>
-                                        <p class="card-text text-center font-weight-normal h6"><b>Supporting Organisation : </b>{{ od.supporting_organisation }}</p>
-                                        <p class="card-text text-center font-weight-normal h6"><b>Last : </b> {{ od.last_date }}</p>
-                                        <p class="card-text text-center font-weight-normal h6"><b>Fees : </b> {{ od.fees }}</p>
-                                        <p class="card-text text-center font-weight-normal h6"><b>Scope : </b> {{ od.scope }}</p>
-                                        {% if od.correspondence %}
-                                        <p class="card-text text-center font-weight-normal h6" ><a href="{{ od.correspondence.url }}" target="__blank" style="color: #3351ff !important;">{{ od.correspondence.name }}</a></p>
-                                        {% endif %}
+                                            <div class="row text-center">
+                                                <div class="col-sm-6">
+                                                    <p class="h6"><b>From: </b>{{ od.from_date|date }}</p>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <p class="h6"><b>To: </b>{{ od.to_date|date }}</p>
+                                                </div>
                                             </div>
+                                            {% if od.fees %}
+                                                <p class="h6 text-center"><b>Fees: </b>{{ od.fees }}</p>
+                                            {% endif %}
+                                            {% if od.scope %}
+                                                <p class="h6 text-center"><b>Scope: </b>{{ od.scope }}</p>
+                                            {% endif %} 
+                                            {% if od.correspondence %}
+                                            <div class="text-center">
+                                                <a href="{{ od.correspondence.url }}" class="btn btn-lg btn-secondary text-dark" target="__blank">
+                                                    <span class="input-group-addon"><i class="fa fa-file fa-fw"></i></span>
+                                                    {% with od.correspondence.name|split:"/" as fname %}
+                                                        {{ fname|last }}
+                                                    {% endwith %}
+                                                </a>
+                                            </div>
+                                            {% endif %}
                                         
                                         </div>
                                         {% if loads %}
