@@ -51,6 +51,16 @@
             <i class="fas fa-clipboard-list mr-2"></i> Leave History
           </a>
       </li>
+      <li id="faculty_api_home">
+          <a href="{% url 'api_home' %}">
+            <i class="fas fa-exchange-alt mr-2"></i> API
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'change_password' %}">
+            <i class="fas fa-sign-out-alt mr-2"></i> Change Password
+          </a>
+        </li>
         <li>
           <a href="{% url 'logout' %}">
             <i class="fas fa-sign-out-alt mr-2"></i> Logout
@@ -99,9 +109,9 @@
             <i class="fas fa-trophy mr-2"></i> OD
           </a>
         </li>
-        <li>
-          <a href="{% url 'logout' %}">
-            <i class="fas fa-sign-out-alt mr-2"></i> Logout
+        <li id="faculty_api_home">
+          <a href="{% url 'api_home' %}">
+            <i class="fas fa-exchange-alt mr-2"></i> API
           </a>
         </li>
         <li>
@@ -109,9 +119,9 @@
             <i class="fas fa-sign-out-alt mr-2"></i> Change Password
           </a>
         </li>
-        <li id="faculty_api_home">
-          <a href="{% url 'api_home' %}">
-            <i class="fas fa-exchange-alt mr-2"></i> API
+        <li>
+          <a href="{% url 'logout' %}">
+            <i class="fas fa-sign-out-alt mr-2"></i> Logout
           </a>
         </li>
 

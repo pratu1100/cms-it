@@ -27,48 +27,45 @@ def get_leaves(request):
 	if request.user.is_superuser:
 		if request.method == 'POST':
 			leave = Leave.objects.get(pk = request.POST.get('leave_id'))
+			# default duration
+			duration = 'full' 
+			if(leave.leave_start_time.strftime("%H:%M") == '10:30' and leave.leave_end_time.strftime("%H:%M") == '17:15'):
+				duration = 'full'
+			elif(leave.leave_start_time.strftime("%H:%M") == '10:30' and leave.leave_end_time.strftime("%H:%M") == '13:15'):
+				duration = 'first_half'
+			elif(leave.leave_start_time.strftime("%H:%M") == '13:15' and leave.leave_end_time.strftime("%H:%M") == '17:15'):
+				duration = 'second_half'
+			else:
+				duration = leave.leave_start_time.strftime("%H:%M") + " TO " + leave.leave_end_time.strftime("%H:%M")
+			
+			subject = 'Leave Notification'			
+			message_data = {
+				'leave' : leave,
+				'duration' : duration
+			}
+			
 			if '_reject' in request.POST:
-
-				subject = 'Leave Notification'
-						
-				message_data = {
-					'leave' : leave,
-				}
-
-				email_from = settings.EMAIL_HOST_USER
-				recipient_list = []
-				recipient_list.append(leave.leave_taken_by.email)
-				html_content = render_to_string('email/approve_notification.html', message_data) # render with dynamic value
-				text_content = strip_tags(html_content)
-
-				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
-				msg.attach_alternative(html_content, "text/html")
-				
-				msg.send()
-				
 				leave.approved_status = False;
 				leave.save()
-				
 			elif '_approve' in request.POST:
 				leave.approved_status = True
 				leave.save() 
 
-				subject = 'Leave Notification'
-						
-				message_data = {
-					'leave' : leave,
-				}
+			subject = 'Leave Notification'
+					
+		
 
-				email_from = settings.EMAIL_HOST_USER
-				recipient_list = []
-				recipient_list.append(leave.leave_taken_by.email)
-				html_content = render_to_string('email/approve_notification.html', message_data) # render with dynamic value
-				text_content = strip_tags(html_content)
+			email_from = settings.EMAIL_HOST_USER
+			recipient_list = []
+			recipient_list.append(leave.leave_taken_by.email)
+			html_content = render_to_string('email/faculty/approve_leave.html', message_data) # render with dynamic value
+			text_content = strip_tags(html_content)
 
-				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
-				msg.attach_alternative(html_content, "text/html")
-				
-				msg.send()
+			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+			msg.attach_alternative(html_content, "text/html")
+			
+			msg.send()
+			# return render(request,'email/faculty/approve_leave.html', message_data)
 
 		leaves = Leave.objects.filter(approved_status = None)
 		leave_loads_pairs = list()
@@ -97,48 +94,45 @@ def leave_history(request):
 	if request.user.is_superuser:
 		if request.method == 'POST':
 			leave = Leave.objects.get(pk = request.POST.get('leave_id'))
+			# default duration
+			duration = 'full' 
+			if(leave.leave_start_time.strftime("%H:%M") == '10:30' and leave.leave_end_time.strftime("%H:%M") == '17:15'):
+				duration = 'full'
+			elif(leave.leave_start_time.strftime("%H:%M") == '10:30' and leave.leave_end_time.strftime("%H:%M") == '13:15'):
+				duration = 'first_half'
+			elif(leave.leave_start_time.strftime("%H:%M") == '13:15' and leave.leave_end_time.strftime("%H:%M") == '17:15'):
+				duration = 'second_half'
+			else:
+				duration = leave.leave_start_time.strftime("%H:%M") + " TO " + leave.leave_end_time.strftime("%H:%M")
+			
+			subject = 'Leave Notification'			
+			message_data = {
+				'leave' : leave,
+				'duration' : duration
+			}
+			
 			if '_reject' in request.POST:
-
-				subject = 'Leave Notification'
-						
-				message_data = {
-					'leave' : leave,
-				}
-
-				email_from = settings.EMAIL_HOST_USER
-				recipient_list = []
-				recipient_list.append(leave.leave_taken_by.email)
-				html_content = render_to_string('email/approve_notification.html', message_data) # render with dynamic value
-				text_content = strip_tags(html_content)
-
-				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
-				msg.attach_alternative(html_content, "text/html")
-				
-				msg.send()
-				
 				leave.approved_status = False;
 				leave.save()
-				
 			elif '_approve' in request.POST:
 				leave.approved_status = True
 				leave.save() 
 
-				subject = 'Leave Notification'
-						
-				message_data = {
-					'leave' : leave,
-				}
+			subject = 'Leave Notification'
+					
+		
 
-				email_from = settings.EMAIL_HOST_USER
-				recipient_list = []
-				recipient_list.append(leave.leave_taken_by.email)
-				html_content = render_to_string('email/approve_notification.html', message_data) # render with dynamic value
-				text_content = strip_tags(html_content)
+			email_from = settings.EMAIL_HOST_USER
+			recipient_list = []
+			recipient_list.append(leave.leave_taken_by.email)
+			html_content = render_to_string('email/faculty/approve_leave.html', message_data) # render with dynamic value
+			text_content = strip_tags(html_content)
 
-				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
-				msg.attach_alternative(html_content, "text/html")
-				
-				msg.send()
+			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+			msg.attach_alternative(html_content, "text/html")
+			
+			msg.send()
+			# return render(request,'email/faculty/approve_leave.html', message_data)
 		leaves = Leave.objects.exclude(approved_status = None)
 		leave_loads_pairs = list()
 		for leave in leaves:

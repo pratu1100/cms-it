@@ -119,6 +119,42 @@ def submit_leave(request):
 					# date_of_adjusting_lec = date
 					adjust_opts[(lec,date)] = faculty_list_for_adjusting_lec 
 
+			subject = 'New Load Shift request'
+			# message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
+			message_data = {
+				'leave' : new_leave[0],
+				'duration' : duration,
+			}
+			# ---------------------------------TO FACULTY -------------------------------
+			email_from = settings.EMAIL_HOST_USER
+			recipient_list = []
+			recipient_list.append(new_leave[0].leave_taken_by.email)
+			html_content = render_to_string('email/faculty/leave_scheduled.html', message_data,request) # render with dynamic value
+			text_content = strip_tags(html_content)
+
+			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+			msg.attach_alternative(html_content, "text/html")
+							# print(l[0].for_lecture)
+			# msg.send()
+			# return render(request,'email/faculty/leave_scheduled.html', message_data)
+
+			#---------------------------------TO HOD-------------------------------------
+			authority = User.objects.filter(is_superuser = True)[0]
+			message_data = {
+				'leave' : new_leave[0],
+				'duration' : duration,
+				'authority' : authority,
+			}
+			recipient_list = []
+			recipient_list.append(authority.email)
+			html_content = render_to_string('email/hod/leave_request.html', message_data,request) # render with dynamic value
+			text_content = strip_tags(html_content)
+			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+			msg.attach_alternative(html_content, "text/html")
+			msg.send()
+			# return render(request,'email/hod/leave_request.html', message_data)
+
+
 			context_data = {
 				"adjust_opts" : adjust_opts,
 				"leave" : new_leave[0]
@@ -165,16 +201,16 @@ def submit_load_shift(request):
 	if not request.user.is_superuser and not request.user.is_staff:
 		user = User.objects.get(pk = request.user.id)
 		if request.method == 'POST':
-			print(request.POST)
+			# print(request.POST)
 			if(request.POST.get('leave_id')):
 				leave = Leave.objects.get(pk = request.POST.get('leave_id'))
-				print(leave)
+				# print(leave)
 				if('_apply' in request.POST):
-					print(request.POST.getlist('lecture_id'))
+					# print(request.POST.getlist('lecture_id'))
 					if(request.POST.getlist('lecture_id')):
 						for lec_id in request.POST.getlist('lecture_id'):
 							lec = Lecture.objects.get(pk = lec_id)
-							print(lec)
+							# print(lec)
 							granted_to = list()
 							for x in request.POST.getlist(str(lec.id)):
 								granted_to.append(User.objects.get(pk = x))
@@ -186,25 +222,27 @@ def submit_load_shift(request):
 							# Email notificaion
 
 							subject = 'New Load Shift request'
-							message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
-
-							message_data = {
-								'loadshift' : l[0],
-							}
+							# message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
 
 							email_from = settings.EMAIL_HOST_USER
-							recipient_list = []
+							
 							for faculty in granted_to:
-								print(faculty.id)
-								recipient_list.append(faculty.email)
-							html_content = render_to_string('email/loadshift_notification.html', message_data,request) # render with dynamic value
-							text_content = strip_tags(html_content)
 
-							msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
-							msg.attach_alternative(html_content, "text/html")
-							# print(l[0].for_lecture)
-							msg.send()
-							# return render(request,'email/loadShift_notification.html', message_data)
+								message_data = {
+									'loadshift' : l[0],
+									'granted_to' : faculty
+								}
+								recipient_list = []
+								# print(faculty.id)
+								recipient_list.append(faculty.email)
+								html_content = render_to_string('email/faculty/loadshift_notification.html', message_data,request) # render with dynamic value
+								text_content = strip_tags(html_content)
+
+								msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+								msg.attach_alternative(html_content, "text/html")
+								# print(l[0].for_lecture)
+								msg.send()
+								# return render(request,'email/faculty/loadShift_notification.html', message_data)
 						context_data = {
 							"success" : True,
 						}
@@ -247,6 +285,32 @@ def view_load_shifts(request):
 				load_shift.approved_status = True
 				load_shift.to_faculty.set((request.user,))
 				load_shift.save()
+
+				subject = 'Loadshift accecpted'
+				# message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
+
+				email_from = settings.EMAIL_HOST_USER
+				
+
+				message_data = {
+					'loadshift' : load_shift,
+					'accecpted_by' : request.user
+				}
+				recipient_list = []
+				# print(faculty.id)
+				if(load_shift.leave):
+					recipient_list.append(load_shift.leave.leave_taken_by)
+				else:
+					recipient_list.append(load_shift.od.taken_by)
+				html_content = render_to_string('email/faculty/loadshift_accept.html', message_data,request) # render with dynamic value
+				text_content = strip_tags(html_content)
+
+				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+				msg.attach_alternative(html_content, "text/html")
+				# print(l[0].for_lecture)
+				msg.send()
+				# return render(request,'email/faculty/loadshift_accept.html', message_data)
+
 
 		# user = User.objects.get(pk = request.user.id)
 		load_shifts = LoadShift.objects.filter(to_faculty = request.user)
