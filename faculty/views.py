@@ -642,10 +642,15 @@ def guestlecture(request):
 	if not request.user.is_superuser and not request.user.is_staff:
 		years = Year.objects.all()
 		subjects = Subject.objects.all()
+		timeslots = TimeSlot.objects.annotate(
+	    diff=ExpressionWrapper(F('end_time') - F('start_time'), output_field=DurationField())
+		).filter(diff__lte= datetime.timedelta(hours = 2))
 
 		context_data = {
 			"years" : years,
-			"subjects" : subjects
+			"subjects" : subjects,
+			"timeslots" : timeslots
+
 		}
 
 		return render(request,"faculty/guestlecture.html",context_data)
@@ -660,14 +665,22 @@ def guestlecture_schedule(request):
 	if not request.user.is_superuser and not request.user.is_staff:
 		if(request.method == 'POST'):
 			# print(request.POST)
+			title = None
+			subject = None
 			year = Year.objects.get(pk = int(request.POST.get('year')))
-			subject = Subject.objects.get(pk = int(request.POST.get('subject')))
+			if(request.POST.get('subject') == '0'):
+				title = request.POST.get('title')
+			else:
+				subject = Subject.objects.get(pk = int(request.POST.get('subject')))
 			date = datetime.datetime.strptime(request.POST.get('guestlec_date'),'%m/%d/%Y')
 			timeslot = TimeSlot.objects.get(pk = int(request.POST.get('timeslot')))
 			room = Room.objects.get(pk = int(request.POST.get('locations')))
 
 			try:
-				guest_lecture = GuestLecture(lec_year = year, lec_subject = subject,lec_date = date,lec_time = timeslot,lec_in = room)
+				if(subject):
+					guest_lecture = GuestLecture(lec_year = year, lec_subject = subject,lec_date = date,lec_time = timeslot,lec_in = room)
+				else:
+					guest_lecture = GuestLecture(lec_year = year, title = title,lec_date = date,lec_time = timeslot,lec_in = room)
 				guest_lecture.full_clean()
 				# print(guest_lecture)
 				guest_lecture.save()

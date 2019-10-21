@@ -150,7 +150,8 @@ class IaBatchRoomMapping(models.Model):
 class GuestLecture(models.Model):
 	lec_year = models.ForeignKey(Year,on_delete = models.CASCADE)
 	lec_date = models.DateField(auto_now = False,auto_now_add = False)
-	lec_subject = models.ForeignKey(Subject,on_delete = models.CASCADE)
+	lec_subject = models.ForeignKey(Subject,on_delete = models.CASCADE,null = True,blank = True)
+	title = models.TextField(max_length=255,null=True,blank=True)
 	lec_time = models.ForeignKey(TimeSlot,on_delete = models.CASCADE)
 	lec_in = models.ForeignKey(Room,on_delete = models.CASCADE,null = True)
 

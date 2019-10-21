@@ -58,7 +58,7 @@ class IaBatchRoomMappingAdmin(admin.ModelAdmin):
 admin.site.register(IaBatchRoomMapping,IaBatchRoomMappingAdmin)
 
 class GuestLectureAdmin(admin.ModelAdmin):
-	list_display = ('lec_subject','lec_date','lec_time','lec_year','lec_in')
+	list_display = ('lec_subject','lec_date','lec_time','lec_year','lec_in','title')
 	list_display_links = ('lec_subject',)
 
 admin.site.register(GuestLecture,GuestLectureAdmin)

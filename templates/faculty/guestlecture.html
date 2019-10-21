@@ -31,7 +31,7 @@
                         <p class="d-block font-weight-bold mb-3 mt-4 ml-2 text-dark">Schedule Expert lecture</p>
                     </div>
 
-                    <div class="row">
+                    <div class="row" id="yearsubdiv">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <small class="d-block font-weight-bold mb-1 ml-2">Year</small>
@@ -104,48 +104,66 @@
         $(document).ready(function () {
             $('[name = year]').change(function () {
                 $('[name = subject]').empty();
+                $('[name = guestlec_date]').empty();
+                $('[name = timeslot]').empty();
+                $('[name = locations]').empty();
+                $('#otherdiv').remove()
+
                 var html = "<option value=-1 disabled selected>Select Subject</option>";
                 {% for subject in subjects %}
                     if ("{{ subject.year.id }}" == $(this).val()) {
                         html += "<option value={{ subject.id }}>{{ subject }}</option>"
                     }
                 {% endfor %}
+                html += "<option value=0>Other</option>"
                 $('[name=subject]').append(html);
             })
+            $('[name=subject]').change(function(){
+                if($(this).val() == 0){
+                    // alert("Enter Area of expertise")
+                    $('#yearsubdiv').append("<div class='col-md-6' id='otherdiv'><div class='form-group'><small class='d-block font-weight-bold mb-1 ml-2'>Title</small><input class='form-control form-control-alternative' placeholder='Enter title' type='text' name='title' required></div>");
+
+                }
+            })
             $('[name = guestlec_date]').change(function () {
+                $('[name = timeslot]').empty()
                 year = $('[name=year]').val()
                 d = new Date($(this).val())
                 // Timezone offset error correction
                 d.setDate(d.getDate() + 1);
                 date = d.toISOString().split('T')[0];
-                url_string = "{% url 'get_timeslots' 'year' 'sample' %}".replace('sample', date)
-                    .replace('year', year);
-                console.log(url_string)
-                $.ajax({
-                    url: url_string,
-                    success: function (text) {
-                        // $('#resp').empty();
-                        // $('#resp').append(text);
-                        $('[name = timeslot]').empty();
-                        // ts_json = text.split('$$')[0]
-                        // rooms_json = text.split('$$')[1]
-                        ts_result = $.parseJSON(text);
-                        console.log(ts_result);
+                // url_string = "{% url 'get_timeslots' 'year' 'sample' %}".replace('sample', date)
+                //     .replace('year', year);
+                // console.log(url_string)
+                // $.ajax({
+                //     url: url_string,
+                //     success: function (text) {
+                //         // $('#resp').empty();
+                //         // $('#resp').append(text);
+                //         $('[name = timeslot]').empty();
+                //         // ts_json = text.split('$$')[0]
+                //         // rooms_json = text.split('$$')[1]
+                //         ts_result = $.parseJSON(text);
+                //         console.log(ts_result);
                         var html = "<option value=-1 disabled selected>Select Timeslot</option>";
-                        for (i = 0; i < ts_result.length; i++) {
-                            slot_start = ts_result[i].fields.start_time.split(':')[0] +
-                                ":" + ts_result[i].fields
-                                .start_time.split(':')[1];
-                            slot_end = ts_result[i].fields.end_time.split(':')[0] + ":" +
-                                ts_result[i].fields.end_time
-                                .split(':')[1];
-                            html += "<option value=" + ts_result[i].pk + ">" + slot_start +
-                                " - " + slot_end +
-                                "</option>"
-                        }
-                        $('[name = timeslot]').append(html);
-                    }
-                });
+                //         for (i = 0; i < ts_result.length; i++) {
+                //             slot_start = ts_result[i].fields.start_time.split(':')[0] +
+                //                 ":" + ts_result[i].fields
+                //                 .start_time.split(':')[1];
+                //             slot_end = ts_result[i].fields.end_time.split(':')[0] + ":" +
+                //                 ts_result[i].fields.end_time
+                //                 .split(':')[1];
+                //             html += "<option value=" + ts_result[i].pk + ">" + slot_start +
+                //                 " - " + slot_end +
+                //                 "</option>"
+                //         }
+                //         $('[name = timeslot]').append(html);
+                //     }
+                // });
+                {% for timeslot in timeslots %}
+                    html+= "<option value ={{ timeslot.id }}>{{ timeslot }}</option>"
+                {% endfor %}
+                $('[name = timeslot]').append(html);
             })
             $('[name = timeslot]').change(function () {
                 $('[name = locations]').empty();
@@ -153,20 +171,28 @@
                 d.setDate(d.getDate() + 1);
                 date = d.toISOString().split('T')[0];
                 timeslot = $(this).val();
-                url_string = "{% url 'available_rooms' 'date' 'timeslot' %}".replace('timeslot',
-                    timeslot).replace(
-                    'date', date);
-                console.log(url_string)
+                url_string = "{% url 'api_free_rooms' %}"
+                // console.log(url_string)
+                $.ajaxSetup({
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                    });
                 $.ajax({
+                    type : 'POST',
                     url: url_string,
-                    success: function (text) {
-                        rooms_json = $.parseJSON(text);
-                        // console.log(rooms_json);
-                        var html = "<option value=-1 disabled selected>Select Room</option>";
-                        for (i = 0; i < rooms_json.length; i++) {
-                            html += "<option value=" + rooms_json[i].pk + ">" + rooms_json[
-                                i].fields.room + "</option>"
-                        }
+                    data : {
+                            'date' : d.toLocaleDateString(),
+                            'timeslot_id' : timeslot
+                        },
+                    success: function (response) {
+                        json_response = $.parseJSON(response)
+                        html = "<option value =-1>Please select</option>"
+                        // console.log(json_response)
+                        for(i=0;i<json_response.length;i++){
+                                // console.log(json_response[i].fields.room)
+                            html += "<option value ="+ json_response[i].pk +">"+json_response[i].fields.room+"</option>"
+                            } 
                         $('[name = locations]').append(html);
                     }
                 })
