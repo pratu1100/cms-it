@@ -1,5 +1,5 @@
 [client]
-database = cmsdb
-user = dbmasteruser
-password = balbasor
+database = cms-db
+user = harmanshal
+password = Password@123
 default-character-set = utf8

@@ -299,9 +299,9 @@ def view_load_shifts(request):
 				recipient_list = []
 				# print(faculty.id)
 				if(load_shift.leave):
-					recipient_list.append(load_shift.leave.leave_taken_by)
+					recipient_list.append(load_shift.leave.leave_taken_by.email)
 				else:
-					recipient_list.append(load_shift.od.taken_by)
+					recipient_list.append(load_shift.od.taken_by.email)
 				html_content = render_to_string('email/faculty/loadshift_accept.html', message_data,request) # render with dynamic value
 				text_content = strip_tags(html_content)
 
