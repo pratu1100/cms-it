@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 
 def index(request):
 	if(request.user.is_authenticated):
@@ -14,18 +15,22 @@ def index(request):
 	
 	return HttpResponseRedirect('/accounts/login')
 
-def change_password(request):
-    if request.method == 'POST':
-        form = PasswordChangeForm(request.user, request.POST)
-        if form.is_valid():
-            user = form.save()
-            update_session_auth_hash(request, user)
-            messages.success(request, 'Your password was successfully updated!')
-            return HttpResponse("success")
+def password_change(request):
+    if(request.method == 'POST'):
+        old_password = request.POST.get('current_password')
+        if(request.user.check_password(old_password)):
+            if(request.POST.get('new_password1')==request.POST.get('new_password2')):
+                request.user.set_password(request.POST.get('new_password1'))
+                request.user.save()
+
+                return JsonResponse({"success" : True})
+            else:
+                response =  JsonResponse({"error": "Your new passwords do not match."})
+                response.status_code = 403
+                return response
+
         else:
-            messages.error(request, 'Please correct the error below.')
-    else:
-        form = PasswordChangeForm(request.user)
-    return render(request, 'registration/password_change.html', {
-        'form': form
-    })
+            response =  JsonResponse({"error": "Your old password seems to be incorrect."})
+            response.status_code = 403
+            return response
+

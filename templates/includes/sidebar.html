@@ -57,7 +57,7 @@
           </a>
         </li>
         <li>
-          <a href="{% url 'change_password' %}">
+          <a href="{% url 'password_change' %}" id="change_password">
             <i class="fas fa-sign-out-alt mr-2"></i> Change Password
           </a>
         </li>
@@ -115,7 +115,7 @@
           </a>
         </li>
         <li>
-          <a href="{% url 'change_password' %}">
+          <a href="{% url 'password_change' %}" id="change_password">
             <i class="fas fa-sign-out-alt mr-2"></i> Change Password
           </a>
         </li>
@@ -129,11 +129,49 @@
 
     {% endif %}
 </nav>
+          <div class="modal fade" id="changepasswordmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 500px !important;">
+            <div class="modal-content rounded-2">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Change Password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <form id="password_change" method="POST" action="{% url 'password_change' %}">
+                            {% csrf_token %}
+                      <div class="col-md-12 ">
+                        <div id="passwordchangeerrors" class="mb-1 text-center text-danger font-weight-bold"></div>
+                        <small class="d-block font-weight-bold mb-1 ml-2">Old Password</small>
+                        <div class="form-group">
+                          <input class="form-control form-control-alternative" type="password" name="current_password" required>
+                        </div>
+                        <small class="d-block font-weight-bold mb-1 ml-2">New Password</small>
+                        <div class="form-group">
+                          <input class="form-control form-control-alternative" type="password" name="new_password1" required>
+                        </div>
+                        <small class="d-block font-weight-bold mb-1 ml-2">Confirm Password</small>
+                        <div class="form-group">
+                          <input class="form-control form-control-alternative" type="password" name="new_password2" required>
+                        </div>
+                      </div>
+                        <div class="card-footer text-center bg-white">
+                            <button class="btn btn-danger btn-block" type="submit">Next</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+          </div>
 
 <script>
   $(() => {
 
-  
+    $('#change_password').click(function(event){
+      $('#changepasswordmodal').modal('show');
+      event.preventDefault();
+    })
 
     $("a").addClass("mr-1 rounded").css('font-family', 'Work Sans');
 
@@ -143,5 +181,34 @@
     }
     
     $("#" + page_loaded).addClass("active shadow");
+
+    $('#password_change').submit(function(event){
+      $.ajaxSetup({
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+        });
+        $.ajax({
+            type : 'POST',
+            url: "{% url 'password_change' %}",
+            data : {
+                    'current_password' : $('[name = current_password]').val(),
+                    'new_password1' : $('[name = new_password1]').val(),
+                    'new_password2' : $('[name = new_password2]').val(),
+                },
+            success: function (response) {
+              $('#password_change').empty();
+              $('#password_change').append("Password Changed Successfully");
+               // console.log(response);
+            },
+            error: function(response){
+              $('#passwordchangeerrors').empty();
+              // 
+              $('#passwordchangeerrors').append(response.responseJSON.error)
+              // console.log(response);
+            }
+        })
+        event.preventDefault();
+      })
   });
 </script>

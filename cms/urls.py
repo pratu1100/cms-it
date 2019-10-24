@@ -21,5 +21,5 @@ urlpatterns = [
     path('hod/', include('hod.urls')),
     path('assistant/',include('labassistant.urls')),
     path('guest/',include('guest.urls')),
-    path('password/change',views.change_password,name="change_password")
+    path('password/change',views.password_change,name="password_change")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
