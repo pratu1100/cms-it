@@ -26,10 +26,11 @@ def index(request):
 		ias = IA.objects.filter(ia_date__gte = datetime.datetime.now())
 		makeup_lecs = MakeupLecture.objects.filter(lec_date__gte = datetime.datetime.now())
 		guest_lecs = GuestLecture.objects.filter(lec_date__gte = datetime.datetime.now())
+		print("######",guest_lecs)
 		context_data = {
 			"ias" : ias,
 			"makeup_lecs" : makeup_lecs,
-			"guest_lecs" : guest_lecs,
+			"guest_lectures" : guest_lecs
 		}
 		return render(request,"faculty/faculty_index.html",context_data)
 	html_error_data = {
@@ -675,22 +676,81 @@ def guestlecture_schedule(request):
 			date = datetime.datetime.strptime(request.POST.get('guestlec_date'),'%m/%d/%Y')
 			timeslot = TimeSlot.objects.get(pk = int(request.POST.get('timeslot')))
 			room = Room.objects.get(pk = int(request.POST.get('locations')))
+			day = DaysOfWeek.objects.get(day_name = date.strftime('%A'))
+			lecs_in_timeslot = Lecture.objects.filter(lec_time__start_time = timeslot.start_time,lec_day = day,lname__year = year) | Lecture.objects.filter(lec_time__end_time = timeslot.end_time,lec_day = day,lname__year = year)
 
+			
 			try:
 				if(subject):
 					guest_lecture = GuestLecture(lec_year = year, lec_subject = subject,lec_date = date,lec_time = timeslot,lec_in = room)
 				else:
 					guest_lecture = GuestLecture(lec_year = year, title = title,lec_date = date,lec_time = timeslot,lec_in = room)
 				guest_lecture.full_clean()
-				# print(guest_lecture)
+				# # print(guest_lecture)
 				guest_lecture.save()
+
+				subject = 'Expert Lecture'
+				# message = 'Lecture : ' + str(Lecture.objects.get(pk = lec_id).lname.sname) +'/n From : ' + str(leave.leave_taken_by.username)
+				# --------------------------------TO FACULTY WITH CONFLICTING TIMESLOTS---------
+				for _ in lecs_in_timeslot:
+					message_data = {
+						'guest_lecture' : guest_lecture,
+						'faculty' : _.taken_by,
+						'conflicting_lecture' : _, 
+
+					}
+					email_from = settings.EMAIL_HOST_USER
+					recipient_list = []
+					recipient_list.append(_.taken_by.email)
+					print("###",recipient_list)
+					html_content = render_to_string('email/faculty/expert_lecture_conflicting_notification.html', message_data,request) # render with dynamic value
+					text_content = strip_tags(html_content)
+
+					msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+					msg.attach_alternative(html_content, "text/html")
+									# print(l[0].for_lecture)
+					msg.send()
+					# return render(request,'email/faculty/expert_lecture_conflicting_notification.html', message_data)				
+
+				# ---------------------------------TO ALL FACULTY -------------------------------
+				email_from = settings.EMAIL_HOST_USER
+				recipient_list = []
+
+				staff_list = User.objects.filter(is_staff = False,is_superuser = False).exclude(pk__in=[x.id  for x in lecs_in_timeslot])
+				for _ in staff_list:
+					recipient_list.append(_.email)
+				html_content = render_to_string('email/faculty/expert_lecture_notification.html', message_data,request) # render with dynamic value
+				text_content = strip_tags(html_content)
+
+				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+				msg.attach_alternative(html_content, "text/html")
+								# print(l[0].for_lecture)
+				msg.send()
+				# return render(request,'email/faculty/expert_lecture_notification.html', message_data)
+
+				#---------------------------------TO HOD-------------------------------------
+				authority = User.objects.filter(is_superuser = True)[0]
+				message_data = {
+					'lecture' : guest_lecture,
+					'authority' : authority,
+				}
+				recipient_list = []
+				recipient_list.append(authority.email)
+				html_content = render_to_string('email/hod/expert_lecture_notification.html', message_data,request) # render with dynamic value
+				text_content = strip_tags(html_content)
+				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+				msg.attach_alternative(html_content, "text/html")
+				msg.send()
+				# return render(request,'email/hod/expert_lecture_notification.html', message_data)
 
 				context_data = {
 					"success" : 'true'
 				}
 
-			except Exception as e:
+				# return render(request,"faculty/guestlecture.html",context_data)
 
+			except Exception as e:
+				# print(e)
 				context_data = {
 					"errors" : e
 				}

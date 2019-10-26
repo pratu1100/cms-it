@@ -31,10 +31,10 @@
 						</div>
 					{% endfor %}
 					</div>
-					{% endif }	
-					{% if guest_lecs }
+					{% endif %}	
+					{% if guest_lectures %}
 					<div class="col-sm-12 col-md-4">
-					{% for lec in guest_lecs %}
+					{% for lec in guest_lectures %}
 						<div class="card shadow mb-3">
 							<div class="card-header bg-secondary">
 								<div class="float-left"><strong>Expert Lecture</strong></div>
@@ -48,7 +48,7 @@
 								<div class="badge badge-warning badge-lg float-right" style="font-size : 90%;">{{ lec.lec_in }}</div>			
 							</div>
 							<div class="badge badge-success badge-lg" style="font-size : 90%;">
-								{{ lec.lec_subject }}
+								{% if lec.subject %}{{ lec.lec_subject }}{% else %}{{ lec.title }}{% endif %}
 							</div>
 						</div>
 					{% endfor %}

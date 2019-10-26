@@ -156,7 +156,10 @@ class GuestLecture(models.Model):
 	lec_in = models.ForeignKey(Room,on_delete = models.CASCADE,null = True)
 
 	def __str__(self):
-		return self.lec_subject.sname
+		try:
+			return self.lec_subject.sname
+		except:
+			return self.title	
 
 	class Meta:
 		unique_together = ('lec_year','lec_date','lec_time')
