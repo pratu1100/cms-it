@@ -1,9 +1,16 @@
 from django.shortcuts import render
 from faculty.models import Room
 from django.http import JsonResponse
+from django.contrib.auth.models import User
 import datetime
 from . models import Reservation
 from datetime import timedelta
+import os
+from django.conf import settings
+from django.core.mail import send_mail,EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
 
 
 # Create your views here.
@@ -31,6 +38,41 @@ def reserve(request):
 			email = request.POST.get('email')
 			try:
 				r = Reservation.objects.get_or_create(room = room,institute = institute,department = department,purpose = purpose,start_date = start_date,end_date = end_date,start_time = start_time,end_time = end_time,contact_person = contact_person,email = email)
+				
+				# --------------------To CONTACT PERSON--------------------------
+				subject = "Room Reservation Notificaion"
+
+				message_data = {
+					'reservation' : r[0],
+				}
+				email_from = settings.EMAIL_HOST_USER
+				recipient_list = []
+				recipient_list.append(r[0].email)
+				html_content = render_to_string('email/guest/event_request.html', message_data,request) # render with dynamic value
+				text_content = strip_tags(html_content)
+
+				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+				msg.attach_alternative(html_content, "text/html")
+				msg.send()
+				# return render(request,'email/guest/event_request.html', message_data)
+
+				# --------------------To HOD--------------------------
+				subject = "Room Reservation Notificaion"
+				authority = User.objects.filter(is_superuser = True)[0]
+				message_data = {
+					'reservation' : r[0],
+					'authority' : authority
+				}
+				email_from = settings.EMAIL_HOST_USER
+				recipient_list = []
+				recipient_list.append(authority.email)
+				html_content = render_to_string('email/hod/event_request.html', message_data,request) # render with dynamic value
+				text_content = strip_tags(html_content)
+
+				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+				msg.attach_alternative(html_content, "text/html")
+				# msg.send()
+				return render(request,'email/hod/event_request.html', message_data)
 				context_data = {
 					"success" : True,
 				}

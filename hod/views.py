@@ -200,6 +200,7 @@ def daterange(start_date, end_date):
     for n in range(int ((end_date - start_date).days)):
         yield start_date + timedelta(n)
 
+@login_required
 def events(request):
 	if request.user.is_superuser:
 		if request.method == 'POST':
@@ -231,6 +232,7 @@ def events(request):
 	}
 	return JsonResponse(json_data, status=500)
 
+@login_required
 def room_reservations(request):
 	if request.user.is_superuser:
 		if request.method == 'POST':
@@ -245,22 +247,24 @@ def room_reservations(request):
 				event.approved_status = True
 				event.save() 
 
-			subject = 'Event Notification'
+			subject = 'Room reservation Update'
 					
 			message_data = {
-				'event' : event,
+				'reservation' : event,
 			}
 
 			email_from = settings.EMAIL_HOST_USER
 			recipient_list = []
 			recipient_list.append(event.email)
-			html_content = render_to_string('email/event_approve_notification.html', message_data) # render with dynamic value
+			html_content = render_to_string('email/guest/event_approve_notification.html', message_data) # render with dynamic value
 			text_content = strip_tags(html_content)
 
 			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 			msg.attach_alternative(html_content, "text/html")
 			
 			msg.send()
+
+			# return render(request,'email/guest/event_approve_notification.html', message_data)
 
 		events = Reservation.objects.filter(approved_status = None)
 		context_data = {
