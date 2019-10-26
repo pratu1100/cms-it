@@ -25,7 +25,7 @@
                                     <p class="card-text"><b class="font-weight-bold text-dark">Subject: </b>{{ ia.ia_subject }}</p>
                                 </div>
                                 <div class="col-md m-3 p-3">
-                                    <p class="card-text"><b class="font-weight-bold text-dark">Date: </b>{{ ia.ia_date }}</p>
+                                    <p class="card-text"><b class="font-weight-bold text-dark">Date: </b>{{ ia.ia_date|date }}</p>
                                     <p class="card-text"><b class="font-weight-bold text-dark">Time: </b>{{ ia.ia_start_time }} to {{ ia.ia_end_time }}</p>
                                 </div>
                             </div>
@@ -42,7 +42,7 @@
                             <div class="form-group">
                                 <small class="d-block font-weight-bold mb-1 ml-2">{{ batch.batch }}</small>
                                 <select class="form-control form-control-alternative" name="{{ batch }}-room" required>
-                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                    <option class="text-dark" value="" selected disabled>Please Select</option>
                                     {% for room in rooms %}
                                         <option class="text-dark" value="{{ room.id }}">{{ room }}</option>
                                     {% endfor %}
@@ -53,7 +53,7 @@
                             <div class="form-group">
                                 <small class="d-block font-weight-bold mb-1 ml-2">Supervisor</small>
                                 <select class="form-control form-control-alternative" name="{{ batch }}-supervisor" required>
-                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                    <option class="text-dark" value="" selected disabled>Please Select</option>
                                     {% for supervisor in supervisors %}
                                         <option class="text-dark" value="{{ supervisor.id }}">{{ supervisor.username }}</option>
                                     {% endfor %}
@@ -93,7 +93,7 @@
                             <div class="form-group">
                                 <small class="d-block font-weight-bold mb-1 ml-2">Year</small>
                                 <select class="form-control form-control-alternative" name="year" required>
-                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                    <option class="text-dark" value="" selected disabled>Please Select</option>
                                     {% for year in years %}
                                         <option class="text-dark" value="{{ year.id }}">{{ year }}</option>
                                     {% endfor %}
@@ -104,7 +104,7 @@
                             <div class="form-group">
                                 <small class="d-block font-weight-bold mb-1 ml-2">Subject</small>
                                 <select class="form-control form-control-alternative" name="subject" required>
-                                    <option class="text-dark" value="-1" selected disabled>Please Select</option>
+                                    <option class="text-dark" value="" selected disabled>Please Select</option>
                                 </select>
                             </div>
                         </div>
@@ -169,7 +169,7 @@
         $(document).ready(function () {
             $('[name=year]').change(function () {
                 $('[name=subject]').empty();
-                var html = "<option value=-1 disabled selected>Select Subject</option>";
+                var html = "<option value='' disabled selected>Select Subject</option>";
                 {% for subject in subjects %}
                     if ("{{ subject.year.id }}" == $(this).val()) {
                         html += "<option value={{ subject.id }}>{{ subject }}</option>"

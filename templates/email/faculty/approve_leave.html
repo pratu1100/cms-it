@@ -160,8 +160,8 @@
 <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 30px; padding-left: 30px; padding-top: 10px; padding-bottom: 10px; font-family: Arial, sans-serif"><![endif]-->
 <div style="color:#283C4B;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;line-height:150%;padding-top:10px;padding-right:30px;padding-bottom:10px;padding-left:30px;">
 <div style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 12px; line-height: 18px; color: #283C4B;">
-<p style="font-size: 12px; line-height: 24px; text-align: center; margin: 0;"><span style="font-size: 16px;"><strong><span style="font-family: 'lucida sans unicode', 'lucida grande', sans-serif; line-height: 24px; font-size: 16px;">Dear {{ leave.leave_taken_by }}</span></strong></span></p>
-<p style="font-size: 12px; line-height: 24px; text-align: center; margin: 0;"><span mce-data-marked="1" style="font-size: 16px;"><strong><span mce-data-marked="1" style="font-family: 'lucida sans unicode', 'lucida grande', sans-serif; line-height: 24px; font-size: 16px;">Your leave has been {% if leave.approved_status %}approved{% else %}rejected{% endif %}!</span></strong></span></p>
+<p style="font-size: 12px; line-height: 24px; text-align: center; margin: 0;"><span style="font-size: 16px;"><strong><span style=" line-height: 24px; font-size: 16px;">Dear {{ leave.leave_taken_by }}</span></strong></span></p>
+<p style="font-size: 12px; line-height: 24px; text-align: center; margin: 0;"><span mce-data-marked="1" style="font-size: 16px;"><strong><span mce-data-marked="1" style=" line-height: 24px; font-size: 16px;">Your leave has been {% if leave.approved_status %}approved{% else %}rejected{% endif %}!</span></strong></span></p>
 </div>
 </div>
 <!--[if mso]></td></tr></table><![endif]-->
@@ -170,7 +170,7 @@
 <div style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 12px; line-height: 18px; color: #283C4B;">
 
 
-<p style="font-size: 12px; line-height: 21px; text-align: center; margin: 0;"><span style="font-family: 'lucida sans unicode', 'lucida grande', sans-serif; font-size: 14px;">
+<p style="font-size: 12px; line-height: 21px; text-align: center; margin: 0;"><span style=" font-size: 14px;">
 	<b>DATE : </b> {{ leave.leave_start_date }} TO {{ leave.leave_end_date }}<br>
 	<b>DURATION : </b> {% if duration == 'full' %}Full Day {% elif duration == 'first_half' %}First Half {% elif duration == 'second_half' %}Second Half{% else %}Contact Admin{% endif %}
 </span></p>
@@ -180,7 +180,7 @@
 <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 20px; padding-left: 20px; padding-top: 20px; padding-bottom: 30px; font-family: Arial, sans-serif"><![endif]-->
 <div style="color:#555555;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;line-height:120%;padding-top:20px;padding-right:20px;padding-bottom:30px;padding-left:20px;">
 <div style="font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 12px; line-height: 14px; color: #555555;">
-<p style="font-size: 14px; line-height: 16px; text-align: center; margin: 0;"><span style="font-family: 'lucida sans unicode', 'lucida grande', sans-serif; font-size: 14px; line-height: 16px;"><a href="{% url 'view_leaves' %}" style="color: #3AAEE0;" target="_blank">You can view it here.</a></span></p>
+<p style="font-size: 14px; line-height: 16px; text-align: center; margin: 0;"><span style=" font-size: 14px; line-height: 16px;"><a href="{% url 'view_leaves' %}" style="color: #3AAEE0;" target="_blank">You can view it here.</a></span></p>
 </div>
 <!--[if mso]></td></tr></table><![endif]-->
 <!--[if (!mso)&(!IE)]><!-->

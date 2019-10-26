@@ -368,6 +368,29 @@ def post_makeup(request):
 			try:
 				makeup_lec.full_clean()
 				makeup_lec.save()
+						
+					# ------------------- TO STUDENTS -------------------
+				subject = "Makeup Lecture notificaion - " + makeup_lec.lec_subject.sname 
+
+				message_data = {
+					'makeup_lec' : makeup_lec,
+
+				}
+				email_from = settings.EMAIL_HOST_USER
+				recipient_list = []
+				# To be replaced by student email
+				recipient_list.append("mandlekar.prashant.harshal@gmail.com")
+				# print("###",recipient_list)
+				html_content = render_to_string('email/student/makeup_notification.html', message_data,request) # render with dynamic value
+				text_content = strip_tags(html_content)
+
+				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+				msg.attach_alternative(html_content, "text/html")
+								# print(l[0].for_lecture)
+				msg.send()
+				# return render(request,'email/student/makeup_notification.html', message_data)
+
+
 				context_data = {
 					"success" : 'true'
 				}
@@ -598,33 +621,76 @@ def post_ia_arrangement(request):
 	if not request.user.is_superuser and not request.user.is_staff:
 		if request.method == 'POST':
 			ia = IA.objects.get(pk = request.POST.get('ia_id'))
+			# batch_room_dict = dict()			
 			for batch in Batch.objects.filter(batch_of_year = ia.ia_year):
 				batch_room_id = request.POST.get(str(batch)+"-room")
 				batch_supervisor_id = request.POST.get(str(batch)+"-supervisor")
-				print("###",batch_supervisor_id)
-				if(batch_room_id != "-1" and batch_supervisor_id != "-1"):
+				# print("###",batch_supervisor_id)
+				if(batch_room_id != "-1" and batch_supervisor_id != "-1" and batch_room_id !="" and batch_supervisor_id != ""):
 					batch_room = Room.objects.get(pk = batch_room_id)
 					batch_supervisor = User.objects.get(pk = batch_supervisor_id)
-					print("###",batch_supervisor)
-
+					# print("###",batch_supervisor)
+					# batch_room_dict[batch] = (batch_room,batch_supervisor)
 					try:
 						mapping = IaBatchRoomMapping(ia= ia,batch = batch,room=batch_room,supervisor= batch_supervisor)
-						mapping.full_clean()
-						mapping.save()
+						# mapping.full_clean()
+						# mapping.save()
 
-						subject = "New IA has been scheduled for TY"
-						recipients = ['ty_it_a@yopmail.com', 'ty_it_b@yopmail.com']
 
-						message_data = {
-							# 'ia': 
-						}
-
-						send_emails(request, recipients, subject, message_data, 'email/ia_notification.html')
 
 					except Exception as e:
 						context_data = {
 							"errors" : e
 						}
+
+			# ------------------- TO STUDENTS -------------------
+			subject = "IA notificaion - " + ia.ia_subject.sname 
+
+			ia_mappings = IaBatchRoomMapping.objects.filter(ia = ia)
+
+			message_data = {
+				'ia' : ia,
+				'ia_mappings' : ia_mappings,
+
+			}
+			email_from = settings.EMAIL_HOST_USER
+			recipient_list = []
+			# To be replaced by student email
+			recipient_list.append("mandlekar.prashant.harshal@gmail.com")
+			# print("###",recipient_list)
+			html_content = render_to_string('email/student/ia_notification.html', message_data,request) # render with dynamic value
+			text_content = strip_tags(html_content)
+
+			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+			msg.attach_alternative(html_content, "text/html")
+							# print(l[0].for_lecture)
+			msg.send()
+			# return render(request,'email/student/ia_notification.html', message_data)				
+			# -------------------TO ALLOCATED SUPERVISOR FACULTY AND ASSISTANTS--------------
+			subject = "IA notificaion - " + ia.ia_subject.sname 
+
+			ia_mappings = IaBatchRoomMapping.objects.filter(ia = ia)
+
+			message_data = {
+				'ia' : ia,
+				'ia_mappings' : ia_mappings,
+
+			}
+			email_from = settings.EMAIL_HOST_USER
+			recipient_list = []
+
+			for ia_mapping in ia_mappings:
+				recipient_list.append(ia_mapping.supervisor.email)
+			# print("###",recipient_list)
+			html_content = render_to_string('email/faculty/ia_notification.html', message_data,request) # render with dynamic value
+			text_content = strip_tags(html_content)
+
+			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
+			msg.attach_alternative(html_content, "text/html")
+							# print(l[0].for_lecture)
+			msg.send()
+			# return render(request,'email/faculty/ia_notification.html', message_data)	
+
 			context_data = {
 				"success" : True,
 			}	
@@ -1031,10 +1097,4 @@ def api_available(request):
 	# print()
 	return render(request,"faculty/api_available_faculty.html",context_data)
 
-def send_emails(request, recipients, subject, message_data, template_name):
-	email_from = settings.EMAIL_HOST_USER
-	html_content = render_to_string(template_name, message_data, request)
-	text_content = strip_tags(html_content)
-	msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
-	msg.attach_alternative(html_content, "text/html")
-	msg.send()
+
