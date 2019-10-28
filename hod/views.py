@@ -3,7 +3,7 @@ from faculty.models import Leave
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from faculty.models import LoadShift,Leave, OD
-from django.core.mail import send_mail,EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
@@ -64,7 +64,8 @@ def get_leaves(request):
 			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 			msg.attach_alternative(html_content, "text/html")
 			
-			msg.send()
+			send_async_mail(msg)
+
 			# return render(request,'email/faculty/approve_leave.html', message_data)
 
 		leaves = Leave.objects.filter(approved_status = None)
@@ -128,7 +129,8 @@ def leave_history(request):
 			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 			msg.attach_alternative(html_content, "text/html")
 			
-			msg.send()
+			send_async_mail(msg)
+
 			# return render(request,'email/faculty/approve_leave.html', message_data)
 		leaves = Leave.objects.exclude(approved_status = None)
 		leave_loads_pairs = list()
@@ -175,7 +177,8 @@ def get_ods(request):
 			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 			msg.attach_alternative(html_content, "text/html")
 			
-			msg.send()
+			send_async_mail(msg)
+
 			# return render(request,'email/faculty/approve_od.html', message_data)
 		ods = OD.objects.filter(approved_status = None)
 		od_loads_pairs = list()
@@ -262,7 +265,8 @@ def room_reservations(request):
 			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 			msg.attach_alternative(html_content, "text/html")
 			
-			msg.send()
+			send_async_mail(msg)
+
 
 			# return render(request,'email/guest/event_approve_notification.html', message_data)
 

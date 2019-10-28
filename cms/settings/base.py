@@ -46,11 +46,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mailer',
     'faculty',
     'hod',
     'labassistant',
     'guest',
+    'EmailManager'
 ]
 
 MIDDLEWARE = [
@@ -155,8 +155,9 @@ MEDIA_URL = '/media/'
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_ROOT = os.path.join(BASE_DIR, "live-static-files", "media-root")
 
-# Email
-EMAIL_BACKEND = 'mailer.backend.DbBackend'
+# EMAIL_BACKEND = 'mailer.backend.DbBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587

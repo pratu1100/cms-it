@@ -53,7 +53,8 @@ def reserve(request):
 
 				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 				msg.attach_alternative(html_content, "text/html")
-				msg.send()
+				send_async_mail(msg)
+
 				# return render(request,'email/guest/event_request.html', message_data)
 
 				# --------------------To HOD--------------------------
@@ -71,7 +72,8 @@ def reserve(request):
 
 				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 				msg.attach_alternative(html_content, "text/html")
-				# msg.send()
+				# send_async_mail(msg)
+
 				return render(request,'email/hod/event_request.html', message_data)
 				context_data = {
 					"success" : True,

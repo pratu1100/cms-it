@@ -14,6 +14,7 @@ from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from itertools import chain
+from EmailManager.views import send_async_mail
 
 # # Update leave as approved by HOD
 # def update_leave(request, leave_id):
@@ -136,7 +137,7 @@ def submit_leave(request):
 			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 			msg.attach_alternative(html_content, "text/html")
 							# print(l[0].for_lecture)
-			msg.send()
+			send_async_mail(msg)
 			# return render(request,'email/faculty/leave_scheduled.html', message_data)
 
 			#---------------------------------TO HOD-------------------------------------
@@ -152,7 +153,8 @@ def submit_leave(request):
 			text_content = strip_tags(html_content)
 			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 			msg.attach_alternative(html_content, "text/html")
-			msg.send()
+			send_async_mail(msg)
+			
 			# return render(request,'email/hod/leave_request.html', message_data)
 
 
@@ -242,7 +244,8 @@ def submit_load_shift(request):
 								msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 								msg.attach_alternative(html_content, "text/html")
 								# print(l[0].for_lecture)
-								msg.send()
+								send_async_mail(msg)
+								
 								# return render(request,'email/faculty/loadShift_notification.html', message_data)
 						context_data = {
 							"success" : True,
@@ -309,7 +312,8 @@ def view_load_shifts(request):
 				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 				msg.attach_alternative(html_content, "text/html")
 				# print(l[0].for_lecture)
-				msg.send()
+				send_async_mail(msg)
+
 				# return render(request,'email/faculty/loadshift_accept.html', message_data)
 
 
@@ -387,7 +391,8 @@ def post_makeup(request):
 				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 				msg.attach_alternative(html_content, "text/html")
 								# print(l[0].for_lecture)
-				msg.send()
+				send_async_mail(msg)
+
 				# return render(request,'email/student/makeup_notification.html', message_data)
 
 
@@ -664,7 +669,8 @@ def post_ia_arrangement(request):
 			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 			msg.attach_alternative(html_content, "text/html")
 							# print(l[0].for_lecture)
-			msg.send()
+			send_async_mail(msg)
+
 			# return render(request,'email/student/ia_notification.html', message_data)				
 			# -------------------TO ALLOCATED SUPERVISOR FACULTY AND ASSISTANTS--------------
 			subject = "IA notificaion - " + ia.ia_subject.sname 
@@ -688,7 +694,8 @@ def post_ia_arrangement(request):
 			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 			msg.attach_alternative(html_content, "text/html")
 							# print(l[0].for_lecture)
-			msg.send()
+			send_async_mail(msg)
+
 			# return render(request,'email/faculty/ia_notification.html', message_data)	
 
 			context_data = {
@@ -775,7 +782,8 @@ def guestlecture_schedule(request):
 					msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 					msg.attach_alternative(html_content, "text/html")
 									# print(l[0].for_lecture)
-					msg.send()
+					send_async_mail(msg)
+
 					# return render(request,'email/faculty/expert_lecture_conflicting_notification.html', message_data)				
 
 				# ---------------------------------TO ALL FACULTY -------------------------------
@@ -791,7 +799,8 @@ def guestlecture_schedule(request):
 				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 				msg.attach_alternative(html_content, "text/html")
 								# print(l[0].for_lecture)
-				msg.send()
+				send_async_mail(msg)
+
 				# return render(request,'email/faculty/expert_lecture_notification.html', message_data)
 
 				#---------------------------------TO HOD-------------------------------------
@@ -806,7 +815,8 @@ def guestlecture_schedule(request):
 				text_content = strip_tags(html_content)
 				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 				msg.attach_alternative(html_content, "text/html")
-				msg.send()
+				send_async_mail(msg)
+
 				# return render(request,'email/hod/expert_lecture_notification.html', message_data)
 
 				context_data = {
@@ -901,7 +911,8 @@ def submit_od(request):
 			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 			msg.attach_alternative(html_content, "text/html")
 							# print(l[0].for_lecture)
-			msg.send()
+			send_async_mail(msg)
+
 			# return render(request,'email/faculty/od_scheduled.html', message_data)
 
 			#---------------------------------TO HOD-------------------------------------
@@ -916,7 +927,8 @@ def submit_od(request):
 			text_content = strip_tags(html_content)
 			msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 			msg.attach_alternative(html_content, "text/html")
-			msg.send()
+			send_async_mail(msg)
+
 			# return render(request,'email/hod/od_request.html', message_data)
 
 			context_data = {
@@ -975,7 +987,8 @@ def submit_od_loadshift(request):
 							msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 							msg.attach_alternative(html_content, "text/html")
 							# print(l[0].for_lecture)
-							msg.send()
+							send_async_mail(msg)
+
 
 						context_data = {
 							"success" : 'true',
@@ -1002,20 +1015,23 @@ def send_email(request):
 		email_from = settings.EMAIL_HOST_USER
 		# print(email_from)
 		recipient_list = ['harshal.pm@somaiya.edu',]
-		html_content = render_to_string('email/loadShift_notification.html', {'varname':'value'}) # render with dynamic value
+		html_content = render_to_string('email/approve_notification.html', {'varname':'value'}) # render with dynamic value
 		text_content = strip_tags(html_content)
 
 		msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 		msg.attach_alternative(html_content, "text/html")
 
-		msg.send()
-		return render(request,'email/loadShift_notification.html',{})
-		# return HttpResponse("Success")
+		# send_async_mail(msg)
+
+		# send_async_mail(msg)
+		return render(request,'email/hod/leave_request.html',{})
+		return HttpResponse("Success")
 	html_error_data = {
 		"error_code" : "401",
 		"error_message" : "UNAUTHORIZED"
 	}
 	return render(request,"error.html",html_error_data)
+
 
 
 @login_required
@@ -1048,7 +1064,9 @@ def api_free_rooms(request):
 			for lec in makeup_lecs:
 				occupied_rooms.append(lec.lec_in)
 			for ia in ias:
-				occupied_rooms.append(ia.ia_in)
+				ia_mappings = IaBatchRoomMapping.objects.filter(ia=ia)
+				for ia_mapping in ia_mappings:
+					occupied_rooms.append(ia_mapping.room)
 			for lec in guest_lecs:
 				occupied_rooms.append(lec.lec_in)
 
