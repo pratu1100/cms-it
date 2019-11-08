@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from guest.models import Reservation
 import datetime
 from datetime import timedelta
+from EmailManager.views import send_async_mail
 # Create your views here.
 @login_required
 def index(request):
@@ -45,7 +46,7 @@ def get_leaves(request):
 			}
 			
 			if '_reject' in request.POST:
-				leave.approved_status = False;
+				leave.approved_status = False
 				leave.save()
 			elif '_approve' in request.POST:
 				leave.approved_status = True
@@ -113,7 +114,7 @@ def leave_history(request):
 			}
 			
 			if '_reject' in request.POST:
-				leave.approved_status = False;
+				leave.approved_status = False
 				leave.save()
 			elif '_approve' in request.POST:
 				leave.approved_status = True
@@ -242,7 +243,7 @@ def room_reservations(request):
 			event = Reservation.objects.get(pk = request.POST.get('event_id'))
 			if '_reject' in request.POST:
 
-				event.approved_status = False;
+				event.approved_status = False
 				event.save()
 				
 			elif '_approve' in request.POST:
