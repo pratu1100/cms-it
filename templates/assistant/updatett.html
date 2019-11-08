@@ -141,7 +141,7 @@
 												<div class="icon-circle">
 													<i class="ti-map"></i>
 												</div>
-												Submit
+												Fill Data
 											</a>
 										</li>
 									</ul>
@@ -349,7 +349,7 @@
 				var select_type = parent_name.split('-')[2];
 				var row_no = parent_name.split('-')[3];
 				if(select_type == "major"){
-					$('[name="div-row-minor-' + row_no + '"]').find('select').attr("disabled", true);
+					$('[name="div-row-minor-' + row_no + '"]').find('select').attr("readonly", true);
 					var flag = true;
 					$.each($('[name="div-row-major-' + row_no + '"]').find('select'), function(index, ele){
 						if($(ele).val() != "0" && $(ele).val() != "None"){
@@ -357,10 +357,10 @@
 						}
 					});
 					if(flag) {
-						$('[name="div-row-minor-' + row_no + '"]').find('select').attr("disabled", false);
+						$('[name="div-row-minor-' + row_no + '"]').find('select').attr("readonly", false);
 					}
 				} else if(select_type == "minor") {
-					$('[name="div-row-major-' + row_no + '"]').find('select').attr("disabled", true);
+					$('[name="div-row-major-' + row_no + '"]').find('select').attr("readonly", true);
 					var flag = true;
 					$.each($('[name="div-row-minor-' + row_no + '"]').find('select'), function(index, ele){
 						if($(ele).val() != "0" && $(ele).val() != "None"){
@@ -368,7 +368,7 @@
 						}
 					});
 					if(flag) {
-						$('[name="div-row-major-' + row_no + '"]').find('select').attr("disabled", false);
+						$('[name="div-row-major-' + row_no + '"]').find('select').attr("readonly", false);
 					}
 				}
 			}
@@ -638,7 +638,7 @@
 				{% for room in rooms %}
 					html += "<option value='{{ room.id }}'>{{ room }}</option>";
 				{% endfor %}
-				
+
 			{% endif %}
 			$('.lec_batch_opts').append(html);
 		{% endfor %}

@@ -95,6 +95,28 @@ def get_timetable(request):
 										l = Lecture(lname = s, lec_day = t_day, lec_time = t, lec_div = t_div, taken_by = u, lec_in = r,lec_batch = batch)
 										l.full_clean()
 										l.save()
+							else:
+								t_day = DaysOfWeek.objects.filter(day_name = day_name)[0]
+								t_div = Division.objects.filter(division = div)[0]
+								t_year = Year.objects.filter(year = year)[0]
+
+								if len(key_list) == 2: #delete a lec
+									start_time, end_time = key_list
+									t = TimeSlot.objects.filter(start_time = start_time, end_time = end_time)[0]
+									try:
+										l = Lecture.objects.get(lec_time = t, lec_day = t_day, lec_div = t_div, lname__year = t_year)
+										l.delete()
+									except: #throws Lectue.DoesNotExist
+										pass
+								elif len(key_list) == 3: #delete a lab
+									start_time, end_time, batch_nm = key_list
+									t = TimeSlot.objects.filter(start_time = start_time, end_time = end_time)[0]
+									batch = Batch.objects.filter(batch = batch_nm)[0]
+									try:
+										l = Lecture.objects.get(lec_time = t, lec_day = t_day, lec_div = t_div, lname__year = t_year, lec_batch = batch)
+										l.delete()
+									except:
+										pass
 						else:
 							if data_key == "yearopt":
 								year = data_value[0]
