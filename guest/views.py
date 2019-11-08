@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from EmailManager.views import send_async_mail
 
 
 
@@ -72,9 +73,9 @@ def reserve(request):
 
 				msg = EmailMultiAlternatives(subject, text_content, email_from, recipient_list)
 				msg.attach_alternative(html_content, "text/html")
-				# send_async_mail(msg)
+				send_async_mail(msg)
 
-				return render(request,'email/hod/event_request.html', message_data)
+				# return render(request,'email/hod/event_request.html', message_data)
 				context_data = {
 					"success" : True,
 				}
