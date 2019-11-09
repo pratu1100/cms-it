@@ -165,6 +165,7 @@
 	</main>
 	<script>
 		$(() => {
+
 			$(".checkbox-label").click((e) => {
 				if($(e.currentTarget).siblings('input')[0].checked){
 					$(e.currentTarget).siblings('input')[0].checked=  false
@@ -185,6 +186,7 @@
 				let start_date = $('#start_date').datepicker('getUTCDate');
 				$('#end_date').datepicker('setStartDate', start_date);
 			});
+
 		});
 
 	</script>
